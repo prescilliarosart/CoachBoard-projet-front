@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useProgressionCanvas } from "../components/useProgressionCanvas";
 import { StatItem } from "./StatItem";
-import { useProgressionCanvas } from "./useProgressionCanvas";
 import "./HomePage.css";
 
 const statsData = [
