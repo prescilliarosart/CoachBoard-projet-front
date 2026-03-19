@@ -34,10 +34,25 @@ export default function NavbarCoach() {
 					onClick={() => navigate("/programmes")}
 					sx={{
 						color: "#7a8fa6",
+						position: "relative",
+						padding: 0,
 						"&:hover": { color: "#22c55e" },
 						marginLeft: "60px",
 						fontSize: "0.88rem",
 						fontWeight: 500,
+						"&::after": {
+							content: '""',
+							position: "absolute",
+							left: 0,
+							bottom: "-3px",
+							width: 0,
+							height: "1.5px",
+							background: "#22c55e",
+							transition: "width 0.25s",
+						},
+						"&:hover::after": {
+							width: "100%",
+						},
 					}}
 				>
 					Programmes
@@ -46,10 +61,25 @@ export default function NavbarCoach() {
 					onClick={() => navigate("/eleves")}
 					sx={{
 						color: "#7a8fa6",
+						position: "relative",
+						padding: 0,
 						"&:hover": { color: "#22c55e" },
-						marginLeft: "45px",
+						marginLeft: "60px",
 						fontSize: "0.88rem",
 						fontWeight: 500,
+						"&::after": {
+							content: '""',
+							position: "absolute",
+							left: 0,
+							bottom: "-3px",
+							width: 0,
+							height: "1.5px",
+							background: "#22c55e",
+							transition: "width 0.25s",
+						},
+						"&:hover::after": {
+							width: "100%",
+						},
 					}}
 				>
 					Elèves
@@ -58,10 +88,25 @@ export default function NavbarCoach() {
 					onClick={() => navigate("/progression")}
 					sx={{
 						color: "#7a8fa6",
+						position: "relative",
+						padding: 0,
 						"&:hover": { color: "#22c55e" },
-						marginLeft: "45px",
+						marginLeft: "60px",
 						fontSize: "0.88rem",
 						fontWeight: 500,
+						"&::after": {
+							content: '""',
+							position: "absolute",
+							left: 0,
+							bottom: "-3px",
+							width: 0,
+							height: "1.5px",
+							background: "#22c55e",
+							transition: "width 0.25s",
+						},
+						"&:hover::after": {
+							width: "100%",
+						},
 					}}
 				>
 					Progression
@@ -69,7 +114,15 @@ export default function NavbarCoach() {
 				<Box sx={{ flexGrow: 1 }} />
 				<Button
 					onClick={() => navigate("/profil")}
-					sx={{ color: "#7a8fa6", fontSize: "0.88rem", fontWeight: 500 }}
+					sx={{
+						color: "#22c55e",
+						"&:hover": { background: "#22c55e", color: "#0b1520" },
+						fontStyle: "italic",
+						fontSize: "0.92rem",
+						fontWeight: 700,
+						border: "1.5px solid #22c55e",
+						borderRadius: "4px",
+					}}
 				>
 					Mon profil - Coach
 				</Button>
