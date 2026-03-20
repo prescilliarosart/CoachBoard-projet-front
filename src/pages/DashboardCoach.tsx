@@ -26,8 +26,10 @@ export default function DashboardCoach() {
 					margin: "80px 0 0",
 					paddingTop: "60px",
 					padding: "0 36px",
+					paddingBottom: "45px",
 					position: "relative",
 					zIndex: 2,
+					borderBottom: "1px solid rgba(34, 197, 94, 0.5)",
 				}}
 			>
 				<Box
@@ -54,6 +56,7 @@ export default function DashboardCoach() {
 						style={{
 							fontSize: "1.5rem",
 							marginTop: "16px",
+							marginBottom: "50px",
 							fontFamily: "'Barlow', sans-serif",
 						}}
 					>
@@ -65,16 +68,22 @@ export default function DashboardCoach() {
 					variant="contained"
 					onClick={() => navigate("/eleves")}
 					sx={{
-						marginRight: "36px",
+						alignSelf: "flex-end",
+						marginRight: "200px",
 						position: "relative",
 						zIndex: 2,
 						backgroundColor: "#22c55e",
 						color: "#0b1520",
 						fontStyle: "italic",
-						fontSize: "1rem",
+						fontSize: "1.25rem",
 						fontWeight: 700,
 						border: "1.5px solid #22c55e",
 						borderRadius: "4px",
+						"&:hover": {
+							backgroundColor: "#16a34a",
+							transform: "translateY(-2px)",
+							boxShadow: "0 8px 28px rgba(34, 197, 94, 0.22)",
+						},
 					}}
 				>
 					Suivre mes élèves
