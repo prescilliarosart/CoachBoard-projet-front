@@ -7,7 +7,7 @@ import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { useNavigate } from "react-router-dom";
-import NavbarCoach from "../components/NavbarCoach";
+import Navbar from "../components/Navbar";
 import { useProgressionCanvas } from "../components/useProgressionCanvas";
 
 export default function DashboardCoach() {
@@ -21,7 +21,14 @@ export default function DashboardCoach() {
 				className="home__sticky-canvas"
 				aria-hidden="true"
 			/>
-			<NavbarCoach />
+			<Navbar
+				links={[
+					{ label: "Programmes", path: "/programmes" },
+					{ label: "Elèves", path: "/eleves" },
+					{ label: "Progression", path: "/progression" },
+				]}
+				profilLabel="Mon profil - Coach"
+			/>
 			<Box
 				sx={{
 					display: "flex",
