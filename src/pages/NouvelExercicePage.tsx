@@ -30,9 +30,7 @@ function UploadZone({ label, accept, file, onFile }: { label: string; accept: st
       <Box onClick={() => !file && ref.current?.click()} sx={{ width: "100%", aspectRatio: "16/9", background: "#111e2c", border: "1px solid rgba(34,197,94,0.18)", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", cursor: file ? "default" : "pointer", position: "relative", overflow: "hidden", transition: "border-color 0.2s", "&:hover": !file ? { borderColor: "#22c55e", background: "rgba(34,197,94,0.04)" } : {} }}>
         {preview ? (
           <>
-            {isVideo ? <video src={preview} style={{ width: "100%", height: "100%", objectFit: "cover" }} controls>
-  <track kind="captions" />
-</video> : <img src={preview} alt="preview" style={{ width: "100%", height: "100%", objectFit: "cover" }} />}
+            {isVideo ? <video src={preview} style={{ width: "100%", height: "100%", objectFit: "cover" }} controls><track kind="captions" /></video> : <img src={preview} alt="preview" style={{ width: "100%", height: "100%", objectFit: "cover" }} />}
             <Box onClick={(e) => { e.stopPropagation(); onFile(null); }} sx={{ position: "absolute", top: 8, right: 8, width: 24, height: 24, borderRadius: "50%", background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", "&:hover": { background: "rgba(200,50,50,0.8)" } }}>
               <CloseIcon sx={{ fontSize: 14, color: "#fff" }} />
             </Box>
