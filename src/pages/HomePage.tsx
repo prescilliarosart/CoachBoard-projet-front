@@ -133,7 +133,7 @@ export default function HomePage() {
 				<button
 					type="button"
 					className="home__btn-coach"
-					onClick={() => navigate("/login/coach")}
+					onClick={() => navigate("/dashboard-coach")}
 				>
 					Connexion Coach
 				</button>
