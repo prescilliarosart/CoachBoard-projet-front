@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useProgressionCanvas } from "../components/useProgressionCanvas";
+import { ProgressionCanvas } from "../components/useProgressionCanvas";
 import { StatItem } from "./StatItem";
 import "./HomePage.css";
 
@@ -87,8 +87,6 @@ export default function HomePage() {
 	const [titleVisible, setTitleVisible] = useState(false);
 	const titleRef = useRef<HTMLHeadingElement>(null);
 
-	useProgressionCanvas();
-
 	useEffect(() => {
 		const onScroll = () => setScrolled(window.scrollY > 40);
 		window.addEventListener("scroll", onScroll);
@@ -124,11 +122,7 @@ export default function HomePage() {
 
 	return (
 		<div className="home">
-			<canvas
-				id="progression-canvas"
-				className="home__sticky-canvas"
-				aria-hidden="true"
-			/>
+			<ProgressionCanvas />
 
 			<nav className={`home__nav${scrolled ? " home__nav--scrolled" : ""}`}>
 				<div className="home__nav-left">
