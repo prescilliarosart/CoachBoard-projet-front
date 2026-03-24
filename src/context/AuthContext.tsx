@@ -19,10 +19,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 	const [token, setToken] = useState<string | null>(null);
 
 	const login = (token: string) => {
-		localStorage.setItem("token", token);
-		const result = jwtDecode<User>(token);
-		setToken(token);
-		setUser(result);
+		try {
+			const result = jwtDecode<User>(token);
+			localStorage.setItem("token", token);
+			setToken(token);
+			setUser(result);
+		} catch {
+			console.error("Token ilvalide");
+		}
 	};
 
 	const logout = () => {
