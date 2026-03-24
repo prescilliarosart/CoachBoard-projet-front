@@ -170,3 +170,13 @@ export function useProgressionCanvas() {
 		};
 	}, []);
 }
+export function ProgressionCanvas() {
+	useProgressionCanvas();
+	return (
+		<canvas
+			id="progression-canvas"
+			className="home__sticky-canvas"
+			aria-hidden="true"
+		/>
+	);
+}
