@@ -4,7 +4,6 @@ import SearchIcon from "@mui/icons-material/Search";
 import {
 	Box,
 	Button,
-	Chip,
 	FormControl,
 	InputAdornment,
 	InputLabel,
