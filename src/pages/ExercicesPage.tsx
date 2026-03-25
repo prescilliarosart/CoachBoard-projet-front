@@ -4,6 +4,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import {
 	Box,
 	Button,
+	Chip,
 	FormControl,
 	InputAdornment,
 	InputLabel,
@@ -76,6 +77,105 @@ const MENU = {
 		},
 	},
 };
+
+function ExerciceCard({ ex }: { ex: Exercice }) {
+	return (
+		<Box
+			sx={{
+				background: "#0f1b27",
+				border: "1px solid rgba(34,197,94,0.13)",
+				borderRadius: "10px",
+				overflow: "hidden",
+				transition: "transform 0.22s, border-color 0.22s, box-shadow 0.22s",
+				"&:hover": {
+					transform: "translateY(-4px)",
+					borderColor: "#22c55e",
+					boxShadow: "0 8px 28px rgba(34,197,94,0.15)",
+				},
+			}}
+		>
+			<Box
+				sx={{
+					width: "100%",
+					aspectRatio: "16/10",
+					background: "linear-gradient(135deg, #1a2a35 0%, #0b1520 100%)",
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "center",
+					borderBottom: "1px solid rgba(34,197,94,0.08)",
+				}}
+			>
+				<Typography sx={{ color: "#3a5060", fontSize: "0.75rem" }}>
+					Image
+				</Typography>
+			</Box>
+			<Box
+				sx={{
+					p: "12px 14px",
+					display: "flex",
+					flexDirection: "column",
+					gap: "8px",
+				}}
+			>
+				<Box
+					sx={{
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "space-between",
+						gap: 1,
+					}}
+				>
+					<Typography
+						sx={{
+							fontFamily: "'Barlow Condensed',sans-serif",
+							fontStyle: "italic",
+							fontWeight: 700,
+							fontSize: "0.95rem",
+							color: "#e2e8f0",
+							textTransform: "uppercase",
+							flex: 1,
+							overflow: "hidden",
+							textOverflow: "ellipsis",
+							whiteSpace: "nowrap",
+						}}
+					>
+						{ex.nom}
+					</Typography>
+					<Chip
+						label={ex.type}
+						size="small"
+						sx={{
+							background: "rgba(34,197,94,0.1)",
+							color: "#22c55e",
+							border: "1px solid rgba(34,197,94,0.25)",
+							fontFamily: "'Barlow',sans-serif",
+							fontSize: "0.65rem",
+							height: "20px",
+						}}
+					/>
+				</Box>
+				<Box sx={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
+					{ex.muscles.slice(0, 3).map((m) => (
+						<Typography
+							key={m}
+							sx={{
+								fontSize: "0.68rem",
+								color: "#7a8fa6",
+								background: "rgba(255,255,255,0.04)",
+								border: "1px solid rgba(255,255,255,0.07)",
+								borderRadius: "4px",
+								px: "6px",
+								py: "1px",
+							}}
+						>
+							{m}
+						</Typography>
+					))}
+				</Box>
+			</Box>
+		</Box>
+	);
+}
 
 export default function ExercicesPage() {
 	useProgressionCanvas();
@@ -250,19 +350,7 @@ export default function ExercicesPage() {
 						}}
 					>
 						{filtered.map((ex) => (
-							<Box
-								key={ex.id}
-								sx={{
-									background: "#0f1b27",
-									border: "1px solid rgba(34,197,94,0.13)",
-									borderRadius: "10px",
-									overflow: "hidden",
-								}}
-							>
-								<Typography sx={{ color: "#e2e8f0", p: 2 }}>
-									{ex.nom}
-								</Typography>
-							</Box>
+							<ExerciceCard key={ex.id} ex={ex} />
 						))}
 					</Box>
 				)}
