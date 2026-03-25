@@ -1,5 +1,5 @@
 import { jwtDecode } from "jwt-decode";
-import { createContext, type ReactNode, useState } from "react";
+import { createContext, type ReactNode, useContext, useState } from "react";
 
 export type User = {
 	id: number;
@@ -13,6 +13,8 @@ type AuthContextType = {
 	login: (token: string) => void;
 	logout: () => void;
 };
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
 	const [user, setUser] = useState<User | null>(null);
@@ -34,4 +36,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 		setToken(null);
 		setUser(null);
 	};
+
+	return (
+		<AuthContext.Provider value={{ user, token, login, logout }}>
+			{children}
+		</AuthContext.Provider>
+	);
+}
+
+export function useAuth() {
+	const context = useContext(AuthContext);
+	if (!context) throw new Error("useAuth doit être utilisé dans AuthProvider");
+	return context;
 }
