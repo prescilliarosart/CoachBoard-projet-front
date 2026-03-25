@@ -10,7 +10,7 @@ export type User = {
 type AuthContextType = {
 	user: User | null;
 	token: null | string;
-	login: (token: string) => void;
+	login: (token: string) => User | undefined;
 	logout: () => void;
 };
 
@@ -26,6 +26,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 			localStorage.setItem("token", token);
 			setToken(token);
 			setUser(result);
+			return result;
 		} catch {
 			console.error("Token ilvalide");
 		}
