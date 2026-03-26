@@ -1,5 +1,7 @@
+import Box from "@mui/material/Box";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
 import { useAuth } from "../context/AuthContext";
 
 function LoginPage() {
@@ -41,23 +43,27 @@ function LoginPage() {
 		}
 	};
 	return (
-		<form onSubmit={handleSubmit}>
-			<input
-				type="email"
-				name="email"
-				value={formData.email}
-				onChange={handleChange}
-			/>
-			<input
-				type="password"
-				name="mot_de_passe"
-				value={formData.mot_de_passe}
-				onChange={handleChange}
-			/>
-			{error && <p>{error}</p>}
+		<>
+			<Navbar links={[]} profilLabel="Connexion" />
+			<Box sx={{ pt: 10 }}></Box>
+			<form onSubmit={handleSubmit}>
+				<input
+					type="email"
+					name="email"
+					value={formData.email}
+					onChange={handleChange}
+				/>
+				<input
+					type="password"
+					name="mot_de_passe"
+					value={formData.mot_de_passe}
+					onChange={handleChange}
+				/>
+				{error && <p>{error}</p>}
 
-			<button type="submit">Se connecter</button>
-		</form>
+				<button type="submit">Se connecter</button>
+			</form>
+		</>
 	);
 }
 
