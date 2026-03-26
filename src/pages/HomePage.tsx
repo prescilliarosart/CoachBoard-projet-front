@@ -168,7 +168,7 @@ export default function HomePage() {
 						<button
 							type="button"
 							className="home__btn-primary"
-							onClick={() => navigate("/login/eleve")}
+							onClick={() => navigate("/dashboard-eleves")}
 						>
 							Commencer maintenant
 						</button>
