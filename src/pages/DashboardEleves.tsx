@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { ProgressionCanvas } from "../components/useProgressionCanvas";
 
-export default function DashboardCoach() {
+export default function DashboarEleves() {
 	const navigate = useNavigate();
 
 	return (
@@ -19,10 +19,9 @@ export default function DashboardCoach() {
 			<Navbar
 				links={[
 					{ label: "Programmes", path: "/programmes" },
-					{ label: "Elèves", path: "/eleves" },
 					{ label: "Progression", path: "/progression" },
 				]}
-				profilLabel="Mon profil - Coach"
+				profilLabel="Mon profil - Eleve"
 			/>
 			<Box
 				sx={{
@@ -57,7 +56,7 @@ export default function DashboardCoach() {
 							fontWeight: 700,
 						}}
 					>
-						Dashboard Coach
+						Mon espace
 					</Typography>
 					<p
 						style={{
@@ -67,13 +66,13 @@ export default function DashboardCoach() {
 							fontFamily: "'Barlow', sans-serif",
 						}}
 					>
-						Gérez vos programmes de coaching et suivez la progression de vos
-						élèves depuis un tableau de bord central.
+						Consultez votre programme, enregistrez vos performances et suivez
+						votre progression séance après séance.
 					</p>
 				</Box>
 				<Button
 					variant="contained"
-					onClick={() => navigate("/eleves")}
+					onClick={() => navigate("/seance-en-cours")}
 					sx={{
 						alignSelf: "flex-end",
 						marginRight: "200px",
@@ -93,12 +92,12 @@ export default function DashboardCoach() {
 						},
 					}}
 				>
-					Suivre mes élèves
+					Démarrer une séance
 				</Button>
 			</Box>
 			<Typography>
 				<h2 style={{ color: "#fff", margin: "40px 0 24px", padding: "0 36px" }}>
-					Historique des séances
+					Historique de mes séances
 				</h2>
 			</Typography>
 			<Box
@@ -116,7 +115,6 @@ export default function DashboardCoach() {
 							<TableCell sx={{ color: "#fff" }}>Programme</TableCell>
 							<TableCell sx={{ color: "#fff" }}>Séance</TableCell>
 							<TableCell sx={{ color: "#fff" }}>Statut</TableCell>
-							<TableCell sx={{ color: "#fff" }}>Elève concerné</TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
@@ -125,7 +123,6 @@ export default function DashboardCoach() {
 							<TableCell sx={{ color: "#fff" }}>Programme 1</TableCell>
 							<TableCell sx={{ color: "#fff" }}>50%</TableCell>
 							<TableCell sx={{ color: "#fff" }}>✅</TableCell>
-							<TableCell sx={{ color: "#fff" }}>John Doe</TableCell>
 						</TableRow>
 					</TableBody>
 				</Table>
