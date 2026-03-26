@@ -21,7 +21,7 @@ export default function DashboarEleves() {
 					{ label: "Programmes", path: "/programmes" },
 					{ label: "Progression", path: "/progression" },
 				]}
-				profilLabel="Mon profil - Eleves"
+				profilLabel="Mon profil - Eleve"
 			/>
 			<Box
 				sx={{
@@ -56,7 +56,7 @@ export default function DashboarEleves() {
 							fontWeight: 700,
 						}}
 					>
-						Dashboard Eleves
+						Mon espace
 					</Typography>
 					<p
 						style={{
