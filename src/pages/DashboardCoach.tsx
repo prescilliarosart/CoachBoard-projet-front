@@ -22,7 +22,7 @@ export default function DashboardCoach() {
 					{ label: "Elèves", path: "/eleves" },
 					{ label: "Progression", path: "/progression" },
 				]}
-				profilLabel="Mon profil - Coach"
+				profilLabel="Profil"
 			/>
 			<Box
 				sx={{

@@ -4,6 +4,7 @@ import Button from "@mui/material/Button";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 type NavbarProps = {
 	links: { label: string; path: string }[];
@@ -12,6 +13,7 @@ type NavbarProps = {
 
 export default function Navbar({ links, profilLabel }: NavbarProps) {
 	const navigate = useNavigate();
+	const { logout, token } = useAuth();
 	return (
 		<AppBar
 			sx={{
@@ -44,7 +46,7 @@ export default function Navbar({ links, profilLabel }: NavbarProps) {
 							position: "relative",
 							padding: 0,
 							"&:hover": { color: "#22c55e" },
-							marginLeft: "60px",
+							marginLeft: "32px",
 							fontSize: "0.88rem",
 							fontWeight: 500,
 							"&::after": {
@@ -77,10 +79,31 @@ export default function Navbar({ links, profilLabel }: NavbarProps) {
 						fontWeight: 700,
 						border: "1.5px solid #22c55e",
 						borderRadius: "4px",
+						whiteSpace: "nowrap",
 					}}
 				>
 					{profilLabel}
 				</Button>
+				{token && ( // 👈 s'affiche seulement si connecté
+					<Button
+						onClick={() => {
+							logout();
+							navigate("/login");
+						}}
+						sx={{
+							color: "#ef4444",
+							marginLeft: "12px",
+							fontStyle: "italic",
+							fontSize: "0.92rem",
+							fontWeight: 700,
+							border: "1.5px solid #ef4444",
+							borderRadius: "4px",
+							"&:hover": { background: "#ef4444", color: "#fff" },
+						}}
+					>
+						Déconnexion
+					</Button>
+				)}
 			</Toolbar>
 		</AppBar>
 	);
