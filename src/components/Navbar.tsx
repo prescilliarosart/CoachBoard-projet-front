@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 type NavbarProps = {
@@ -23,20 +23,22 @@ export default function Navbar({ links, profilLabel }: NavbarProps) {
 			}}
 		>
 			<Toolbar sx={{ alignItems: "center" }}>
-				<Typography
-					variant="h6"
-					component="div"
-					sx={{
-						color: "#fff",
-						fontStyle: "italic",
-						fontSize: "1.1rem",
-						fontWeight: 700,
-						letterSpacing: "0.04em",
-						fontFamily: "'Barlow Condensed', sans-serif",
-					}}
-				>
-					Julien Marchal · Coach Sportif
-				</Typography>
+				<Link to="/" style={{ textDecoration: "none" }}>
+					<Typography
+						variant="h6"
+						component="div"
+						sx={{
+							color: "#fff",
+							fontStyle: "italic",
+							fontSize: "1.1rem",
+							fontWeight: 700,
+							letterSpacing: "0.04em",
+							fontFamily: "'Barlow Condensed', sans-serif",
+						}}
+					>
+						Julien Marchal · Coach Sportif
+					</Typography>
+				</Link>
 				{links.map((link) => (
 					<Button
 						key={link.path}
