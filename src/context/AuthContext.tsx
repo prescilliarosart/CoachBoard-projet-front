@@ -17,8 +17,20 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-	const [user, setUser] = useState<User | null>(null);
-	const [token, setToken] = useState<string | null>(null);
+	const [user, setUser] = useState<User | null>(() => {
+		const savedToken = localStorage.getItem("token");
+		if (savedToken) {
+			try {
+				return jwtDecode<User>(savedToken);
+			} catch {
+				return null;
+			}
+		}
+		return null;
+	});
+	const [token, setToken] = useState<string | null>(
+		localStorage.getItem("token"),
+	);
 
 	const login = (token: string) => {
 		try {
