@@ -22,7 +22,7 @@ export default function DashboardCoach() {
 					{ label: "Elèves", path: "/eleves" },
 					{ label: "Progression", path: "/progression" },
 				]}
-				profilLabel="Mon profil - Coach"
+				profilLabel="Profil"
 			/>
 			<Box
 				sx={{
@@ -71,30 +71,83 @@ export default function DashboardCoach() {
 						élèves depuis un tableau de bord central.
 					</p>
 				</Box>
-				<Button
-					variant="contained"
-					onClick={() => navigate("/eleves")}
+				<Box
 					sx={{
+						display: "flex",
+						flexDirection: "row",
+						gap: 2,
 						alignSelf: "flex-end",
 						marginRight: "200px",
 						position: "relative",
 						zIndex: 2,
-						backgroundColor: "#22c55e",
-						color: "#0b1520",
-						fontStyle: "italic",
-						fontSize: "1.25rem",
-						fontWeight: 700,
-						border: "1.5px solid #22c55e",
-						borderRadius: "4px",
-						"&:hover": {
-							backgroundColor: "#16a34a",
-							transform: "translateY(-2px)",
-							boxShadow: "0 8px 28px rgba(34, 197, 94, 0.22)",
-						},
 					}}
 				>
-					Suivre mes élèves
-				</Button>
+					<Button
+						variant="contained"
+						onClick={() => navigate("/eleves")}
+						sx={{
+							zIndex: 2,
+							backgroundColor: "#22c55e",
+							color: "#0b1520",
+							fontStyle: "italic",
+							fontSize: "1.25rem",
+							fontWeight: 700,
+							border: "1.5px solid #22c55e",
+							borderRadius: "4px",
+							"&:hover": {
+								backgroundColor: "#16a34a",
+								transform: "translateY(-2px)",
+								boxShadow: "0 8px 28px rgba(34, 197, 94, 0.22)",
+							},
+						}}
+					>
+						Suivre mes élèves
+					</Button>
+
+					<Button
+						variant="contained"
+						onClick={() => navigate("/exercices")}
+						sx={{
+							zIndex: 2,
+							backgroundColor: "#22c55e",
+							color: "#0b1520",
+							fontStyle: "italic",
+							fontSize: "1.25rem",
+							fontWeight: 700,
+							border: "1.5px solid #22c55e",
+							borderRadius: "4px",
+							"&:hover": {
+								backgroundColor: "#16a34a",
+								transform: "translateY(-2px)",
+								boxShadow: "0 8px 28px rgba(34, 197, 94, 0.22)",
+							},
+						}}
+					>
+						Bibliothèques d'exercices
+					</Button>
+
+					<Button
+						variant="contained"
+						onClick={() => navigate("/exercices/nouveau")}
+						sx={{
+							zIndex: 2,
+							backgroundColor: "#22c55e",
+							color: "#0b1520",
+							fontStyle: "italic",
+							fontSize: "1.25rem",
+							fontWeight: 700,
+							border: "1.5px solid #22c55e",
+							borderRadius: "4px",
+							"&:hover": {
+								backgroundColor: "#16a34a",
+								transform: "translateY(-2px)",
+								boxShadow: "0 8px 28px rgba(34, 197, 94, 0.22)",
+							},
+						}}
+					>
+						Créer un exercice
+					</Button>
+				</Box>
 			</Box>
 			<Typography>
 				<h2 style={{ color: "#fff", margin: "40px 0 24px", padding: "0 36px" }}>

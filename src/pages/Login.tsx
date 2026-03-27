@@ -36,7 +36,7 @@ function LoginPage() {
 			if (loggedUser.role === "coach") {
 				navigate("/dashboard-coach");
 			} else {
-				navigate("/dashboard-eleve");
+				navigate("/dashboard-eleves");
 			}
 		} catch (_err) {
 			setError("Identifiants incorrects");
