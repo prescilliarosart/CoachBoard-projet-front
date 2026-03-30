@@ -40,7 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 			setUser(result);
 			return result;
 		} catch {
-			console.error("Token ilvalide");
+			console.error("Token invalide");
 		}
 	};
 

@@ -8,10 +8,10 @@ import { useAuth } from "../context/AuthContext";
 
 type NavbarProps = {
 	links: { label: string; path: string }[];
-	profilLabel: string;
+	profilLabel?: string;
 };
 
-export default function Navbar({ links, profilLabel }: NavbarProps) {
+export default function Navbar({ links }: NavbarProps) {
 	const navigate = useNavigate();
 	const { logout, token } = useAuth();
 	return (
@@ -71,21 +71,7 @@ export default function Navbar({ links, profilLabel }: NavbarProps) {
 				))}
 
 				<Box sx={{ flexGrow: 1 }} />
-				<Button
-					onClick={() => navigate("/profil")}
-					sx={{
-						color: "#22c55e",
-						"&:hover": { background: "#22c55e", color: "#0b1520" },
-						fontStyle: "italic",
-						fontSize: "0.92rem",
-						fontWeight: 700,
-						border: "1.5px solid #22c55e",
-						borderRadius: "4px",
-						whiteSpace: "nowrap",
-					}}
-				>
-					{profilLabel}
-				</Button>
+
 				{token && ( // 👈 s'affiche seulement si connecté
 					<Button
 						onClick={() => {
