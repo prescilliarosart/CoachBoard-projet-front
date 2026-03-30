@@ -57,30 +57,6 @@ const steps = [
 	},
 ];
 
-const testimonials = [
-	{
-		id: 1,
-		name: "Sophie M.",
-		role: "Athlète amateur",
-		comment:
-			"CoachBoard a transformé ma façon de m'entraîner. Je progresse bien plus vite qu'avant !",
-	},
-	{
-		id: 2,
-		name: "Thomas K.",
-		role: "Coach sportif",
-		comment:
-			"Un outil indispensable pour gérer mes élèves et leurs programmes d'entraînement.",
-	},
-	{
-		id: 3,
-		name: "Laura D.",
-		role: "Sportive débutante",
-		comment:
-			"Interface intuitive, résultats concrets. Tout est centralisé au même endroit.",
-	},
-];
-
 export default function HomePage() {
 	const navigate = useNavigate();
 	const [scrolled, setScrolled] = useState(false);
@@ -172,9 +148,6 @@ export default function HomePage() {
 						>
 							Commencer maintenant
 						</button>
-						<span className="home__hero-hint">
-							Inscription gratuite · Aucune carte requise
-						</span>
 					</div>
 				</div>
 			</section>
@@ -195,7 +168,7 @@ export default function HomePage() {
 					TOUT CE DONT TU AS BESOIN
 				</h2>
 				<p className="home__section-sub reveal">
-					Une app pensée pour la performance, pas pour la paperasse.
+					Une app pensée et axée sur la performance
 				</p>
 				<div className="home__features-grid">
 					{features.map((f, i) => (
@@ -232,44 +205,6 @@ export default function HomePage() {
 						</div>
 					))}
 				</div>
-			</section>
-
-			<section className="home__testimonials">
-				<h2 className="home__section-title reveal">ILS NOUS FONT CONFIANCE</h2>
-				<div className="home__testimonials-grid">
-					{testimonials.map((t, i) => (
-						<div
-							className="home__testimonial-card reveal"
-							key={t.id}
-							style={{ transitionDelay: `${i * 0.12}s` }}
-						>
-							<div className="home__testimonial-stars">★★★★★</div>
-							<p className="home__testimonial-comment">"{t.comment}"</p>
-							<div className="home__testimonial-author">
-								<span className="home__testimonial-name">{t.name}</span>
-								<span className="home__testimonial-role">{t.role}</span>
-							</div>
-						</div>
-					))}
-				</div>
-			</section>
-
-			<section className="home__cta reveal">
-				<h2 className="home__cta-title">
-					PRÊT À PASSER AU
-					<br />
-					<span>NIVEAU SUPÉRIEUR ?</span>
-				</h2>
-				<p className="home__cta-sub">
-					Rejoins des centaines d'élèves qui progressent avec CoachBoard.
-				</p>
-				<button
-					type="button"
-					className="home__btn-primary home__btn-large"
-					onClick={() => navigate("/login/eleve")}
-				>
-					Rejoindre CoachBoard
-				</button>
 			</section>
 		</div>
 	);
