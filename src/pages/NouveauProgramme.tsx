@@ -48,6 +48,33 @@ const SX_BTN = {
 	},
 };
 
+const seances_fictives = [
+	{
+		id: 1,
+		nom: "Seance Push",
+		description: "Pectoraux / Epaules, Triceps",
+		serie: 5,
+		duree: "45min",
+		repos: "1min",
+	},
+	{
+		id: 2,
+		nom: "Seance Pull",
+		description: "Dos, Biceps",
+		serie: 5,
+		duree: "45min",
+		repos: "1min",
+	},
+	{
+		id: 3,
+		nom: "Seance Legs",
+		description: "Jambes, Abdominaux",
+		serie: 5,
+		duree: "45min",
+		repos: "1min",
+	},
+];
+
 export default function NouveauProgramme() {
 	const navigate = useNavigate();
 	const [form, setForm] = useState<FormData>({
@@ -123,6 +150,7 @@ export default function NouveauProgramme() {
 						display: "grid",
 						gridTemplateColumns: "2fr 1fr",
 						gap: "40px",
+						alignItems: "stretch",
 					}}
 				>
 					<Box
@@ -154,7 +182,7 @@ export default function NouveauProgramme() {
 								sx={SX_IN}
 							/>
 							<TextField
-								label="Durée (semaines)"
+								label="Durée"
 								value={form.duree}
 								onChange={(e) => setForm({ ...form, duree: e.target.value })}
 								fullWidth
@@ -163,7 +191,7 @@ export default function NouveauProgramme() {
 						</Box>
 						<Box sx={{ display: "flex", flexDirection: "row", gap: 3 }}>
 							<TextField
-								label="Notes"
+								label="Notes (optionnel)"
 								value={form.notes}
 								onChange={(e) => setForm({ ...form, notes: e.target.value })}
 								fullWidth
@@ -182,14 +210,97 @@ export default function NouveauProgramme() {
 							/>
 						</Box>
 					</Box>
+
 					<Box
 						sx={{
+							px: "36px",
+							py: "18px",
 							background: "rgba(15,27,39,0.85)",
 							border: "1px solid rgba(34,197,94,0.13)",
 							borderRadius: "12px",
-							p: "24px",
+							display: "flex",
+							flexDirection: "column",
+							alignItems: "flex-start",
+							position: "relative",
+							zIndex: 2,
 						}}
-					></Box>
+					>
+						<Typography
+							sx={{
+								fontFamily: "'Barlow Condensed',sans-serif",
+								fontWeight: 900,
+								fontSize: "1.1rem",
+								color: "#e2e8f0",
+								textTransform: "uppercase",
+								paddingBottom: "12px",
+								height: "100%",
+							}}
+						>
+							Bibliothèque
+						</Typography>
+						<TextField label="Rechercher une séance" sx={SX_IN} />
+						<Box sx={{ mt: 2, width: "100%" }}>
+							{seances_fictives.map((seance) => (
+								<Box
+									key={seance.id}
+									sx={{
+										background: "rgba(15,27,39,0.85)",
+										border: "1px solid rgba(34,197,94,0.13)",
+										borderRadius: "8px",
+										padding: "16px",
+										marginBottom: "12px",
+										width: "100%",
+									}}
+								>
+									<Box
+										sx={{
+											display: "flex",
+											flexDirection: "row",
+											gap: 2,
+											alignItems: "center",
+										}}
+									>
+										<Box
+											sx={{
+												width: 56,
+												height: 56,
+												borderRadius: "8px",
+												background: "rgba(34,197,94,0.1)",
+												flexShrink: 0,
+											}}
+										/>
+										<Box>
+											<Typography sx={{ color: "#e2e8f0", fontWeight: 700 }}>
+												{seance.nom}
+											</Typography>
+											<Typography sx={{ color: "#7a8fa6", fontSize: "0.8rem" }}>
+												{seance.description}
+											</Typography>
+										</Box>
+									</Box>
+
+									<Box
+										sx={{
+											display: "flex",
+											flexDirection: "row",
+											gap: 3,
+											mt: 2,
+										}}
+									>
+										<Typography sx={{ color: "#7a8fa6", fontSize: "0.78rem" }}>
+											Série : {seance.serie}
+										</Typography>
+										<Typography sx={{ color: "#7a8fa6", fontSize: "0.78rem" }}>
+											Durée : {seance.duree}
+										</Typography>
+										<Typography sx={{ color: "#7a8fa6", fontSize: "0.78rem" }}>
+											Repos : {seance.repos}
+										</Typography>
+									</Box>
+								</Box>
+							))}
+						</Box>
+					</Box>
 				</Box>
 			</Box>
 		</div>
