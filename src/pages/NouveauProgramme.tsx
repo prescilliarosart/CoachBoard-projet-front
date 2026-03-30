@@ -1,6 +1,6 @@
 import FitnessCenterIcon from "@mui/icons-material/FitnessCenter";
 import SaveIcon from "@mui/icons-material/Save";
-import { Box, Button, Toolbar, Typography } from "@mui/material";
+import { Box, Button, TextField, Toolbar, Typography } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
@@ -13,6 +13,21 @@ interface FormData {
 	notes: string;
 	eleveConcerne: string;
 }
+
+const SX_IN = {
+	"& .MuiOutlinedInput-root": {
+		background: "#111e2c",
+		borderRadius: "6px",
+		fontFamily: "'Barlow',sans-serif",
+		fontSize: "0.88rem",
+		color: "#e2e8f0",
+		"& fieldset": { borderColor: "rgba(34,197,94,0.18)" },
+		"&:hover fieldset": { borderColor: "rgba(34,197,94,0.4)" },
+		"&.Mui-focused fieldset": { borderColor: "#22c55e" },
+	},
+	"& .MuiInputLabel-root": { color: "#7a8fa6", fontSize: "0.82rem" },
+	"& .MuiInputLabel-root.Mui-focused": { color: "#22c55e" },
+};
 
 const SX_BTN = {
 	background: "#22c55e",
@@ -100,6 +115,82 @@ export default function NouveauProgramme() {
 				>
 					Enregistrer
 				</Button>
+			</Box>
+
+			<Box sx={{ p: "32px 36px", position: "relative", zIndex: 2 }}>
+				<Box
+					sx={{
+						display: "grid",
+						gridTemplateColumns: "2fr 1fr",
+						gap: "40px",
+					}}
+				>
+					<Box
+						sx={{
+							display: "flex",
+							flexDirection: "column",
+							gap: 3,
+							background: "rgba(15,27,39,0.85)",
+							border: "1px solid rgba(34,197,94,0.13)",
+							borderRadius: "12px",
+							p: "32px",
+						}}
+					>
+						<Box sx={{ display: "flex", flexDirection: "row", gap: 3 }}>
+							<TextField
+								label="Nom du programme"
+								value={form.nomProgramme}
+								onChange={(e) =>
+									setForm({ ...form, nomProgramme: e.target.value })
+								}
+								fullWidth
+								sx={SX_IN}
+							/>
+							<TextField
+								label="Objectif"
+								value={form.objectif}
+								onChange={(e) => setForm({ ...form, objectif: e.target.value })}
+								fullWidth
+								sx={SX_IN}
+							/>
+							<TextField
+								label="Durée (semaines)"
+								value={form.duree}
+								onChange={(e) => setForm({ ...form, duree: e.target.value })}
+								fullWidth
+								sx={SX_IN}
+							/>
+						</Box>
+						<Box sx={{ display: "flex", flexDirection: "row", gap: 3 }}>
+							<TextField
+								label="Notes"
+								value={form.notes}
+								onChange={(e) => setForm({ ...form, notes: e.target.value })}
+								fullWidth
+								multiline
+								rows={3}
+								sx={SX_IN}
+							/>
+							<TextField
+								label="Élève concerné"
+								value={form.eleveConcerne}
+								onChange={(e) =>
+									setForm({ ...form, eleveConcerne: e.target.value })
+								}
+								fullWidth
+								sx={SX_IN}
+							/>
+						</Box>
+					</Box>
+					<Box
+						sx={{
+							background: "rgba(15,27,39,0.85)",
+							border: "1px solid rgba(34,197,94,0.13)",
+							borderRadius: "12px",
+							p: "24px",
+						}}
+					></Box>
+				</Box>
 			</Box>
 		</div>
 	);
