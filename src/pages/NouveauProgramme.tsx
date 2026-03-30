@@ -73,6 +73,52 @@ const seances_fictives = [
 		duree: "45min",
 		repos: "1min",
 	},
+	{
+		id: 4,
+		nom: "Seance Full Body",
+		description: "Corps entier, idéal pour les débutants",
+		serie: 4,
+		duree: "40min",
+		repos: "1min30s",
+	},
+	{
+		id: 5,
+		nom: "Seance HIIT",
+		description:
+			"Entraînement fractionné de haute intensité pour brûler un maximum de calories en peu de temps",
+		serie: 6,
+		duree: "30min",
+		repos: "30s",
+	},
+];
+
+const programmes_fictifs = [
+	{
+		id: 1,
+		nom: "Programme de prise de masse",
+		description: "Un programme intensif pour développer la masse musculaire.",
+		objectif: "Gagner du muscle",
+		duree: "12 semaines",
+		eleveConcerne: "Jean Dupont",
+	},
+	{
+		id: 2,
+		nom: "Programme de perte de poids",
+		description:
+			"Un programme axé sur la perte de graisse et l'amélioration de la condition physique.",
+		objectif: "Perdre du gras",
+		duree: "8 semaines",
+		eleveConcerne: "Marie Curie",
+	},
+	{
+		id: 3,
+		nom: "Programme de remise en forme",
+		description:
+			"Un programme équilibré pour améliorer la condition physique générale.",
+		objectif: "Améliorer la condition physique générale",
+		duree: "10 semaines",
+		eleveConcerne: "Alice Martin",
+	},
 ];
 
 export default function NouveauProgramme() {
@@ -150,66 +196,138 @@ export default function NouveauProgramme() {
 						display: "grid",
 						gridTemplateColumns: "2fr 1fr",
 						gap: "40px",
-						alignItems: "stretch",
+						alignItems: "start",
 					}}
 				>
-					<Box
-						sx={{
-							display: "flex",
-							flexDirection: "column",
-							gap: 3,
-							background: "rgba(15,27,39,0.85)",
-							border: "1px solid rgba(34,197,94,0.13)",
-							borderRadius: "12px",
-							p: "32px",
-						}}
-					>
-						<Box sx={{ display: "flex", flexDirection: "row", gap: 3 }}>
-							<TextField
-								label="Nom du programme"
-								value={form.nomProgramme}
-								onChange={(e) =>
-									setForm({ ...form, nomProgramme: e.target.value })
-								}
-								fullWidth
-								sx={SX_IN}
-							/>
-							<TextField
-								label="Objectif"
-								value={form.objectif}
-								onChange={(e) => setForm({ ...form, objectif: e.target.value })}
-								fullWidth
-								sx={SX_IN}
-							/>
-							<TextField
-								label="Durée"
-								value={form.duree}
-								onChange={(e) => setForm({ ...form, duree: e.target.value })}
-								fullWidth
-								sx={SX_IN}
-							/>
+					<Box sx={{ display: "flex", flexDirection: "column", gap: "40px" }}>
+						{/* Formulaire de création de programme */}
+
+						<Box
+							sx={{
+								display: "flex",
+								flexDirection: "column",
+								gap: 3,
+								background: "rgba(15,27,39,0.85)",
+								border: "1px solid rgba(34,197,94,0.13)",
+								borderRadius: "12px",
+								p: "32px",
+							}}
+						>
+							<Box sx={{ display: "flex", flexDirection: "row", gap: 3 }}>
+								<TextField
+									label="Nom du programme"
+									value={form.nomProgramme}
+									onChange={(e) =>
+										setForm({ ...form, nomProgramme: e.target.value })
+									}
+									fullWidth
+									sx={SX_IN}
+								/>
+								<TextField
+									label="Objectif"
+									value={form.objectif}
+									onChange={(e) =>
+										setForm({ ...form, objectif: e.target.value })
+									}
+									fullWidth
+									sx={SX_IN}
+								/>
+								<TextField
+									label="Durée"
+									value={form.duree}
+									onChange={(e) => setForm({ ...form, duree: e.target.value })}
+									fullWidth
+									sx={SX_IN}
+								/>
+							</Box>
+							<Box sx={{ display: "flex", flexDirection: "row", gap: 3 }}>
+								<TextField
+									label="Notes (optionnel)"
+									value={form.notes}
+									onChange={(e) => setForm({ ...form, notes: e.target.value })}
+									fullWidth
+									multiline
+									rows={3}
+									sx={SX_IN}
+								/>
+								<TextField
+									label="Élève concerné"
+									value={form.eleveConcerne}
+									onChange={(e) =>
+										setForm({ ...form, eleveConcerne: e.target.value })
+									}
+									fullWidth
+									sx={SX_IN}
+								/>
+							</Box>
 						</Box>
-						<Box sx={{ display: "flex", flexDirection: "row", gap: 3 }}>
-							<TextField
-								label="Notes (optionnel)"
-								value={form.notes}
-								onChange={(e) => setForm({ ...form, notes: e.target.value })}
-								fullWidth
-								multiline
-								rows={3}
-								sx={SX_IN}
-							/>
-							<TextField
-								label="Élève concerné"
-								value={form.eleveConcerne}
-								onChange={(e) =>
-									setForm({ ...form, eleveConcerne: e.target.value })
-								}
-								fullWidth
-								sx={SX_IN}
-							/>
+
+						{/* Liste des programmes */}
+
+						<Box sx={{ mt: 2, position: "relative", zIndex: 2 }}>
+							{programmes_fictifs.map((programme) => (
+								<Box
+									key={programme.id}
+									sx={{
+										background: "rgba(15,27,39,0.85)",
+										border: "1px solid rgba(34,197,94,0.13)",
+										borderRadius: "8px",
+										padding: "16px",
+										marginBottom: "12px",
+										width: "100%",
+									}}
+								>
+									<Box
+										sx={{
+											display: "flex",
+											flexDirection: "row",
+											gap: 2,
+											alignItems: "center",
+										}}
+									>
+										<Box
+											sx={{
+												width: 56,
+												height: 56,
+												borderRadius: "8px",
+												background: "rgba(34,197,94,0.1)",
+												flexShrink: 0,
+											}}
+										/>
+										<Box>
+											<Typography sx={{ color: "#e2e8f0", fontWeight: 700 }}>
+												{programme.nom}
+											</Typography>
+											<Typography sx={{ color: "#7a8fa6", fontSize: "0.8rem" }}>
+												{programme.description}
+											</Typography>
+										</Box>
+									</Box>
+
+									<Box
+										sx={{
+											display: "flex",
+											flexDirection: "row",
+											gap: 3,
+											mt: 2,
+										}}
+									>
+										<Typography sx={{ color: "#7a8fa6", fontSize: "0.78rem" }}>
+											Objectif : {programme.objectif}
+										</Typography>
+										<Typography sx={{ color: "#7a8fa6", fontSize: "0.78rem" }}>
+											Durée : {programme.duree}
+										</Typography>
+										<Typography sx={{ color: "#7a8fa6", fontSize: "0.78rem" }}>
+											Eleve concerné : {programme.eleveConcerne}
+										</Typography>
+									</Box>
+								</Box>
+							))}
 						</Box>
 					</Box>
+
+					{/* Bibliothèque */}
 
 					<Box
 						sx={{
