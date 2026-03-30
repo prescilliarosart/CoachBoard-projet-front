@@ -266,7 +266,7 @@ export default function HomePage() {
 				<button
 					type="button"
 					className="home__btn-primary home__btn-large"
-					onClick={() => navigate("/login/eleve")}
+					onClick={() => navigate("/login")}
 				>
 					Rejoindre CoachBoard
 				</button>
