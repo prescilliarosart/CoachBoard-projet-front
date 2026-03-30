@@ -27,6 +27,9 @@ function LoginPage() {
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(formData),
 			});
+			if (!response.ok) {
+				throw new Error("Identifiants incorrects");
+			}
 
 			const { token } = await response.json();
 			const loggedUser = login(token);
