@@ -7,7 +7,6 @@ import HomePage from "./pages/HomePage";
 import Login from "./pages/Login";
 import NouveauProgramme from "./pages/NouveauProgramme";
 import NouvelExercicePage from "./pages/NouvelExercicePage";
-import NouvelleSeancePage from "./pages/NouvelleSeancePage";
 import Programmes from "./pages/Programmes";
 
 function ProtectedRoute() {
@@ -25,7 +24,6 @@ function App() {
 				<Route path="/dashboard-eleves" element={<DashboardEleves />} />
 				<Route path="/exercices" element={<ExercicesPage />} />
 				<Route path="/exercices/nouveau" element={<NouvelExercicePage />} />
-				<Route path="/seances/nouvelle" element={<NouvelleSeancePage />} />
 				<Route path="/programmes" element={<Programmes />} />
 				<Route path="/programmes/nouveau" element={<NouveauProgramme />} />
 			</Route>
