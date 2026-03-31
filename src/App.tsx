@@ -6,6 +6,7 @@ import ExercicesPage from "./pages/ExercicesPage";
 import HomePage from "./pages/HomePage";
 import Login from "./pages/Login";
 import NouvelExercicePage from "./pages/NouvelExercicePage";
+import NouvelleSeancePage from "./pages/NouvelleSeancePage";
 
 function ProtectedRoute() {
 	const { token } = useAuth();
@@ -22,6 +23,7 @@ function App() {
 				<Route path="/dashboard-eleves" element={<DashboardEleves />} />
 				<Route path="/exercices" element={<ExercicesPage />} />
 				<Route path="/exercices/nouveau" element={<NouvelExercicePage />} />
+				<Route path="/seances/nouvelle" element={<NouvelleSeancePage />} />
 			</Route>
 		</Routes>
 	);
