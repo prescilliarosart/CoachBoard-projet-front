@@ -8,6 +8,7 @@ import Login from "./pages/Login";
 import NouveauProgramme from "./pages/NouveauProgramme";
 import NouvelExercicePage from "./pages/NouvelExercicePage";
 import Programmes from "./pages/Programmes";
+import Seances from "./pages/Seances";
 
 function ProtectedRoute() {
 	const { token } = useAuth();
@@ -26,6 +27,7 @@ function App() {
 				<Route path="/exercices/nouveau" element={<NouvelExercicePage />} />
 				<Route path="/programmes" element={<Programmes />} />
 				<Route path="/programmes/nouveau" element={<NouveauProgramme />} />
+				<Route path="/seances" element={<Seances />} />
 			</Route>
 		</Routes>
 	);
