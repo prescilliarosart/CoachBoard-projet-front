@@ -136,10 +136,10 @@ export default function Seances() {
 					</TableHead>
 					<TableBody>
 						<TableRow>
-							<TableCell sx={{ color: "#fff" }}>2023-10-01</TableCell>
-							<TableCell sx={{ color: "#fff" }}>Programme 1</TableCell>
-							<TableCell sx={{ color: "#fff" }}>50%</TableCell>
-							<TableCell sx={{ color: "#fff" }}>✅</TableCell>
+							<TableCell sx={{ color: "#fff" }}>Séance 1</TableCell>
+							<TableCell sx={{ color: "#fff" }}>Lundi</TableCell>
+							<TableCell sx={{ color: "#fff" }}>Prise de masse</TableCell>
+							<TableCell sx={{ color: "#fff" }}>Squat lesté</TableCell>
 							<TableCell sx={{ color: "#fff" }}>John Doe</TableCell>
 						</TableRow>
 					</TableBody>
