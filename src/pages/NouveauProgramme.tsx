@@ -1,17 +1,36 @@
+import DeleteIcon from "@mui/icons-material/Delete";
 import FitnessCenterIcon from "@mui/icons-material/FitnessCenter";
 import SaveIcon from "@mui/icons-material/Save";
-import { Box, Button, TextField, Toolbar, Typography } from "@mui/material";
-import { useState } from "react";
+import {
+	Box,
+	Button,
+	FormControl,
+	InputLabel,
+	MenuItem,
+	Select,
+	TextField,
+	Toolbar,
+	Typography,
+} from "@mui/material";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { ProgressionCanvas } from "../components/useProgressionCanvas";
+import { useAuth } from "../context/AuthContext";
 
 interface FormData {
 	nomProgramme: string;
 	objectif: string;
 	duree: string;
 	notes: string;
-	eleveConcerne: string;
+	eleveConcerne: number | "";
+}
+
+interface Eleve {
+	ID_ELEVE: number;
+	NOM: string;
+	PRENOM: string;
+	EMAIL: string;
 }
 
 const SX_IN = {
@@ -123,6 +142,12 @@ const programmes_fictifs = [
 
 export default function NouveauProgramme() {
 	const navigate = useNavigate();
+	const { token } = useAuth();
+
+	const [programmes, setProgrammes] = useState(programmes_fictifs);
+
+	const [eleves, setEleves] = useState<Eleve[]>([]);
+
 	const [form, setForm] = useState<FormData>({
 		nomProgramme: "",
 		objectif: "",
@@ -130,6 +155,20 @@ export default function NouveauProgramme() {
 		notes: "",
 		eleveConcerne: "",
 	});
+
+	useEffect(() => {
+		fetch("http://localhost:3310/api/eleves", {
+			headers: { Authorization: `Bearer ${token}` },
+		})
+			.then((res) => res.json())
+			.then((data) => {
+				console.log("Eleves chargés :", data);
+				setEleves(data);
+			})
+			.catch((err) =>
+				console.error("Erreur lors du chargement des élèves :", err),
+			);
+	}, []);
 
 	const handleSave = () => {
 		if (
@@ -140,6 +179,10 @@ export default function NouveauProgramme() {
 		)
 			return;
 		navigate("/programmes");
+	};
+
+	const handleDelete = (id: number) => {
+		setProgrammes(programmes.filter((p) => p.id !== id));
 	};
 
 	return (
@@ -250,22 +293,28 @@ export default function NouveauProgramme() {
 									rows={3}
 									sx={SX_IN}
 								/>
-								<TextField
-									label="Élève concerné"
-									value={form.eleveConcerne}
-									onChange={(e) =>
-										setForm({ ...form, eleveConcerne: e.target.value })
-									}
-									fullWidth
-									sx={SX_IN}
-								/>
+								<FormControl fullWidth sx={SX_IN}>
+									<InputLabel>Élève concerné</InputLabel>
+									<Select
+										value={form.eleveConcerne}
+										onChange={(e) =>
+											setForm({ ...form, eleveConcerne: e.target.value })
+										}
+									>
+										{eleves.map((eleve) => (
+											<MenuItem key={eleve.ID_ELEVE} value={eleve.ID_ELEVE}>
+												{eleve.NOM} {eleve.PRENOM}
+											</MenuItem>
+										))}
+									</Select>
+								</FormControl>
 							</Box>
 						</Box>
 
 						{/* Liste des programmes */}
 
 						<Box sx={{ mt: 2, position: "relative", zIndex: 2 }}>
-							{programmes_fictifs.map((programme) => (
+							{programmes.map((programme) => (
 								<Box
 									key={programme.id}
 									sx={{
@@ -275,8 +324,22 @@ export default function NouveauProgramme() {
 										padding: "16px",
 										marginBottom: "12px",
 										width: "100%",
+										position: "relative",
 									}}
 								>
+									<DeleteIcon
+										onClick={() => handleDelete(programme.id)}
+										sx={{
+											position: "absolute",
+											top: 8,
+											right: 8,
+											color: "#7a8fa6",
+											cursor: "pointer",
+											fontSize: "24px",
+											"&:hover": { color: "#22c55e" },
+										}}
+									/>
+
 									<Box
 										sx={{
 											display: "flex",
@@ -295,7 +358,7 @@ export default function NouveauProgramme() {
 											}}
 										/>
 										<Box>
-											<Typography sx={{ color: "#e2e8f0", fontWeight: 700 }}>
+											<Typography sx={{ color: "#e2e8f0", fontWeight: 900 }}>
 												{programme.nom}
 											</Typography>
 											<Typography sx={{ color: "#7a8fa6", fontSize: "0.8rem" }}>
