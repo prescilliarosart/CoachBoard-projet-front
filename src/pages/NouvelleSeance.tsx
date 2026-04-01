@@ -192,3 +192,41 @@ const exercices_fictifs = [
 	{ id: 7, nom: "Course", muscles: [], type: "Cardio" },
 	{ id: 8, nom: "Étirements", muscles: ["Épaule", "Dos"], type: "Stretching" },
 ];
+
+export default function NouvelleSeance() {
+	const navigate = useNavigate();
+	const { token } = useAuth();
+
+	const [seances, setSeances] = useState(seances_fictives);
+	const [programmes, setProgrammes] = useState<Programme[]>([]);
+
+	const [form, setForm] = useState<FormSeance>({
+		titre: "",
+		jour: "",
+		ordre: "",
+		id_programme: "",
+	});
+
+	useEffect(() => {
+		fetch("http://localhost:3310/api/programmes", {
+			headers: { Authorization: `Bearer ${token}` },
+		})
+			.then((res) => res.json())
+			.then((data) => {
+				console.log("Programmes chargés :", data);
+				setProgrammes(data);
+			})
+			.catch((err) =>
+				console.error("Erreur lors du chargement des programmes :", err),
+			);
+	}, []);
+
+	const handleSave = () => {
+		if (!form.titre || !form.jour || !form.ordre || !form.id_programme) return;
+		navigate("/seances");
+	};
+
+	const handleDelete = (id: number) => {
+		setSeances(seances.filter((s) => s.id !== id));
+	};
+}
