@@ -193,6 +193,40 @@ const exercices_fictifs = [
 	{ id: 8, nom: "Étirements", muscles: ["Épaule", "Dos"], type: "Stretching" },
 ];
 
+const SX_IN = {
+	"& .MuiOutlinedInput-root": {
+		background: "#111e2c",
+		borderRadius: "6px",
+		fontFamily: "'Barlow',sans-serif",
+		fontSize: "0.88rem",
+		color: "#e2e8f0",
+		"& fieldset": { borderColor: "rgba(34,197,94,0.18)" },
+		"&:hover fieldset": { borderColor: "rgba(34,197,94,0.4)" },
+		"&.Mui-focused fieldset": { borderColor: "#22c55e" },
+	},
+	"& .MuiInputLabel-root": { color: "#7a8fa6", fontSize: "0.82rem" },
+	"& .MuiInputLabel-root.Mui-focused": { color: "#22c55e" },
+};
+
+const SX_BTN = {
+	background: "#22c55e",
+	color: "#0b1520",
+	fontFamily: "'Barlow Condensed',sans-serif",
+	fontStyle: "italic",
+	fontWeight: 700,
+	fontSize: "0.85rem",
+	textTransform: "uppercase" as const,
+	px: "16px",
+	py: "7px",
+	borderRadius: "4px",
+	transition: "all 0.2s",
+	"&:hover": {
+		background: "#16a34a",
+		transform: "translateY(-1px)",
+		boxShadow: "0 4px 16px rgba(34,197,94,0.3)",
+	},
+};
+
 export default function NouvelleSeance() {
 	const navigate = useNavigate();
 	const { token } = useAuth();
@@ -229,4 +263,54 @@ export default function NouvelleSeance() {
 	const handleDelete = (id: number) => {
 		setSeances(seances.filter((s) => s.id !== id));
 	};
+
+	return (
+		<div style={{ position: "relative", zIndex: 1 }}>
+			<ProgressionCanvas />
+			<Navbar
+				links={[
+					{ label: "Programmes", path: "/programmes" },
+					{ label: "Elèves", path: "/eleves" },
+					{ label: "Progression", path: "/progression" },
+				]}
+				profilLabel="Profil"
+			/>
+			<Toolbar />
+			<Box
+				sx={{
+					px: "36px",
+					py: "18px",
+					borderBottom: "1px solid rgba(34,197,94,0.18)",
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "space-between",
+					position: "relative",
+					zIndex: 2,
+				}}
+			>
+				<Box sx={{ display: "flex", alignItems: "center", gap: "10px" }}>
+					<Typography
+						sx={{
+							fontFamily: "'Barlow Condensed',sans-serif",
+							fontStyle: "italic",
+							fontWeight: 700,
+							fontSize: "1.6rem",
+							color: "#e2e8f0",
+							textTransform: "uppercase",
+						}}
+					>
+						Nouvelle séance
+					</Typography>
+					<FitnessCenterIcon sx={{ color: "#22c55e", fontSize: 22 }} />
+				</Box>
+				<Button
+					onClick={handleSave}
+					startIcon={<SaveIcon sx={{ fontSize: 15 }} />}
+					sx={SX_BTN}
+				>
+					Enregistrer
+				</Button>
+			</Box>
+		</div>
+	);
 }
