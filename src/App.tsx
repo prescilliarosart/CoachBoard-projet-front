@@ -7,6 +7,7 @@ import HomePage from "./pages/HomePage";
 import Login from "./pages/Login";
 import NouveauProgramme from "./pages/NouveauProgramme";
 import NouvelExercicePage from "./pages/NouvelExercicePage";
+import NouvelleSeance from "./pages/NouvelleSeance";
 import Programmes from "./pages/Programmes";
 import Seances from "./pages/Seances";
 
@@ -28,6 +29,7 @@ function App() {
 				<Route path="/programmes" element={<Programmes />} />
 				<Route path="/programmes/nouveau" element={<NouveauProgramme />} />
 				<Route path="/seances" element={<Seances />} />
+				<Route path="/seances/nouvelle" element={<NouvelleSeance />} />
 			</Route>
 		</Routes>
 	);
