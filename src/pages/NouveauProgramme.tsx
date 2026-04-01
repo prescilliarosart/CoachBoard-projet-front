@@ -112,35 +112,6 @@ const seances_fictives = [
 	},
 ];
 
-const programmes_fictifs = [
-	{
-		id: 1,
-		nom: "Programme de prise de masse",
-		description: "Un programme intensif pour développer la masse musculaire.",
-		objectif: "Gagner du muscle",
-		duree: "12 semaines",
-		eleveConcerne: "Jean Dupont",
-	},
-	{
-		id: 2,
-		nom: "Programme de perte de poids",
-		description:
-			"Un programme axé sur la perte de graisse et l'amélioration de la condition physique.",
-		objectif: "Perdre du gras",
-		duree: "8 semaines",
-		eleveConcerne: "Marie Curie",
-	},
-	{
-		id: 3,
-		nom: "Programme de remise en forme",
-		description:
-			"Un programme équilibré pour améliorer la condition physique générale.",
-		objectif: "Améliorer la condition physique générale",
-		duree: "10 semaines",
-		eleveConcerne: "Alice Martin",
-	},
-];
-
 export default function NouveauProgramme() {
 	const navigate = useNavigate();
 	const { token, user } = useAuth();
@@ -172,56 +143,55 @@ export default function NouveauProgramme() {
 	}, []);
 
 	const handleSave = async () => {
-    if (!form.nomProgramme || !form.objectif || !form.duree) {
-        alert("Veuillez remplir le nom, l'objectif et la durée.");
-        return;
-    }
+		if (!form.nomProgramme || !form.objectif || !form.duree) {
+			alert("Veuillez remplir le nom, l'objectif et la durée.");
+			return;
+		}
 
-    try {
+		try {
+			const idCoach = (user as any)?.ID_COACH || (user as any).id || 1;
 
-		const idCoach = (user as any)?.ID_COACH || (user as any).id || 1;
+			const programmeData = {
+				nom: form.nomProgramme,
+				objectif: form.objectif,
+				duree: parseInt(form.duree, 10),
+				id_coach: idCoach,
+			};
 
-        const programmeData = {
-            nom: form.nomProgramme,
-            objectif: form.objectif,
-            duree: parseInt(form.duree, 10),
-            id_coach: idCoach
-        };
+			const response = await fetch("http://localhost:3310/api/programmes", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`,
+				},
+				body: JSON.stringify(programmeData),
+			});
 
-        const response = await fetch("http://localhost:3310/api/programmes", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(programmeData),
-        });
+			if (!response.ok) {
+				const errorData = await response.json();
+				throw new Error(errorData.message || "Erreur lors de la création");
+			}
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || "Erreur lors de la création");
-        }
+			const newId = await response.json();
+			console.log("Programme créé :", JSON.stringify(newId));
 
-        const newId = await response.json();
-        console.log("Programme créé :", JSON.stringify(newId));
+			const nouveauProgramme = {
+				id: newId.id,
+				nom: programmeData.nom,
+				objectif: programmeData.objectif,
+				duree: programmeData.duree,
+				description: form.notes,
+			};
 
-    
-        const nouveauProgramme = {
-            id: newId.id,
-            nom: programmeData.nom,
-            objectif: programmeData.objectif,
-            duree: programmeData.duree,
-            description: form.notes
-        };
-
-        setProgrammes([...programmes, nouveauProgramme]);
-        navigate("/programmes");
-
-    } catch (err) {
-        console.error("Détails de l'erreur :", err);
-        alert("Impossible de créer le programme. Vérifiez les types de données (la durée doit être un nombre).");
-    }
-};
+			setProgrammes([...programmes, nouveauProgramme]);
+			navigate("/programmes");
+		} catch (err) {
+			console.error("Détails de l'erreur :", err);
+			alert(
+				"Impossible de créer le programme. Vérifiez les types de données (la durée doit être un nombre).",
+			);
+		}
+	};
 
 	const handleDelete = (id: number) => {
 		setProgrammes(programmes.filter((p) => p.id !== id));
@@ -329,7 +299,9 @@ export default function NouveauProgramme() {
 									label="Date de début"
 									value={form.dateDebut}
 									type="date"
-									onChange={(e) => setForm({ ...form, dateDebut: e.target.value })}
+									onChange={(e) =>
+										setForm({ ...form, dateDebut: e.target.value })
+									}
 									fullWidth
 									sx={SX_IN}
 								/>
