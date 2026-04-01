@@ -9,9 +9,28 @@ import TableRow from "@mui/material/TableRow";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { ProgressionCanvas } from "../components/useProgressionCanvas";
+import { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthContext";
 
 export default function Programmes() {
 	const navigate = useNavigate();
+	const { token } = useAuth();
+	const [programmes, setProgrammes] = useState<any[]>([]);
+
+
+	useEffect(() => {
+		fetch("http://localhost:3310/api/programmes", {
+			headers: {
+				Authorization: `Bearer ${token}` },
+			})
+			.then((response) => response.json())
+			.then((data) => {
+				setProgrammes(data);
+			})
+			.catch((error) => {
+				console.error("Erreur lors de la récupération des programmes :", error);
+			});
+	}, []);
 
 	return (
 		<div style={{ position: "relative", zIndex: 1 }}>
@@ -95,7 +114,7 @@ export default function Programmes() {
 
 					<Button
 						variant="contained"
-						onClick={() => navigate("/séances")}
+						onClick={() => navigate("/seances/nouvelle")}
 						sx={{
 							zIndex: 2,
 							backgroundColor: "#22c55e",
@@ -157,15 +176,19 @@ export default function Programmes() {
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						<TableRow>
-							<TableCell sx={{ color: "#fff" }}>2023-10-01</TableCell>
-							<TableCell sx={{ color: "#fff" }}>Programme 1</TableCell>
-							<TableCell sx={{ color: "#fff" }}>50%</TableCell>
-							<TableCell sx={{ color: "#fff" }}>✅</TableCell>
-							<TableCell sx={{ color: "#fff" }}>John Doe</TableCell>
-						</TableRow>
+						{programmes.map((programme) => (
+							<TableRow key={programme.ID_PROGRAMME}>
+								<TableCell sx={{ color: "#fff" }}>{programme.date}</TableCell>
+								<TableCell sx={{ color: "#fff" }}>{programme.nom}</TableCell>
+								<TableCell sx={{ color: "#fff" }}>{programme.seance}</TableCell>
+								<TableCell sx={{ color: "#fff" }}>{programme.statut}</TableCell>
+								<TableCell sx={{ color: "#fff" }}>{programme.eleve}</TableCell>
+							</TableRow>
+						))}
 					</TableBody>
 				</Table>
+
+
 			</Box>
 		</div>
 	);

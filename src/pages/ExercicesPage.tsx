@@ -12,6 +12,7 @@ import {
 	Select,
 	TextField,
 	Typography,
+	Toolbar,
 } from "@mui/material";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -207,6 +208,8 @@ export default function ExercicesPage() {
 				]}
 				profilLabel="Mon profil - Coach"
 			/>
+
+			<Toolbar />
 			<Box
 				sx={{
 					px: "36px",
