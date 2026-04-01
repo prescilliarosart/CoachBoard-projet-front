@@ -459,6 +459,82 @@ export default function NouvelleSeance() {
 					</Box>
 				))}
 			</Box>
+			{/* Bibliothèque d'exercices */}
+			<Box
+				sx={{
+					px: "36px",
+					py: "18px",
+					background: "rgba(15,27,39,0.85)",
+					border: "1px solid rgba(34,197,94,0.13)",
+					borderRadius: "12px",
+					display: "flex",
+					flexDirection: "column",
+					alignItems: "flex-start",
+					position: "relative",
+					zIndex: 2,
+				}}
+			>
+				<Typography
+					sx={{
+						fontFamily: "'Barlow Condensed',sans-serif",
+						fontWeight: 900,
+						fontSize: "1.1rem",
+						color: "#e2e8f0",
+						textTransform: "uppercase",
+						paddingBottom: "12px",
+					}}
+				>
+					Bibliothèque d'exercices
+				</Typography>
+				<TextField label="Rechercher un exercice" sx={SX_IN} />
+				<Box sx={{ mt: 2, width: "100%" }}>
+					{exercices_fictifs.map((ex) => (
+						<Box
+							key={ex.id}
+							sx={{
+								background: "rgba(15,27,39,0.85)",
+								border: "1px solid rgba(34,197,94,0.13)",
+								borderRadius: "8px",
+								padding: "16px",
+								marginBottom: "12px",
+								width: "100%",
+							}}
+						>
+							<Box
+								sx={{
+									display: "flex",
+									flexDirection: "row",
+									gap: 2,
+									alignItems: "center",
+								}}
+							>
+								<Box
+									sx={{
+										width: 56,
+										height: 56,
+										borderRadius: "8px",
+										background: "rgba(34,197,94,0.1)",
+										flexShrink: 0,
+									}}
+								/>
+								<Box>
+									<Typography sx={{ color: "#e2e8f0", fontWeight: 700 }}>
+										{ex.nom}
+									</Typography>
+									<Typography sx={{ color: "#7a8fa6", fontSize: "0.8rem" }}>
+										{ex.muscles.join(", ")}
+									</Typography>
+								</Box>
+							</Box>
+							<Box sx={{ mt: 2 }}>
+								<Typography sx={{ color: "#7a8fa6", fontSize: "0.78rem" }}>
+									Type : {ex.type}
+								</Typography>
+							</Box>
+						</Box>
+					))}
+				</Box>
+			</Box>
 		</div>
 	);
 }
