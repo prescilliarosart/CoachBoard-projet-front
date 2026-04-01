@@ -181,3 +181,14 @@ const seances_fictives = [
 		programme: "Remise en forme",
 	},
 ];
+
+const exercices_fictifs = [
+	{ id: 1, nom: "Squat", muscles: ["Fessiers", "Biceps"], type: "Muscu" },
+	{ id: 2, nom: "Pompes", muscles: ["Pectoraux", "Triceps"], type: "Muscu" },
+	{ id: 3, nom: "Gainage", muscles: ["Abdos", "Lombaires"], type: "Cardio" },
+	{ id: 4, nom: "Fentes", muscles: ["Fessiers", "Biceps"], type: "Muscu" },
+	{ id: 5, nom: "Burpees", muscles: ["Épaule", "Abdos"], type: "HIIT" },
+	{ id: 6, nom: "Tractions", muscles: ["Dos", "Biceps"], type: "Muscu" },
+	{ id: 7, nom: "Course", muscles: [], type: "Cardio" },
+	{ id: 8, nom: "Étirements", muscles: ["Épaule", "Dos"], type: "Stretching" },
+];
