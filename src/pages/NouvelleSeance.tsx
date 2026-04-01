@@ -311,6 +311,90 @@ export default function NouvelleSeance() {
 					Enregistrer
 				</Button>
 			</Box>
+			<Box sx={{ p: "32px 36px", position: "relative", zIndex: 2 }}>
+				<Box
+					sx={{
+						display: "grid",
+						gridTemplateColumns: "2fr 1fr",
+						gap: "40px",
+						alignItems: "start",
+					}}
+				>
+					<Box sx={{ display: "flex", flexDirection: "column", gap: "40px" }}>
+						{/* Formulaire de création de séance */}
+						<Box
+							sx={{
+								display: "flex",
+								flexDirection: "column",
+								gap: 3,
+								background: "rgba(15,27,39,0.85)",
+								border: "1px solid rgba(34,197,94,0.13)",
+								borderRadius: "12px",
+								p: "32px",
+							}}
+						>
+							<Box sx={{ display: "flex", flexDirection: "row", gap: 3 }}>
+								<TextField
+									label="Titre de la séance"
+									value={form.titre}
+									onChange={(e) => setForm({ ...form, titre: e.target.value })}
+									fullWidth
+									sx={SX_IN}
+								/>
+								<FormControl fullWidth sx={SX_IN}>
+									<InputLabel>Jour</InputLabel>
+									<Select
+										value={form.jour}
+										onChange={(e) => setForm({ ...form, jour: e.target.value })}
+									>
+										{[
+											"Lundi",
+											"Mardi",
+											"Mercredi",
+											"Jeudi",
+											"Vendredi",
+											"Samedi",
+											"Dimanche",
+										].map((j) => (
+											<MenuItem key={j} value={j}>
+												{j}
+											</MenuItem>
+										))}
+									</Select>
+								</FormControl>
+								<TextField
+									label="Ordre"
+									type="number"
+									value={form.ordre}
+									onChange={(e) =>
+										setForm({ ...form, ordre: Number(e.target.value) })
+									}
+									fullWidth
+									sx={SX_IN}
+								/>
+								<FormControl fullWidth sx={SX_IN}>
+									<InputLabel>Programme associé</InputLabel>
+									<Select
+										value={form.id_programme}
+										onChange={(e) =>
+											setForm({
+												...form,
+												id_programme: e.target.value as number,
+											})
+										}
+									>
+										{programmes.map((p) => (
+											<MenuItem key={p.ID_PROGRAMME} value={p.ID_PROGRAMME}>
+												{p.NOM}
+											</MenuItem>
+										))}
+									</Select>
+								</FormControl>
+							</Box>
+						</Box>
+					</Box>
+				</Box>
+			</Box>
 		</div>
 	);
 }
