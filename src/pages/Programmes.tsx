@@ -6,10 +6,10 @@ import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { ProgressionCanvas } from "../components/useProgressionCanvas";
-import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 
 export default function Programmes() {
@@ -17,12 +17,12 @@ export default function Programmes() {
 	const { token } = useAuth();
 	const [programmes, setProgrammes] = useState<any[]>([]);
 
-
 	useEffect(() => {
 		fetch("http://localhost:3310/api/programmes", {
 			headers: {
-				Authorization: `Bearer ${token}` },
-			})
+				Authorization: `Bearer ${token}`,
+			},
+		})
 			.then((response) => response.json())
 			.then((data) => {
 				setProgrammes(data);
@@ -187,8 +187,6 @@ export default function Programmes() {
 						))}
 					</TableBody>
 				</Table>
-
-
 			</Box>
 		</div>
 	);
