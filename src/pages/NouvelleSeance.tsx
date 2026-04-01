@@ -395,6 +395,70 @@ export default function NouvelleSeance() {
 					</Box>
 				</Box>
 			</Box>
+
+			<Box sx={{ mt: 2, position: "relative", zIndex: 2 }}>
+				{seances.map((seance) => (
+					<Box
+						key={seance.id}
+						sx={{
+							background: "rgba(15,27,39,0.85)",
+							border: "1px solid rgba(34,197,94,0.13)",
+							borderRadius: "8px",
+							padding: "16px",
+							marginBottom: "12px",
+							width: "100%",
+							position: "relative",
+						}}
+					>
+						<DeleteIcon
+							onClick={() => handleDelete(seance.id)}
+							sx={{
+								position: "absolute",
+								top: 8,
+								right: 8,
+								color: "#7a8fa6",
+								cursor: "pointer",
+								fontSize: "24px",
+								"&:hover": { color: "#22c55e" },
+							}}
+						/>
+						<Box
+							sx={{
+								display: "flex",
+								flexDirection: "row",
+								gap: 2,
+								alignItems: "center",
+							}}
+						>
+							<Box
+								sx={{
+									width: 56,
+									height: 56,
+									borderRadius: "8px",
+									background: "rgba(34,197,94,0.1)",
+									flexShrink: 0,
+								}}
+							/>
+							<Box>
+								<Typography sx={{ color: "#e2e8f0", fontWeight: 900 }}>
+									{seance.titre}
+								</Typography>
+								<Typography sx={{ color: "#7a8fa6", fontSize: "0.8rem" }}>
+									{seance.programme}
+								</Typography>
+							</Box>
+						</Box>
+						<Box sx={{ display: "flex", flexDirection: "row", gap: 3, mt: 2 }}>
+							<Typography sx={{ color: "#7a8fa6", fontSize: "0.78rem" }}>
+								Jour : {seance.jour}
+							</Typography>
+							<Typography sx={{ color: "#7a8fa6", fontSize: "0.78rem" }}>
+								Ordre : {seance.ordre}
+							</Typography>
+						</Box>
+					</Box>
+				))}
+			</Box>
 		</div>
 	);
 }
