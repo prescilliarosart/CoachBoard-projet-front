@@ -175,6 +175,31 @@ export default function NouveauProgramme() {
 			const newId = await response.json();
 			console.log("Programme créé :", JSON.stringify(newId));
 
+			const response2 = await fetch(
+				"http://localhost:3310/api/eleves-programmes",
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: `Bearer ${token}`,
+					},
+					body: JSON.stringify({
+						id_eleve: form.eleveConcerne,
+						id_programme: newId.id,
+						date_debut: form.dateDebut,
+						statut: "en cours",
+						date_fin: null,
+					}),
+				},
+			);
+
+			if (!response2.ok) {
+				const errorData = await response2.json();
+				throw new Error(
+					errorData.message || "Erreur lors de l'association élève-programme",
+				);
+			}
+
 			const nouveauProgramme = {
 				id: newId.id,
 				nom: programmeData.nom,
