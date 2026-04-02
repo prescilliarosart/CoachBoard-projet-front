@@ -18,8 +18,8 @@ export default function DashboarEleves() {
 			<ProgressionCanvas />
 			<Navbar
 				links={[
-					{ label: "Programmes", path: "/programmes" },
-					{ label: "Progression", path: "/progression" },
+					{ label: "Programmes", path: "/mon-programme" },
+					{ label: "Suivi", path: "/mon-suivi" },
 				]}
 				profilLabel="Mon profil - Eleve"
 			/>

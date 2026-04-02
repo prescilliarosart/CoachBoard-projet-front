@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 type NavbarProps = {
@@ -14,6 +14,7 @@ type NavbarProps = {
 export default function Navbar({ links }: NavbarProps) {
 	const navigate = useNavigate();
 	const { logout, token } = useAuth();
+	const location = useLocation();
 	return (
 		<AppBar
 			sx={{
@@ -44,7 +45,7 @@ export default function Navbar({ links }: NavbarProps) {
 						key={link.path}
 						onClick={() => navigate(link.path)}
 						sx={{
-							color: "#7a8fa6",
+							color: location.pathname === link.path ? "#22c55e" : "#7a8fa6",
 							position: "relative",
 							padding: 0,
 							"&:hover": { color: "#22c55e" },
