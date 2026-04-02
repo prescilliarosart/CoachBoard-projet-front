@@ -35,7 +35,7 @@ const CARD_BG = "#0f1e2e";
 const BORDER = "rgba(34,197,94,0.13)";
 
 const navLinks = [
-	{ label: "Programmes", path: "/dashboard-eleves" },
+	{ label: "Programmes", path: "/mon-programme" },
 	{ label: "Progression", path: "/mon-suivi" },
 ];
 
