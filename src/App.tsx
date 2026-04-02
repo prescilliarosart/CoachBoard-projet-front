@@ -9,7 +9,7 @@ import MonSuivi from "./pages/MonSuivi";
 import NouveauProgramme from "./pages/NouveauProgramme";
 import NouvelExercicePage from "./pages/NouvelExercicePage";
 import NouvelleSeance from "./pages/NouvelleSeance";
-import MonProgramme from "./pages/Programme-Eleve";
+import MonProgramme from "./pages/ProgrammeEleve";
 import Programmes from "./pages/Programmes";
 import Seances from "./pages/Seances";
 
