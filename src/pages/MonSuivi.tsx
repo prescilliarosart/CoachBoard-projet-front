@@ -187,7 +187,7 @@ function CourbeProgression() {
 							fontFamily: "'Barlow Condensed', sans-serif",
 							color: "#fff",
 						}}
-						formatter={(value: number) => [`${value} KG`, "Poids"]}
+						formatter={(value) => [`${String(value)} KG`, "Poids"]}
 					/>
 					<Bar dataKey="poids" radius={[3, 3, 0, 0]}>
 						{data.map((entry) => (
