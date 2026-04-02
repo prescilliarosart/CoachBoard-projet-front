@@ -5,6 +5,7 @@ import DashboardEleves from "./pages/DashboardEleves";
 import ExercicesPage from "./pages/ExercicesPage";
 import HomePage from "./pages/HomePage";
 import Login from "./pages/Login";
+import MonSuivi from "./pages/MonSuivi";
 import NouveauProgramme from "./pages/NouveauProgramme";
 import NouvelExercicePage from "./pages/NouvelExercicePage";
 import NouvelleSeance from "./pages/NouvelleSeance";
@@ -26,6 +27,7 @@ function App() {
 				<Route path="/dashboard-eleves" element={<DashboardEleves />} />
 				<Route path="/exercices" element={<ExercicesPage />} />
 				<Route path="/exercices/nouveau" element={<NouvelExercicePage />} />
+				<Route path="/mon-suivi" element={<MonSuivi />} />
 				<Route path="/programmes" element={<Programmes />} />
 				<Route path="/programmes/nouveau" element={<NouveauProgramme />} />
 				<Route path="/seances" element={<Seances />} />
