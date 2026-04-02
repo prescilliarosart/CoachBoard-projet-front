@@ -20,7 +20,7 @@ export default function DashboardCoach() {
 				links={[
 					{ label: "Programmes", path: "/programmes" },
 					{ label: "Elèves", path: "/eleves" },
-					{ label: "Progression", path: "/progression" },
+					{ label: "Suivi", path: "/progression" },
 				]}
 				profilLabel="Profil"
 			/>
