@@ -11,6 +11,7 @@ import {
 	MenuItem,
 	Select,
 	TextField,
+	Toolbar,
 	Typography,
 } from "@mui/material";
 import { useMemo, useState } from "react";
@@ -207,6 +208,8 @@ export default function ExercicesPage() {
 				]}
 				profilLabel="Mon profil - Coach"
 			/>
+
+			<Toolbar />
 			<Box
 				sx={{
 					px: "36px",

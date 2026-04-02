@@ -6,12 +6,36 @@ import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { ProgressionCanvas } from "../components/useProgressionCanvas";
+import { useAuth } from "../context/AuthContext";
 
 export default function Programmes() {
 	const navigate = useNavigate();
+	const { token } = useAuth();
+	const [programmes, setProgrammes] = useState<any[]>([]);
+
+	useEffect(() => {
+		console.log("Token :", token);
+		fetch("http://localhost:3310/api/programmes", {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		})
+			.then((response) => {
+				console.log("Status :", response.status);
+				return response.json();
+			})
+			.then((data) => {
+				console.log("Data reçue :", data);
+				setProgrammes(data);
+			})
+			.catch((error) => {
+				console.error("Erreur lors de la récupération des programmes :", error);
+			});
+	}, []);
 
 	return (
 		<div style={{ position: "relative", zIndex: 1 }}>
@@ -95,7 +119,7 @@ export default function Programmes() {
 
 					<Button
 						variant="contained"
-						onClick={() => navigate("/séances")}
+						onClick={() => navigate("/seances/nouvelle")}
 						sx={{
 							zIndex: 2,
 							backgroundColor: "#22c55e",
@@ -149,21 +173,37 @@ export default function Programmes() {
 				<Table>
 					<TableHead>
 						<TableRow>
-							<TableCell sx={{ color: "#fff" }}>Date</TableCell>
+							<TableCell sx={{ color: "#fff" }}>Date de début</TableCell>
+							<TableCell sx={{ color: "#fff" }}>Date de fin</TableCell>
 							<TableCell sx={{ color: "#fff" }}>Programme</TableCell>
-							<TableCell sx={{ color: "#fff" }}>Séance</TableCell>
 							<TableCell sx={{ color: "#fff" }}>Statut</TableCell>
 							<TableCell sx={{ color: "#fff" }}>Elève concerné</TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						<TableRow>
-							<TableCell sx={{ color: "#fff" }}>2023-10-01</TableCell>
-							<TableCell sx={{ color: "#fff" }}>Programme 1</TableCell>
-							<TableCell sx={{ color: "#fff" }}>50%</TableCell>
-							<TableCell sx={{ color: "#fff" }}>✅</TableCell>
-							<TableCell sx={{ color: "#fff" }}>John Doe</TableCell>
-						</TableRow>
+						{programmes.map((programme) => {
+							const dateFin = new Date(programme.DATE_DEBUT);
+							dateFin.setDate(dateFin.getDate() + programme.duree_programme);
+							return (
+								<TableRow key={programme.ID_PROGRAMME}>
+									<TableCell sx={{ color: "#fff" }}>
+										{new Date(programme.DATE_DEBUT).toLocaleDateString("fr-FR")}
+									</TableCell>
+									<TableCell sx={{ color: "#fff" }}>
+										{dateFin.toLocaleDateString("fr-FR")}
+									</TableCell>
+									<TableCell sx={{ color: "#fff" }}>
+										{programme.nom_programme}
+									</TableCell>
+									<TableCell sx={{ color: "#fff" }}>
+										{programme.STATUT}
+									</TableCell>
+									<TableCell sx={{ color: "#fff" }}>
+										{programme.nom_eleve} {programme.prenom_eleve}
+									</TableCell>
+								</TableRow>
+							);
+						})}
 					</TableBody>
 				</Table>
 			</Box>
