@@ -10,6 +10,7 @@ import {
 	MenuItem,
 	Select,
 	TextField,
+	Toolbar,
 	Typography,
 } from "@mui/material";
 import { useRef, useState } from "react";
@@ -273,6 +274,7 @@ export default function NouvelExercicePage() {
 				]}
 				profilLabel="Mon profil - Coach"
 			/>
+			<Toolbar />
 			<Box
 				sx={{
 					px: "36px",
