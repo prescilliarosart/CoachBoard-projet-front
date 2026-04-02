@@ -36,7 +36,7 @@ const BORDER = "rgba(34,197,94,0.13)";
 
 const navLinks = [
 	{ label: "Programmes", path: "/mon-programme" },
-	{ label: "Progression", path: "/mon-suivi" },
+	{ label: "Suivi", path: "/mon-suivi" },
 ];
 
 const exercicesDisponibles = ["Squat", "Développé couché", "Soulevé de terre"];
