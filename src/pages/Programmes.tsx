@@ -1,11 +1,14 @@
-import { Typography } from "@mui/material";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
+import DeleteIcon from "@mui/icons-material/Delete";
+import {
+	Box,
+	Button,
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableRow,
+	Typography,
+} from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
@@ -36,6 +39,45 @@ export default function Programmes() {
 				console.error("Erreur lors de la récupération des programmes :", error);
 			});
 	}, []);
+
+	const handleDelete = async (
+		idProgramme: number,
+		idEleveProgramme: number,
+	) => {
+		try {
+			const response = await fetch(
+				`http://localhost:3310/api/eleves-programmes/${idEleveProgramme}`,
+				{
+					method: "DELETE",
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				},
+			);
+
+			if (!response.ok)
+				throw new Error(
+					"Erreur lors de la suppression de l'association élève-programme",
+				);
+
+			const response2 = await fetch(
+				`http://localhost:3310/api/programmes/${idProgramme}`,
+				{
+					method: "DELETE",
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				},
+			);
+
+			if (!response2.ok)
+				throw new Error("Erreur lors de la suppression du programme");
+
+			setProgrammes(programmes.filter((p) => p.ID_PROGRAMME !== idProgramme));
+		} catch (error) {
+			console.error("Erreur lors de la suppression du programme :", error);
+		}
+	};
 
 	return (
 		<div style={{ position: "relative", zIndex: 1 }}>
@@ -178,6 +220,7 @@ export default function Programmes() {
 							<TableCell sx={{ color: "#fff" }}>Programme</TableCell>
 							<TableCell sx={{ color: "#fff" }}>Statut</TableCell>
 							<TableCell sx={{ color: "#fff" }}>Elève concerné</TableCell>
+							<TableCell sx={{ color: "#fff" }}></TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
@@ -200,6 +243,22 @@ export default function Programmes() {
 									</TableCell>
 									<TableCell sx={{ color: "#fff" }}>
 										{programme.nom_eleve} {programme.prenom_eleve}
+									</TableCell>
+									<TableCell>
+										<DeleteIcon
+											onClick={() =>
+												handleDelete(
+													programme.ID_PROGRAMME,
+													programme.ID_ELEVE_PROGRAMME,
+												)
+											}
+											sx={{
+												color: "#7a8fa6",
+												cursor: "pointer",
+												fontSize: "24px",
+												"&:hover": { color: "#22c55e" },
+											}}
+										/>
 									</TableCell>
 								</TableRow>
 							);

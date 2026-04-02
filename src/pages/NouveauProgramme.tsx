@@ -1,4 +1,3 @@
-import DeleteIcon from "@mui/icons-material/Delete";
 import FitnessCenterIcon from "@mui/icons-material/FitnessCenter";
 import SaveIcon from "@mui/icons-material/Save";
 import {
@@ -187,7 +186,7 @@ export default function NouveauProgramme() {
 						id_eleve: form.eleveConcerne,
 						id_programme: newId.id,
 						date_debut: form.dateDebut,
-						statut: "en cours",
+						statut: "En cours",
 						date_fin: null,
 					}),
 				},
@@ -216,10 +215,6 @@ export default function NouveauProgramme() {
 				"Impossible de créer le programme. Vérifiez les types de données (la durée doit être un nombre).",
 			);
 		}
-	};
-
-	const handleDelete = (id: number) => {
-		setProgrammes(programmes.filter((p) => p.id !== id));
 	};
 
 	return (
@@ -375,19 +370,6 @@ export default function NouveauProgramme() {
 										position: "relative",
 									}}
 								>
-									<DeleteIcon
-										onClick={() => handleDelete(programme.id)}
-										sx={{
-											position: "absolute",
-											top: 8,
-											right: 8,
-											color: "#7a8fa6",
-											cursor: "pointer",
-											fontSize: "24px",
-											"&:hover": { color: "#22c55e" },
-										}}
-									/>
-
 									<Box
 										sx={{
 											display: "flex",
