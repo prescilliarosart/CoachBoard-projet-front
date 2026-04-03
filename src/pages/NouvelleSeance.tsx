@@ -33,7 +33,7 @@ interface Programme {
 interface Exercice {
 	ID_EXERCICE: number;
 	NOM: string;
-	MUSCLES: string;
+	GROUPE_MUSCULAIRE: string;
 	TYPE: string;
 }
 
@@ -294,7 +294,7 @@ export default function NouvelleSeance() {
 						<Box sx={{ mt: 2, position: "relative", zIndex: 2 }}>
 							{seances.map((seance) => (
 								<Box
-									key={seance.id}
+									key={seance.ID_SEANCE}
 									sx={{
 										background: "rgba(15,27,39,0.85)",
 										border: "1px solid rgba(34,197,94,0.13)",
@@ -306,7 +306,7 @@ export default function NouvelleSeance() {
 									}}
 								>
 									<DeleteIcon
-										onClick={() => handleDelete(seance.id)}
+										onClick={() => handleDelete(seance.ID_SEANCE)}
 										sx={{
 											position: "absolute",
 											top: 8,
@@ -336,10 +336,10 @@ export default function NouvelleSeance() {
 										/>
 										<Box>
 											<Typography sx={{ color: "#e2e8f0", fontWeight: 900 }}>
-												{seance.titre}
+												{seance.TITRE}
 											</Typography>
 											<Typography sx={{ color: "#7a8fa6", fontSize: "0.8rem" }}>
-												{seance.programme}
+												{seance.ID_PROGRAMME}
 											</Typography>
 										</Box>
 									</Box>
@@ -352,10 +352,10 @@ export default function NouvelleSeance() {
 										}}
 									>
 										<Typography sx={{ color: "#7a8fa6", fontSize: "0.78rem" }}>
-											Jour : {seance.jour}
+											Jour : {seance.JOUR}
 										</Typography>
 										<Typography sx={{ color: "#7a8fa6", fontSize: "0.78rem" }}>
-											Ordre : {seance.ordre}
+											Ordre : {seance.ORDRE}
 										</Typography>
 									</Box>
 								</Box>
@@ -391,9 +391,9 @@ export default function NouvelleSeance() {
 						</Typography>
 						<TextField label="Rechercher un exercice" sx={SX_IN} />
 						<Box sx={{ mt: 2, width: "100%" }}>
-							{exercices_fictifs.map((ex) => (
+							{exercices.map((ex) => (
 								<Box
-									key={ex.id}
+									key={ex.ID_EXERCICE}
 									sx={{
 										background: "rgba(15,27,39,0.85)",
 										border: "1px solid rgba(34,197,94,0.13)",
@@ -422,16 +422,16 @@ export default function NouvelleSeance() {
 										/>
 										<Box>
 											<Typography sx={{ color: "#e2e8f0", fontWeight: 700 }}>
-												{ex.nom}
+												{ex.NOM}
 											</Typography>
 											<Typography sx={{ color: "#7a8fa6", fontSize: "0.8rem" }}>
-												{ex.muscles.join(", ")}
+												{ex.GROUPE_MUSCULAIRE}
 											</Typography>
 										</Box>
 									</Box>
 									<Box sx={{ mt: 2 }}>
 										<Typography sx={{ color: "#7a8fa6", fontSize: "0.78rem" }}>
-											Type : {ex.type}
+											Type : {ex.TYPE}
 										</Typography>
 									</Box>
 								</Box>
