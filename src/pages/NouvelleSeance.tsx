@@ -120,15 +120,48 @@ export default function NouvelleSeance() {
 			.catch((err) => console.error("Erreur chargement exercices :", err));
 	}, []);
 
-	const handleSave = () => {
+	const handleSave = async () => {
 		if (!form.titre || !form.jour || !form.ordre || !form.id_programme) return;
-		navigate("/seances");
+
+		try {
+			const response = await fetch("http://localhost:3310/api/seances", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`,
+				},
+				body: JSON.stringify({
+					titre: form.titre,
+					jour: form.jour,
+					ordre: form.ordre,
+					id_programme: form.id_programme,
+				}),
+			});
+
+			if (!response.ok)
+				throw new Error("Erreur lors de la création de la séance");
+
+			navigate("/seances");
+		} catch (err) {
+			console.error("Erreur handleSave séance :", err);
+			alert("Impossible de créer la séance.");
+		}
 	};
 
-	const handleDelete = (id: number) => {
-		setSeances(seances.filter((s) => s.id !== id));
-	};
+	const handleDelete = async (id: number) => {
+		try {
+			const response = await fetch(`http://localhost:3310/api/seances/${id}`, {
+				method: "DELETE",
+				headers: { Authorization: `Bearer ${token}` },
+			});
 
+			if (!response.ok) throw new Error("Erreur lors de la suppression");
+
+			setSeances(seances.filter((s) => s.ID_SEANCE !== id));
+		} catch (err) {
+			console.error("Erreur suppression séance :", err);
+		}
+	};
 	return (
 		<div style={{ position: "relative", zIndex: 1 }}>
 			<ProgressionCanvas />
