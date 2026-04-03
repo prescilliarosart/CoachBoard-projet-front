@@ -1,3 +1,4 @@
+import DeleteIcon from "@mui/icons-material/Delete";
 import { Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -6,12 +7,43 @@ import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { ProgressionCanvas } from "../components/useProgressionCanvas";
+import { useAuth } from "../context/AuthContext";
 
 export default function Seances() {
 	const navigate = useNavigate();
+	const { token } = useAuth();
+	const [seances, setSeances] = useState<any[]>([]);
+
+	useEffect(() => {
+		fetch("http://localhost:3310/api/seances", {
+			headers: { Authorization: `Bearer ${token}` },
+		})
+			.then((res) => res.json())
+			.then((data) => {
+				console.log("Séances reçues :", data);
+				setSeances(data);
+			})
+			.catch((err) => console.error("Erreur chargement séances :", err));
+	}, []);
+
+	const handleDelete = async (id: number) => {
+		try {
+			const response = await fetch(`http://localhost:3310/api/seances/${id}`, {
+				method: "DELETE",
+				headers: { Authorization: `Bearer ${token}` },
+			});
+
+			if (!response.ok) throw new Error("Erreur lors de la suppression");
+
+			setSeances(seances.filter((s) => s.ID_SEANCE !== id));
+		} catch (err) {
+			console.error("Erreur suppression séance :", err);
+		}
+	};
 
 	return (
 		<div style={{ position: "relative", zIndex: 1 }}>
@@ -129,19 +161,33 @@ export default function Seances() {
 						<TableRow>
 							<TableCell sx={{ color: "#fff" }}>Titre</TableCell>
 							<TableCell sx={{ color: "#fff" }}>Jour</TableCell>
+							<TableCell sx={{ color: "#fff" }}>Ordre</TableCell>
 							<TableCell sx={{ color: "#fff" }}>Programme associé</TableCell>
-							<TableCell sx={{ color: "#fff" }}>Exercices</TableCell>
-							<TableCell sx={{ color: "#fff" }}>Elève concerné</TableCell>
+							<TableCell sx={{ color: "#fff" }}></TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						<TableRow>
-							<TableCell sx={{ color: "#fff" }}>Séance 1</TableCell>
-							<TableCell sx={{ color: "#fff" }}>Lundi</TableCell>
-							<TableCell sx={{ color: "#fff" }}>Prise de masse</TableCell>
-							<TableCell sx={{ color: "#fff" }}>Squat lesté</TableCell>
-							<TableCell sx={{ color: "#fff" }}>John Doe</TableCell>
-						</TableRow>
+						{seances.map((seance) => (
+							<TableRow key={seance.ID_SEANCE}>
+								<TableCell sx={{ color: "#fff" }}>{seance.TITRE}</TableCell>
+								<TableCell sx={{ color: "#fff" }}>{seance.JOUR}</TableCell>
+								<TableCell sx={{ color: "#fff" }}>{seance.ORDRE}</TableCell>
+								<TableCell sx={{ color: "#fff" }}>
+									{seance.ID_PROGRAMME}
+								</TableCell>
+								<TableCell sx={{ color: "#fff" }}>
+									<DeleteIcon
+										onClick={() => handleDelete(seance.ID_SEANCE)}
+										sx={{
+											color: "#7a8fa6",
+											cursor: "pointer",
+											fontSize: "24px",
+											"&:hover": { color: "#22c55e" },
+										}}
+									/>
+								</TableCell>
+							</TableRow>
+						))}
 					</TableBody>
 				</Table>
 			</Box>
