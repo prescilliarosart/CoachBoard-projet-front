@@ -173,7 +173,7 @@ export default function Seances() {
 								<TableCell sx={{ color: "#fff" }}>{seance.JOUR}</TableCell>
 								<TableCell sx={{ color: "#fff" }}>{seance.ORDRE}</TableCell>
 								<TableCell sx={{ color: "#fff" }}>
-									{seance.ID_PROGRAMME}
+									{seance.nom_programme}
 								</TableCell>
 								<TableCell sx={{ color: "#fff" }}>
 									<DeleteIcon

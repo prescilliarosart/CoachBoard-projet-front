@@ -339,7 +339,7 @@ export default function NouvelleSeance() {
 												{seance.TITRE}
 											</Typography>
 											<Typography sx={{ color: "#7a8fa6", fontSize: "0.8rem" }}>
-												{seance.ID_PROGRAMME}
+												{seance.nom_programme}
 											</Typography>
 										</Box>
 									</Box>
