@@ -30,168 +30,12 @@ interface Programme {
 	NOM: string;
 }
 
-const seances_fictives = [
-	{
-		id: 1,
-		titre: "Push",
-		jour: "Lundi",
-		ordre: 1,
-		programme: "Prise de masse",
-	},
-	{
-		id: 2,
-		titre: "Pull",
-		jour: "Mardi",
-		ordre: 2,
-		programme: "Prise de masse",
-	},
-	{
-		id: 3,
-		titre: "Legs",
-		jour: "Mercredi",
-		ordre: 3,
-		programme: "Prise de masse",
-	},
-	{
-		id: 4,
-		titre: "Full Body",
-		jour: "Jeudi",
-		ordre: 4,
-		programme: "Prise de masse",
-	},
-	{
-		id: 5,
-		titre: "Cardio",
-		jour: "Vendredi",
-		ordre: 5,
-		programme: "Prise de masse",
-	},
-	{
-		id: 6,
-		titre: "Mobilité",
-		jour: "Samedi",
-		ordre: 6,
-		programme: "Prise de masse",
-	},
-	{
-		id: 7,
-		titre: "Repos actif",
-		jour: "Dimanche",
-		ordre: 7,
-		programme: "Prise de masse",
-	},
-
-	{
-		id: 8,
-		titre: "HIIT",
-		jour: "Lundi",
-		ordre: 1,
-		programme: "Perte de poids",
-	},
-	{
-		id: 9,
-		titre: "Cardio",
-		jour: "Mardi",
-		ordre: 2,
-		programme: "Perte de poids",
-	},
-	{
-		id: 10,
-		titre: "Circuit",
-		jour: "Mercredi",
-		ordre: 3,
-		programme: "Perte de poids",
-	},
-	{
-		id: 11,
-		titre: "HIIT 2",
-		jour: "Jeudi",
-		ordre: 4,
-		programme: "Perte de poids",
-	},
-	{
-		id: 12,
-		titre: "Renfo",
-		jour: "Vendredi",
-		ordre: 5,
-		programme: "Perte de poids",
-	},
-	{
-		id: 13,
-		titre: "Stretching",
-		jour: "Samedi",
-		ordre: 6,
-		programme: "Perte de poids",
-	},
-	{
-		id: 14,
-		titre: "Repos actif",
-		jour: "Dimanche",
-		ordre: 7,
-		programme: "Perte de poids",
-	},
-
-	{
-		id: 15,
-		titre: "Full Body",
-		jour: "Lundi",
-		ordre: 1,
-		programme: "Remise en forme",
-	},
-	{
-		id: 16,
-		titre: "Cardio",
-		jour: "Mardi",
-		ordre: 2,
-		programme: "Remise en forme",
-	},
-	{
-		id: 17,
-		titre: "Renfo",
-		jour: "Mercredi",
-		ordre: 3,
-		programme: "Remise en forme",
-	},
-	{
-		id: 18,
-		titre: "Mobilité",
-		jour: "Jeudi",
-		ordre: 4,
-		programme: "Remise en forme",
-	},
-	{
-		id: 19,
-		titre: "Cardio 2",
-		jour: "Vendredi",
-		ordre: 5,
-		programme: "Remise en forme",
-	},
-	{
-		id: 20,
-		titre: "Stretching",
-		jour: "Samedi",
-		ordre: 6,
-		programme: "Remise en forme",
-	},
-	{
-		id: 21,
-		titre: "Repos actif",
-		jour: "Dimanche",
-		ordre: 7,
-		programme: "Remise en forme",
-	},
-];
-
-const exercices_fictifs = [
-	{ id: 1, nom: "Squat", muscles: ["Fessiers", "Biceps"], type: "Muscu" },
-	{ id: 2, nom: "Pompes", muscles: ["Pectoraux", "Triceps"], type: "Muscu" },
-	{ id: 3, nom: "Gainage", muscles: ["Abdos", "Lombaires"], type: "Cardio" },
-	{ id: 4, nom: "Fentes", muscles: ["Fessiers", "Biceps"], type: "Muscu" },
-	{ id: 5, nom: "Burpees", muscles: ["Épaule", "Abdos"], type: "HIIT" },
-	{ id: 6, nom: "Tractions", muscles: ["Dos", "Biceps"], type: "Muscu" },
-	{ id: 7, nom: "Course", muscles: [], type: "Cardio" },
-	{ id: 8, nom: "Étirements", muscles: ["Épaule", "Dos"], type: "Stretching" },
-];
+interface Exercice {
+	ID_EXERCICE: number;
+	NOM: string;
+	GROUPE_MUSCULAIRE: string;
+	TYPE: string;
+}
 
 const SX_IN = {
 	"& .MuiOutlinedInput-root": {
@@ -231,8 +75,9 @@ export default function NouvelleSeance() {
 	const navigate = useNavigate();
 	const { token } = useAuth();
 
-	const [seances, setSeances] = useState(seances_fictives);
+	const [seances, setSeances] = useState<any[]>([]);
 	const [programmes, setProgrammes] = useState<Programme[]>([]);
+	const [exercices, setExercices] = useState<Exercice[]>([]);
 
 	const [form, setForm] = useState<FormSeance>({
 		titre: "",
@@ -253,17 +98,70 @@ export default function NouvelleSeance() {
 			.catch((err) =>
 				console.error("Erreur lors du chargement des programmes :", err),
 			);
+
+		fetch("http://localhost:3310/api/seances", {
+			headers: { Authorization: `Bearer ${token}` },
+		})
+			.then((res) => res.json())
+			.then((data) => {
+				console.log("Séances chargées :", data);
+				setSeances(data);
+			})
+			.catch((err) => console.error("Erreur chargement séances :", err));
+
+		fetch("http://localhost:3310/api/exercices", {
+			headers: { Authorization: `Bearer ${token}` },
+		})
+			.then((res) => res.json())
+			.then((data) => {
+				console.log("Exercices chargés :", data);
+				setExercices(data);
+			})
+			.catch((err) => console.error("Erreur chargement exercices :", err));
 	}, []);
 
-	const handleSave = () => {
+	const handleSave = async () => {
 		if (!form.titre || !form.jour || !form.ordre || !form.id_programme) return;
-		navigate("/seances");
+
+		try {
+			const response = await fetch("http://localhost:3310/api/seances", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`,
+				},
+				body: JSON.stringify({
+					titre: form.titre,
+					jour: form.jour,
+					ordre: form.ordre,
+					id_programme: form.id_programme,
+				}),
+			});
+
+			if (!response.ok)
+				throw new Error("Erreur lors de la création de la séance");
+
+			navigate("/seances");
+		} catch (err) {
+			console.error("Erreur handleSave séance :", err);
+			alert("Impossible de créer la séance.");
+		}
 	};
 
-	const handleDelete = (id: number) => {
-		setSeances(seances.filter((s) => s.id !== id));
-	};
+	const handleDelete = async (id: number) => {
+		try {
+			const response = await fetch(`http://localhost:3310/api/seances/${id}`, {
+				method: "DELETE",
+				headers: { Authorization: `Bearer ${token}` },
+			});
 
+			if (!response.ok) throw new Error("Erreur lors de la suppression");
+
+			setSeances(seances.filter((s) => s.ID_SEANCE !== id));
+		} catch (err) {
+			console.error("Erreur suppression séance :", err);
+		}
+	};
 	return (
 		<div style={{ position: "relative", zIndex: 1 }}>
 			<ProgressionCanvas />
@@ -396,7 +294,7 @@ export default function NouvelleSeance() {
 						<Box sx={{ mt: 2, position: "relative", zIndex: 2 }}>
 							{seances.map((seance) => (
 								<Box
-									key={seance.id}
+									key={seance.ID_SEANCE}
 									sx={{
 										background: "rgba(15,27,39,0.85)",
 										border: "1px solid rgba(34,197,94,0.13)",
@@ -408,7 +306,7 @@ export default function NouvelleSeance() {
 									}}
 								>
 									<DeleteIcon
-										onClick={() => handleDelete(seance.id)}
+										onClick={() => handleDelete(seance.ID_SEANCE)}
 										sx={{
 											position: "absolute",
 											top: 8,
@@ -438,10 +336,10 @@ export default function NouvelleSeance() {
 										/>
 										<Box>
 											<Typography sx={{ color: "#e2e8f0", fontWeight: 900 }}>
-												{seance.titre}
+												{seance.TITRE}
 											</Typography>
 											<Typography sx={{ color: "#7a8fa6", fontSize: "0.8rem" }}>
-												{seance.programme}
+												{seance.nom_programme}
 											</Typography>
 										</Box>
 									</Box>
@@ -454,10 +352,10 @@ export default function NouvelleSeance() {
 										}}
 									>
 										<Typography sx={{ color: "#7a8fa6", fontSize: "0.78rem" }}>
-											Jour : {seance.jour}
+											Jour : {seance.JOUR}
 										</Typography>
 										<Typography sx={{ color: "#7a8fa6", fontSize: "0.78rem" }}>
-											Ordre : {seance.ordre}
+											Ordre : {seance.ORDRE}
 										</Typography>
 									</Box>
 								</Box>
@@ -493,9 +391,9 @@ export default function NouvelleSeance() {
 						</Typography>
 						<TextField label="Rechercher un exercice" sx={SX_IN} />
 						<Box sx={{ mt: 2, width: "100%" }}>
-							{exercices_fictifs.map((ex) => (
+							{exercices.map((ex) => (
 								<Box
-									key={ex.id}
+									key={ex.ID_EXERCICE}
 									sx={{
 										background: "rgba(15,27,39,0.85)",
 										border: "1px solid rgba(34,197,94,0.13)",
@@ -524,16 +422,16 @@ export default function NouvelleSeance() {
 										/>
 										<Box>
 											<Typography sx={{ color: "#e2e8f0", fontWeight: 700 }}>
-												{ex.nom}
+												{ex.NOM}
 											</Typography>
 											<Typography sx={{ color: "#7a8fa6", fontSize: "0.8rem" }}>
-												{ex.muscles.join(", ")}
+												{ex.GROUPE_MUSCULAIRE}
 											</Typography>
 										</Box>
 									</Box>
 									<Box sx={{ mt: 2 }}>
 										<Typography sx={{ color: "#7a8fa6", fontSize: "0.78rem" }}>
-											Type : {ex.type}
+											Type : {ex.TYPE}
 										</Typography>
 									</Box>
 								</Box>
