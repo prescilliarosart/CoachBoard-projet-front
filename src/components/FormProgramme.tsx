@@ -1,0 +1,154 @@
+import SaveIcon from "@mui/icons-material/Save";
+import {
+	Box,
+	Button,
+	FormControl,
+	InputLabel,
+	MenuItem,
+	Select,
+	TextField,
+	Typography,
+} from "@mui/material";
+import { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthContext";
+
+interface FormData {
+	nomProgramme: string;
+	objectif: string;
+	duree: string;
+	dateDebut: string;
+	notes: string;
+	eleveConcerne: number | "";
+}
+
+interface Eleve {
+	ID_ELEVE: number;
+	NOM: string;
+	PRENOM: string;
+}
+
+interface Props {
+	onSuccess: (programmeId: number) => void;
+}
+
+const SX_IN = {
+	"& .MuiOutlinedInput-root": {
+		background: "#111e2c",
+		borderRadius: "6px",
+		fontFamily: "'Barlow',sans-serif",
+		fontSize: "0.88rem",
+		color: "#e2e8f0",
+		"& fieldset": { borderColor: "rgba(34,197,94,0.18)" },
+		"&:hover fieldset": { borderColor: "rgba(34,197,94,0.4)" },
+		"&.Mui-focused fieldset": { borderColor: "#22c55e" },
+	},
+	"& .MuiInputLabel-root": { color: "#7a8fa6", fontSize: "0.82rem" },
+	"& .MuiInputLabel-root.Mui-focused": { color: "#22c55e" },
+};
+
+const SX_BTN = {
+	background: "#22c55e",
+	color: "#0b1520",
+	fontFamily: "'Barlow Condensed',sans-serif",
+	fontStyle: "italic",
+	fontWeight: 700,
+	fontSize: "0.85rem",
+	textTransform: "uppercase" as const,
+	px: "16px",
+	py: "7px",
+	borderRadius: "4px",
+	transition: "all 0.2s",
+	"&:hover": {
+		background: "#16a34a",
+		transform: "translateY(-1px)",
+		boxShadow: "0 4px 16px rgba(34,197,94,0.3)",
+	},
+};
+
+export default function FormProgramme({ onSuccess }: Props) {
+	const { token, user } = useAuth();
+	const [eleves, setEleves] = useState<Eleve[]>([]);
+	const [loading, setLoading] = useState(false);
+
+	const [form, setForm] = useState<FormData>({
+		nomProgramme: "",
+		objectif: "",
+		duree: "",
+		dateDebut: "",
+		notes: "",
+		eleveConcerne: "",
+	});
+
+	useEffect(() => {
+		fetch("http://localhost:3310/api/eleves", {
+			headers: { Authorization: `Bearer ${token}` },
+		})
+			.then((res) => res.json())
+			.then(setEleves)
+			.catch((err) => console.error("Erreur chargement élèves :", err));
+	}, [token]);
+
+	const handleSave = async () => {
+		if (!form.nomProgramme || !form.objectif || !form.duree) {
+			alert("Veuillez remplir le nom, l'objectif et la durée.");
+			return;
+		}
+
+		setLoading(true);
+		try {
+			const idCoach = (user as any)?.ID_COACH || (user as any)?.id || 1;
+
+			const response = await fetch("http://localhost:3310/api/programmes", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`,
+				},
+				body: JSON.stringify({
+					nom: form.nomProgramme,
+					objectif: form.objectif,
+					duree: parseInt(form.duree, 10),
+					id_coach: idCoach,
+				}),
+			});
+
+			if (!response.ok) {
+				const err = await response.json();
+				throw new Error(err.message || "Erreur création programme");
+			}
+
+			const { id } = await response.json();
+
+			if (form.eleveConcerne) {
+				const response2 = await fetch(
+					"http://localhost:3310/api/eleves-programmes",
+					{
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+							Authorization: `Bearer ${token}`,
+						},
+						body: JSON.stringify({
+							id_eleve: form.eleveConcerne,
+							id_programme: id,
+							date_debut: form.dateDebut,
+							statut: "En cours",
+							date_fin: null,
+						}),
+					},
+				);
+				if (!response2.ok) {
+					const err = await response2.json();
+					throw new Error(err.message || "Erreur association élève-programme");
+				}
+			}
+
+			onSuccess(id);
+		} catch (err) {
+			console.error("Erreur FormProgramme :", err);
+			alert("Impossible de créer le programme.");
+		} finally {
+			setLoading(false);
+		}
+	};
+}
