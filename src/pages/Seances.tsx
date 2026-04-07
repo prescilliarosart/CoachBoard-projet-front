@@ -127,7 +127,7 @@ export default function Seances() {
 
 					<Button
 						variant="contained"
-						onClick={() => navigate("/seances/nouvelle")}
+						onClick={() => navigate("/programmes")}
 						sx={{
 							zIndex: 2,
 							backgroundColor: "#22c55e",
@@ -144,7 +144,7 @@ export default function Seances() {
 							},
 						}}
 					>
-						Créer une séance
+						Bibliothèque de programmes
 					</Button>
 				</Box>
 			</Box>
