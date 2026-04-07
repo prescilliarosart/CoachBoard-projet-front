@@ -119,12 +119,11 @@ export default function Seances() {
 				></Box>
 				<Button
 					variant="contained"
+					sx={{
+						backgroundColor: "#22c55e",
+						"&:hover": { backgroundColor: "#16a34a" },
+					}}
 					onClick={() => setShowForm(!showForm)}
-					sx={
-						{
-							/* même sx que les autres boutons */
-						}
-					}
 				>
 					{showForm ? "Annuler" : "Créer une séance"}
 				</Button>

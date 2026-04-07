@@ -1,4 +1,5 @@
 import DeleteIcon from "@mui/icons-material/Delete";
+import SearchIcon from "@mui/icons-material/Search";
 import {
 	Box,
 	Button,
@@ -9,7 +10,9 @@ import {
 	TableRow,
 	Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import InputAdornment from "@mui/material/InputAdornment";
+import TextField from "@mui/material/TextField";
+import { useEffect, useMemo, useState } from "react";
 import FormProgramme from "../components/FormProgramme";
 import Navbar from "../components/Navbar";
 import { ProgressionCanvas } from "../components/useProgressionCanvas";
@@ -19,6 +22,7 @@ export default function Programmes() {
 	const { token } = useAuth();
 	const [programmes, setProgrammes] = useState<any[]>([]);
 	const [showForm, setShowForm] = useState(false);
+	const [search, setSearch] = useState("");
 
 	useEffect(() => {
 		console.log("Token :", token);
@@ -78,6 +82,16 @@ export default function Programmes() {
 			console.error("Erreur lors de la suppression du programme :", error);
 		}
 	};
+	const filteredProgrammes = useMemo(
+		() =>
+			programmes.filter(
+				(p) =>
+					p.nom_programme.toLowerCase().includes(search.toLowerCase()) ||
+					p.nom_eleve.toLowerCase().includes(search.toLowerCase()) ||
+					p.prenom_eleve.toLowerCase().includes(search.toLowerCase()),
+			),
+		[search, programmes],
+	);
 
 	return (
 		<div style={{ position: "relative", zIndex: 1 }}>
@@ -139,82 +153,127 @@ export default function Programmes() {
 				>
 					<Button
 						variant="contained"
+						sx={{
+							backgroundColor: "#22c55e",
+							"&:hover": { backgroundColor: "#16a34a" },
+						}}
 						onClick={() => setShowForm(!showForm)}
-						sx={{}}
 					>
 						{showForm ? "Annuler" : "Créer un programme"}
 					</Button>
 				</Box>
 			</Box>
-			<Box
-				sx={{
-					background: "#16a34a",
-					borderRadius: "12px",
-					padding: "24px",
-					margin: "40px 36px",
-				}}
-			>
+			<Box sx={{ margin: "40px 36px" }}>
+				{/* Formulaire de création */}
 				{showForm && (
-					<FormProgramme
-						onSuccess={() => {
-							setShowForm(false);
+					<Box
+						sx={{
+							background: "#1E293B", // vert seulement pour le formulaire ouvert
+							borderRadius: "12px",
+							padding: "24px",
+							marginBottom: "24px",
+						}}
+					>
+						<FormProgramme onSuccess={() => setShowForm(false)} />
+					</Box>
+				)}
+
+				{/* Barre de recherche */}
+				<Box sx={{ display: "flex", gap: 2, alignItems: "center", mb: 2 }}>
+					<TextField
+						placeholder="Rechercher un programme ou un élève"
+						value={search}
+						onChange={(e) => setSearch(e.target.value)}
+						size="small"
+						InputProps={{
+							startAdornment: (
+								<InputAdornment position="start">
+									<SearchIcon sx={{ color: "#7a8fa6", fontSize: 18 }} />
+								</InputAdornment>
+							),
+						}}
+						sx={{
+							"& .MuiOutlinedInput-root": {
+								background: "#111e2c", // fond neutre pour la recherche
+								borderRadius: "6px",
+								fontFamily: "'Barlow',sans-serif",
+								fontSize: "0.88rem",
+								color: "#e2e8f0",
+								height: "40px",
+								"& fieldset": { borderColor: "rgba(34,197,94,0.18)" },
+								"&:hover fieldset": { borderColor: "rgba(34,197,94,0.4)" },
+								"&.Mui-focused fieldset": { borderColor: "#22c55e" },
+							},
+							"& input::placeholder": { color: "#7a8fa6" },
 						}}
 					/>
-				)}
-				<Table>...</Table>
-			</Box>
+				</Box>
 
-			<Table>
-				<TableHead>
-					<TableRow>
-						<TableCell sx={{ color: "#fff" }}>Date de début</TableCell>
-						<TableCell sx={{ color: "#fff" }}>Date de fin</TableCell>
-						<TableCell sx={{ color: "#fff" }}>Programme</TableCell>
-						<TableCell sx={{ color: "#fff" }}>Statut</TableCell>
-						<TableCell sx={{ color: "#fff" }}>Elève concerné</TableCell>
-						<TableCell sx={{ color: "#fff" }}></TableCell>
-					</TableRow>
-				</TableHead>
-				<TableBody>
-					{programmes.map((programme) => {
-						const dateFin = new Date(programme.DATE_DEBUT);
-						dateFin.setDate(dateFin.getDate() + programme.duree_programme);
-						return (
-							<TableRow key={programme.ID_PROGRAMME}>
-								<TableCell sx={{ color: "#fff" }}>
-									{new Date(programme.DATE_DEBUT).toLocaleDateString("fr-FR")}
-								</TableCell>
-								<TableCell sx={{ color: "#fff" }}>
-									{dateFin.toLocaleDateString("fr-FR")}
-								</TableCell>
-								<TableCell sx={{ color: "#fff" }}>
-									{programme.nom_programme}
-								</TableCell>
-								<TableCell sx={{ color: "#fff" }}>{programme.STATUT}</TableCell>
-								<TableCell sx={{ color: "#fff" }}>
-									{programme.nom_eleve} {programme.prenom_eleve}
-								</TableCell>
-								<TableCell>
-									<DeleteIcon
-										onClick={() =>
-											handleDelete(
-												programme.ID_PROGRAMME,
-												programme.ID_ELEVE_PROGRAMME,
-											)
-										}
-										sx={{
-											color: "#7a8fa6",
-											cursor: "pointer",
-											fontSize: "24px",
-											"&:hover": { color: "#22c55e" },
-										}}
-									/>
-								</TableCell>
+				{/* Table des programmes */}
+				<Box
+					sx={{
+						background: "#111e2c", // fond neutre pour la table
+						borderRadius: "12px",
+						padding: "24px",
+					}}
+				>
+					<Table>
+						<TableHead>
+							<TableRow>
+								<TableCell sx={{ color: "#fff" }}>Date de début</TableCell>
+								<TableCell sx={{ color: "#fff" }}>Date de fin</TableCell>
+								<TableCell sx={{ color: "#fff" }}>Programme</TableCell>
+								<TableCell sx={{ color: "#fff" }}>Statut</TableCell>
+								<TableCell sx={{ color: "#fff" }}>Elève concerné</TableCell>
+								<TableCell sx={{ color: "#fff" }}></TableCell>
 							</TableRow>
-						);
-					})}
-				</TableBody>
-			</Table>
+						</TableHead>
+						<TableBody>
+							{filteredProgrammes.map((programme) => {
+								const dateFin = new Date(programme.DATE_DEBUT);
+								dateFin.setDate(dateFin.getDate() + programme.duree_programme);
+								return (
+									<TableRow key={programme.ID_PROGRAMME}>
+										<TableCell sx={{ color: "#fff" }}>
+											{new Date(programme.DATE_DEBUT).toLocaleDateString(
+												"fr-FR",
+											)}
+										</TableCell>
+										<TableCell sx={{ color: "#fff" }}>
+											{dateFin.toLocaleDateString("fr-FR")}
+										</TableCell>
+										<TableCell sx={{ color: "#fff" }}>
+											{programme.nom_programme}
+										</TableCell>
+										<TableCell sx={{ color: "#fff" }}>
+											{programme.STATUT}
+										</TableCell>
+										<TableCell sx={{ color: "#fff" }}>
+											{programme.nom_eleve} {programme.prenom_eleve}
+										</TableCell>
+										<TableCell>
+											<DeleteIcon
+												onClick={() =>
+													handleDelete(
+														programme.ID_PROGRAMME,
+														programme.ID_ELEVE_PROGRAMME,
+													)
+												}
+												sx={{
+													color: "#7a8fa6",
+													cursor: "pointer",
+													fontSize: "24px",
+													"&:hover": { color: "#22c55e" },
+												}}
+											/>
+										</TableCell>
+									</TableRow>
+								);
+							})}
+						</TableBody>
+					</Table>
+				</Box>
+			</Box>
 		</div>
 	);
 }
