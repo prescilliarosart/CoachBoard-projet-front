@@ -58,8 +58,8 @@ export default function DashboardCoach() {
 			<Navbar
 				links={[
 					{ label: "Programmes", path: "/programmes" },
-					{ label: "Elèves", path: "/eleves" },
-					{ label: "Suivi", path: "/progression" },
+					{ label: "Seances", path: "/seances" },
+					{ label: "exercices", path: "/exercices" },
 				]}
 				profilLabel="Profil"
 			/>

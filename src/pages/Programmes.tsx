@@ -85,8 +85,8 @@ export default function Programmes() {
 			<Navbar
 				links={[
 					{ label: "Programmes", path: "/programmes" },
-					{ label: "Elèves", path: "/eleves" },
-					{ label: "Progression", path: "/progression" },
+					{ label: "Seances", path: "/seances" },
+					{ label: "Exercices", path: "/exercices" },
 				]}
 				profilLabel="Profil"
 			/>

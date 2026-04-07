@@ -203,8 +203,8 @@ export default function ExercicesPage() {
 			<Navbar
 				links={[
 					{ label: "Programmes", path: "/programmes" },
-					{ label: "Élèves", path: "/eleves" },
-					{ label: "Progression", path: "/progression" },
+					{ label: "Seances", path: "/seances" },
+					{ label: "Exercices", path: "/exercices" },
 				]}
 				profilLabel="Mon profil - Coach"
 			/>
