@@ -140,11 +140,7 @@ export default function Programmes() {
 					<Button
 						variant="contained"
 						onClick={() => setShowForm(!showForm)}
-						sx={
-							{
-								/* même sx que les autres boutons */
-							}
-						}
+						sx={{}}
 					>
 						{showForm ? "Annuler" : "Créer un programme"}
 					</Button>
@@ -152,17 +148,16 @@ export default function Programmes() {
 			</Box>
 			<Box
 				sx={{
-					background: "#1E293B",
+					background: "#16a34a",
 					borderRadius: "12px",
 					padding: "24px",
 					margin: "40px 36px",
 				}}
 			>
-				{showForm && ( // ← ICI, après le >, enfant du Box
+				{showForm && (
 					<FormProgramme
 						onSuccess={() => {
 							setShowForm(false);
-							// recharger la liste
 						}}
 					/>
 				)}
