@@ -36,8 +36,7 @@ export default function DashboardCoach() {
 	};
 
 	const handleExerciceSuccess = () => {
-		setDone(true);
-		setActiveStep(3);
+		setActiveStep(2);
 	};
 
 	const handleReset = () => {
@@ -45,6 +44,15 @@ export default function DashboardCoach() {
 		setSeanceId(null);
 		setDone(false);
 		setActiveStep(0);
+	};
+
+	const handleNewSeance = () => {
+		setSeanceId(null);
+		setActiveStep(1);
+	};
+
+	const handleFinish = () => {
+		setDone(true);
 	};
 
 	return (
@@ -221,7 +229,23 @@ export default function DashboardCoach() {
 							/>
 						)}
 						{activeStep === 2 && seanceId && (
-							<FormExercice onSuccess={handleExerciceSuccess} />
+							<>
+								<FormExercice onSuccess={handleExerciceSuccess} />
+
+								<Box sx={{ display: "flex", gap: 2, mt: 3 }}>
+									<Button variant="outlined" onClick={() => setActiveStep(2)}>
+										Ajouter un autre exercice
+									</Button>
+
+									<Button variant="outlined" onClick={handleNewSeance}>
+										Ajouter une autre séance
+									</Button>
+
+									<Button variant="contained" onClick={handleFinish}>
+										Terminer le programme
+									</Button>
+								</Box>
+							</>
 						)}
 					</>
 				) : (
