@@ -8,15 +8,15 @@ import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import FormSeance from "../components/FormSeances";
 import Navbar from "../components/Navbar";
 import { ProgressionCanvas } from "../components/useProgressionCanvas";
 import { useAuth } from "../context/AuthContext";
 
 export default function Seances() {
-	const navigate = useNavigate();
 	const { token } = useAuth();
 	const [seances, setSeances] = useState<any[]>([]);
+	const [showForm, setShowForm] = useState(false);
 
 	useEffect(() => {
 		fetch("http://localhost:3310/api/seances", {
@@ -102,52 +102,20 @@ export default function Seances() {
 						position: "relative",
 						zIndex: 2,
 					}}
+				></Box>
+				<Button
+					variant="contained"
+					onClick={() => setShowForm(!showForm)}
+					sx={
+						{
+							/* même sx que les autres boutons */
+						}
+					}
 				>
-					<Button
-						variant="contained"
-						onClick={() => navigate("/exercices")}
-						sx={{
-							zIndex: 2,
-							backgroundColor: "#22c55e",
-							color: "#0b1520",
-							fontStyle: "italic",
-							fontSize: "1.25rem",
-							fontWeight: 700,
-							border: "1.5px solid #22c55e",
-							borderRadius: "4px",
-							"&:hover": {
-								backgroundColor: "#16a34a",
-								transform: "translateY(-2px)",
-								boxShadow: "0 8px 28px rgba(34, 197, 94, 0.22)",
-							},
-						}}
-					>
-						Bibliothèque d'exercices
-					</Button>
-
-					<Button
-						variant="contained"
-						onClick={() => navigate("/programmes")}
-						sx={{
-							zIndex: 2,
-							backgroundColor: "#22c55e",
-							color: "#0b1520",
-							fontStyle: "italic",
-							fontSize: "1.25rem",
-							fontWeight: 700,
-							border: "1.5px solid #22c55e",
-							borderRadius: "4px",
-							"&:hover": {
-								backgroundColor: "#16a34a",
-								transform: "translateY(-2px)",
-								boxShadow: "0 8px 28px rgba(34, 197, 94, 0.22)",
-							},
-						}}
-					>
-						Bibliothèque de programmes
-					</Button>
-				</Box>
+					{showForm ? "Annuler" : "Créer une séance"}
+				</Button>
 			</Box>
+
 			<Box
 				sx={{
 					background: "#1E293B",
@@ -156,6 +124,13 @@ export default function Seances() {
 					margin: "40px 36px",
 				}}
 			>
+				{showForm && (
+					<FormSeance
+						onSuccess={() => {
+							setShowForm(false);
+						}}
+					/>
+				)}
 				<Table>
 					<TableHead>
 						<TableRow>
