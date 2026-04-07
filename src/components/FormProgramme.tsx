@@ -151,4 +151,102 @@ export default function FormProgramme({ onSuccess }: Props) {
 			setLoading(false);
 		}
 	};
+	return (
+		<Box
+			sx={{
+				display: "flex",
+				flexDirection: "column",
+				gap: 3,
+				background: "rgba(15,27,39,0.85)",
+				border: "1px solid rgba(34,197,94,0.13)",
+				borderRadius: "12px",
+				p: "32px",
+			}}
+		>
+			<Typography
+				sx={{
+					fontFamily: "'Barlow Condensed',sans-serif",
+					fontStyle: "italic",
+					fontWeight: 700,
+					fontSize: "1.1rem",
+					color: "#7a8fa6",
+					textTransform: "uppercase",
+				}}
+			>
+				Informations du programme
+			</Typography>
+
+			<Box sx={{ display: "flex", flexDirection: "row", gap: 3 }}>
+				<TextField
+					label="Nom du programme"
+					value={form.nomProgramme}
+					onChange={(e) => setForm({ ...form, nomProgramme: e.target.value })}
+					fullWidth
+					sx={SX_IN}
+				/>
+				<TextField
+					label="Objectif"
+					value={form.objectif}
+					onChange={(e) => setForm({ ...form, objectif: e.target.value })}
+					fullWidth
+					sx={SX_IN}
+				/>
+				<TextField
+					label="Durée (jours)"
+					type="number"
+					value={form.duree}
+					onChange={(e) => setForm({ ...form, duree: e.target.value })}
+					fullWidth
+					sx={SX_IN}
+				/>
+				<TextField
+					slotProps={{ inputLabel: { shrink: true } }}
+					label="Date de début"
+					type="date"
+					value={form.dateDebut}
+					onChange={(e) => setForm({ ...form, dateDebut: e.target.value })}
+					fullWidth
+					sx={SX_IN}
+				/>
+			</Box>
+
+			<Box sx={{ display: "flex", flexDirection: "row", gap: 3 }}>
+				<TextField
+					label="Notes (optionnel)"
+					value={form.notes}
+					onChange={(e) => setForm({ ...form, notes: e.target.value })}
+					fullWidth
+					multiline
+					rows={3}
+					sx={SX_IN}
+				/>
+				<FormControl fullWidth sx={SX_IN}>
+					<InputLabel>Élève concerné</InputLabel>
+					<Select
+						value={form.eleveConcerne}
+						onChange={(e) =>
+							setForm({ ...form, eleveConcerne: e.target.value as number })
+						}
+					>
+						{eleves.map((eleve) => (
+							<MenuItem key={eleve.ID_ELEVE} value={eleve.ID_ELEVE}>
+								{eleve.NOM} {eleve.PRENOM}
+							</MenuItem>
+						))}
+					</Select>
+				</FormControl>
+			</Box>
+
+			<Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+				<Button
+					onClick={handleSave}
+					disabled={loading}
+					startIcon={<SaveIcon sx={{ fontSize: 15 }} />}
+					sx={SX_BTN}
+				>
+					{loading ? "Création..." : "Créer le programme"}
+				</Button>
+			</Box>
+		</Box>
+	);
 }
