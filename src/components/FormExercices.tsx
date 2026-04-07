@@ -295,4 +295,147 @@ export default function FormExercice({ onSuccess }: Props) {
 			setLoading(false);
 		}
 	};
+
+	return (
+		<Box
+			sx={{
+				background: "rgba(15,27,39,0.85)",
+				border: "1px solid rgba(34,197,94,0.13)",
+				borderRadius: "12px",
+				p: "32px",
+				display: "grid",
+				gridTemplateColumns: "1fr 1fr",
+				gap: "40px",
+			}}
+		>
+			<Box sx={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+				<Typography
+					sx={{
+						fontFamily: "'Barlow Condensed',sans-serif",
+						fontStyle: "italic",
+						fontWeight: 700,
+						fontSize: "1.1rem",
+						color: "#7a8fa6",
+						textTransform: "uppercase",
+					}}
+				>
+					Informations de l'exercice
+				</Typography>
+
+				<TextField
+					label="Nom de l'exercice"
+					value={form.nom}
+					onChange={(e) => setForm({ ...form, nom: e.target.value })}
+					fullWidth
+					sx={SX_IN}
+				/>
+				<TextField
+					label="Description de l'exercice"
+					value={form.description}
+					onChange={(e) => setForm({ ...form, description: e.target.value })}
+					multiline
+					rows={4}
+					fullWidth
+					sx={SX_IN}
+				/>
+
+				<Box>
+					<Typography sx={SX_LB}>Muscles ciblés</Typography>
+					<Box sx={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+						{MUSCLES.map((m) => (
+							<Box
+								key={m}
+								onClick={() => toggle(m)}
+								sx={{
+									px: "12px",
+									py: "5px",
+									borderRadius: "6px",
+									cursor: "pointer",
+									border: form.muscles.includes(m)
+										? "1px solid #22c55e"
+										: "1px solid rgba(34,197,94,0.2)",
+									background: form.muscles.includes(m)
+										? "rgba(34,197,94,0.15)"
+										: "rgba(255,255,255,0.03)",
+									transition: "all 0.18s",
+									"&:hover": {
+										borderColor: "#22c55e",
+										background: "rgba(34,197,94,0.08)",
+									},
+								}}
+							>
+								<Typography
+									sx={{
+										fontFamily: "'Barlow',sans-serif",
+										fontSize: "0.78rem",
+										fontWeight: 500,
+										color: form.muscles.includes(m) ? "#22c55e" : "#7a8fa6",
+										userSelect: "none",
+									}}
+								>
+									{m}
+								</Typography>
+							</Box>
+						))}
+					</Box>
+				</Box>
+
+				<Box>
+					<Typography sx={SX_LB}>Type d'exercice</Typography>
+					<FormControl sx={{ minWidth: 160 }}>
+						<InputLabel
+							sx={{
+								color: "#7a8fa6",
+								fontSize: "0.82rem",
+								"&.Mui-focused": { color: "#22c55e" },
+							}}
+						>
+							Type
+						</InputLabel>
+						<Select
+							value={form.type}
+							label="Type"
+							onChange={(e) =>
+								setForm({ ...form, type: e.target.value as TypeExercice })
+							}
+							sx={SX_SEL}
+							MenuProps={MENU}
+						>
+							{TYPES.map((t) => (
+								<MenuItem key={t} value={t}>
+									{t}
+								</MenuItem>
+							))}
+						</Select>
+					</FormControl>
+				</Box>
+
+				<Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+					<Button
+						onClick={handleSave}
+						disabled={loading}
+						startIcon={<SaveIcon sx={{ fontSize: 15 }} />}
+						sx={SX_BTN}
+					>
+						{loading ? "Création..." : "Créer l'exercice"}
+					</Button>
+				</Box>
+			</Box>
+
+			<Box sx={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+				<UploadZone
+					label="Ajouter une vidéo"
+					accept="video/*"
+					file={form.video}
+					onFile={(f) => setForm({ ...form, video: f })}
+				/>
+				<UploadZone
+					label="Ajouter une photo"
+					accept="image/*"
+					file={form.image}
+					onFile={(f) => setForm({ ...form, image: f })}
+				/>
+			</Box>
+		</Box>
+	);
 }
