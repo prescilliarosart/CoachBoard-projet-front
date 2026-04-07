@@ -1,15 +1,54 @@
-import { Typography } from "@mui/material";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import RestartAltIcon from "@mui/icons-material/RestartAlt";
+import {
+	Box,
+	Button,
+	Step,
+	StepLabel,
+	Stepper,
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableRow,
+	Typography,
+} from "@mui/material";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import FormExercice from "../components/FormExercice";
+import FormProgramme from "../components/FormProgramme";
+import FormSeance from "../components/FormSeance";
 import Navbar from "../components/Navbar";
 import { ProgressionCanvas } from "../components/useProgressionCanvas";
 
+const STEPS = ["Programme", "Séance", "Exercice"];
+
+const [activeStep, setActiveStep] = useState(0);
+const [programmeId, setProgrammeId] = useState<number | null>(null);
+const [seanceId, setSeanceId] = useState<number | null>(null);
+const [done, setDone] = useState(false);
+
+const handleProgrammeSuccess = (id: number) => {
+	setProgrammeId(id);
+	setActiveStep(1);
+};
+
+const handleSeanceSuccess = (id: number) => {
+	setSeanceId(id);
+	setActiveStep(2);
+};
+
+const handleExerciceSuccess = () => {
+	setDone(true);
+	setActiveStep(3);
+};
+
+const handleReset = () => {
+	setProgrammeId(null);
+	setSeanceId(null);
+	setDone(false);
+	setActiveStep(0);
+};
 export default function DashboardCoach() {
 	const navigate = useNavigate();
 
