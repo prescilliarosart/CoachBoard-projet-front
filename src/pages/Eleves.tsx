@@ -1,13 +1,4 @@
 import { AddBox } from "@mui/icons-material";
-import {
-	Box,
-	Button,
-	Card,
-	CardContent,
-	CardMedia,
-	Container,
-	Typography,
-} from "@mui/material";
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import { ProgressionCanvas } from "../components/useProgressionCanvas";
