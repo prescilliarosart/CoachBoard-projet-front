@@ -161,7 +161,7 @@ export default function Programmes() {
 
 					<Button
 						variant="contained"
-						onClick={() => navigate("/seances/nouvelle")}
+						onClick={() => navigate("/seances/")}
 						sx={{
 							zIndex: 2,
 							backgroundColor: "#22c55e",
@@ -178,29 +178,7 @@ export default function Programmes() {
 							},
 						}}
 					>
-						Créer une séance
-					</Button>
-
-					<Button
-						variant="contained"
-						onClick={() => navigate("/programmes/nouveau")}
-						sx={{
-							zIndex: 2,
-							backgroundColor: "#22c55e",
-							color: "#0b1520",
-							fontStyle: "italic",
-							fontSize: "1.25rem",
-							fontWeight: 700,
-							border: "1.5px solid #22c55e",
-							borderRadius: "4px",
-							"&:hover": {
-								backgroundColor: "#16a34a",
-								transform: "translateY(-2px)",
-								boxShadow: "0 8px 28px rgba(34, 197, 94, 0.22)",
-							},
-						}}
-					>
-						Créer un programme
+						Bibliothèque de séances
 					</Button>
 				</Box>
 			</Box>
