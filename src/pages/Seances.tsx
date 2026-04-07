@@ -1,22 +1,26 @@
 import DeleteIcon from "@mui/icons-material/Delete";
+import SearchIcon from "@mui/icons-material/Search";
 import { Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import InputAdornment from "@mui/material/InputAdornment";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import TextField from "@mui/material/TextField";
+import { useEffect, useMemo, useState } from "react";
+import FormSeance from "../components/FormSeances";
 import Navbar from "../components/Navbar";
 import { ProgressionCanvas } from "../components/useProgressionCanvas";
 import { useAuth } from "../context/AuthContext";
 
 export default function Seances() {
-	const navigate = useNavigate();
 	const { token } = useAuth();
 	const [seances, setSeances] = useState<any[]>([]);
+	const [showForm, setShowForm] = useState(false);
+	const [search, setSearch] = useState("");
 
 	useEffect(() => {
 		fetch("http://localhost:3310/api/seances", {
@@ -44,6 +48,16 @@ export default function Seances() {
 			console.error("Erreur suppression séance :", err);
 		}
 	};
+	const filteredSeances = useMemo(
+		() =>
+			seances.filter(
+				(s) =>
+					s.TITRE.toLowerCase().includes(search.toLowerCase()) ||
+					s.nom_programme.toLowerCase().includes(search.toLowerCase()) ||
+					s.JOUR.toLowerCase().includes(search.toLowerCase()),
+			),
+		[search, seances],
+	);
 
 	return (
 		<div style={{ position: "relative", zIndex: 1 }}>
@@ -51,8 +65,8 @@ export default function Seances() {
 			<Navbar
 				links={[
 					{ label: "Programmes", path: "/programmes" },
-					{ label: "Elèves", path: "/eleves" },
-					{ label: "Progression", path: "/progression" },
+					{ label: "Seances", path: "/seances" },
+					{ label: "Exercices", path: "/exercices" },
 				]}
 				profilLabel="Profil"
 			/>
@@ -102,52 +116,49 @@ export default function Seances() {
 						position: "relative",
 						zIndex: 2,
 					}}
+				></Box>
+				<Button
+					variant="contained"
+					sx={{
+						backgroundColor: "#22c55e",
+						"&:hover": { backgroundColor: "#16a34a" },
+					}}
+					onClick={() => setShowForm(!showForm)}
 				>
-					<Button
-						variant="contained"
-						onClick={() => navigate("/exercices")}
-						sx={{
-							zIndex: 2,
-							backgroundColor: "#22c55e",
-							color: "#0b1520",
-							fontStyle: "italic",
-							fontSize: "1.25rem",
-							fontWeight: 700,
-							border: "1.5px solid #22c55e",
-							borderRadius: "4px",
-							"&:hover": {
-								backgroundColor: "#16a34a",
-								transform: "translateY(-2px)",
-								boxShadow: "0 8px 28px rgba(34, 197, 94, 0.22)",
-							},
-						}}
-					>
-						Bibliothèque d'exercices
-					</Button>
-
-					<Button
-						variant="contained"
-						onClick={() => navigate("/seances/nouvelle")}
-						sx={{
-							zIndex: 2,
-							backgroundColor: "#22c55e",
-							color: "#0b1520",
-							fontStyle: "italic",
-							fontSize: "1.25rem",
-							fontWeight: 700,
-							border: "1.5px solid #22c55e",
-							borderRadius: "4px",
-							"&:hover": {
-								backgroundColor: "#16a34a",
-								transform: "translateY(-2px)",
-								boxShadow: "0 8px 28px rgba(34, 197, 94, 0.22)",
-							},
-						}}
-					>
-						Créer une séance
-					</Button>
-				</Box>
+					{showForm ? "Annuler" : "Créer une séance"}
+				</Button>
 			</Box>
+
+			<Box sx={{ display: "flex", gap: 2, alignItems: "center", mb: 2 }}>
+				<TextField
+					placeholder="Rechercher une séance"
+					value={search}
+					onChange={(e) => setSearch(e.target.value)}
+					size="small"
+					InputProps={{
+						startAdornment: (
+							<InputAdornment position="start">
+								<SearchIcon sx={{ color: "#7a8fa6", fontSize: 18 }} />
+							</InputAdornment>
+						),
+					}}
+					sx={{
+						"& .MuiOutlinedInput-root": {
+							background: "#111e2c",
+							borderRadius: "6px",
+							fontFamily: "'Barlow',sans-serif",
+							fontSize: "0.88rem",
+							color: "#e2e8f0",
+							height: "40px",
+							"& fieldset": { borderColor: "rgba(34,197,94,0.18)" },
+							"&:hover fieldset": { borderColor: "rgba(34,197,94,0.4)" },
+							"&.Mui-focused fieldset": { borderColor: "#22c55e" },
+						},
+						"& input::placeholder": { color: "#7a8fa6" },
+					}}
+				/>
+			</Box>
+
 			<Box
 				sx={{
 					background: "#1E293B",
@@ -156,6 +167,13 @@ export default function Seances() {
 					margin: "40px 36px",
 				}}
 			>
+				{showForm && (
+					<FormSeance
+						onSuccess={() => {
+							setShowForm(false);
+						}}
+					/>
+				)}
 				<Table>
 					<TableHead>
 						<TableRow>
@@ -167,7 +185,7 @@ export default function Seances() {
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{seances.map((seance) => (
+						{filteredSeances.map((seance) => (
 							<TableRow key={seance.ID_SEANCE}>
 								<TableCell sx={{ color: "#fff" }}>{seance.TITRE}</TableCell>
 								<TableCell sx={{ color: "#fff" }}>{seance.JOUR}</TableCell>
