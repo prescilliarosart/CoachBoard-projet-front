@@ -24,7 +24,7 @@ export default function Navbar({ links }: NavbarProps) {
 			}}
 		>
 			<Toolbar sx={{ alignItems: "center" }}>
-				<Link to="/" style={{ textDecoration: "none" }}>
+				<Link to="/dashboard-coach" style={{ textDecoration: "none" }}>
 					<Typography
 						variant="h6"
 						component="div"
