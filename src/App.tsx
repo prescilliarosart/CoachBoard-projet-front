@@ -2,6 +2,7 @@ import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
 import DashboardCoach from "./pages/DashboardCoach";
 import DashboardEleves from "./pages/DashboardEleves";
+import Eleves from "./pages/Eleves";
 import ExercicesPage from "./pages/ExercicesPage";
 import HomePage from "./pages/HomePage";
 import Login from "./pages/Login";
@@ -34,6 +35,7 @@ function App() {
 				<Route path="/seances" element={<Seances />} />
 				<Route path="/seances/nouvelle" element={<NouvelleSeance />} />
 				<Route path="/mon-programme" element={<MonProgramme />} />
+				<Route path="/eleves" element={<Eleves />} />
 			</Route>
 		</Routes>
 	);
