@@ -243,7 +243,7 @@ function UploadZone({
 }
 
 export default function FormExercice({ onSuccess }: Props) {
-	const { token } = useAuth();
+	const { token, user } = useAuth();
 	const [loading, setLoading] = useState(false);
 
 	const [form, setForm] = useState<FormData>({
@@ -271,6 +271,10 @@ export default function FormExercice({ onSuccess }: Props) {
 
 		setLoading(true);
 		try {
+			const idCoach =
+				(user as { ID_COACH?: number; id?: number })?.ID_COACH ||
+				(user as { ID_COACH?: number; id?: number })?.id ||
+				1;
 			const response = await fetch("http://localhost:3310/api/exercices", {
 				method: "POST",
 				headers: {
@@ -282,6 +286,7 @@ export default function FormExercice({ onSuccess }: Props) {
 					description: form.description,
 					groupe_musculaire: form.muscles.join(", "),
 					type: form.type,
+					id_coach: idCoach,
 				}),
 			});
 

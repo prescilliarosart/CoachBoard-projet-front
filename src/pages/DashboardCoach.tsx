@@ -15,9 +15,9 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import FormExercice from "../components/FormExercice";
+import FormExercice from "../components/FormExercices";
 import FormProgramme from "../components/FormProgramme";
-import FormSeance from "../components/FormSeance";
+import FormSeance from "../components/FormSeances";
 import Navbar from "../components/Navbar";
 import { ProgressionCanvas } from "../components/useProgressionCanvas";
 
