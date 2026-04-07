@@ -23,34 +23,34 @@ import { ProgressionCanvas } from "../components/useProgressionCanvas";
 
 const STEPS = ["Programme", "Séance", "Exercice"];
 
-const [activeStep, setActiveStep] = useState(0);
-const [programmeId, setProgrammeId] = useState<number | null>(null);
-const [seanceId, setSeanceId] = useState<number | null>(null);
-const [done, setDone] = useState(false);
-
-const handleProgrammeSuccess = (id: number) => {
-	setProgrammeId(id);
-	setActiveStep(1);
-};
-
-const handleSeanceSuccess = (id: number) => {
-	setSeanceId(id);
-	setActiveStep(2);
-};
-
-const handleExerciceSuccess = () => {
-	setDone(true);
-	setActiveStep(3);
-};
-
-const handleReset = () => {
-	setProgrammeId(null);
-	setSeanceId(null);
-	setDone(false);
-	setActiveStep(0);
-};
 export default function DashboardCoach() {
 	const navigate = useNavigate();
+	const [activeStep, setActiveStep] = useState(0);
+	const [programmeId, setProgrammeId] = useState<number | null>(null);
+	const [seanceId, setSeanceId] = useState<number | null>(null);
+	const [done, setDone] = useState(false);
+
+	const handleProgrammeSuccess = (id: number) => {
+		setProgrammeId(id);
+		setActiveStep(1);
+	};
+
+	const handleSeanceSuccess = (id: number) => {
+		setSeanceId(id);
+		setActiveStep(2);
+	};
+
+	const handleExerciceSuccess = () => {
+		setDone(true);
+		setActiveStep(3);
+	};
+
+	const handleReset = () => {
+		setProgrammeId(null);
+		setSeanceId(null);
+		setDone(false);
+		setActiveStep(0);
+	};
 
 	return (
 		<div style={{ position: "relative", zIndex: 1 }}>
@@ -164,29 +164,73 @@ export default function DashboardCoach() {
 					>
 						Bibliothèques d'exercices
 					</Button>
+				</Box>
+			</Box>
+			{/* ── Section création ── */}
+			<Box sx={{ px: "36px", py: "40px", position: "relative", zIndex: 2 }}>
+				<Typography
+					sx={{
+						fontFamily: "'Barlow Condensed', sans-serif",
+						fontSize: "1.8rem",
+						fontStyle: "italic",
+						fontWeight: 700,
+						color: "#e2e8f0",
+						textTransform: "uppercase",
+						mb: "32px",
+					}}
+				>
+					Créer un programme complet
+				</Typography>
 
-					<Button
-						variant="contained"
-						onClick={() => navigate("/exercices/nouveau")}
+				<Stepper activeStep={activeStep} sx={{ mb: "40px" }}>
+					{STEPS.map((label) => (
+						<Step key={label}>
+							<StepLabel>{label}</StepLabel>
+						</Step>
+					))}
+				</Stepper>
+
+				{!done ? (
+					<>
+						{activeStep === 0 && (
+							<FormProgramme onSuccess={handleProgrammeSuccess} />
+						)}
+						{activeStep === 1 && programmeId && (
+							<FormSeance
+								programmeId={programmeId}
+								onSuccess={handleSeanceSuccess}
+							/>
+						)}
+						{activeStep === 2 && seanceId && (
+							<FormExercice onSuccess={handleExerciceSuccess} />
+						)}
+					</>
+				) : (
+					<Box
 						sx={{
-							zIndex: 2,
-							backgroundColor: "#22c55e",
-							color: "#0b1520",
-							fontStyle: "italic",
-							fontSize: "1.25rem",
-							fontWeight: 700,
-							border: "1.5px solid #22c55e",
-							borderRadius: "4px",
-							"&:hover": {
-								backgroundColor: "#16a34a",
-								transform: "translateY(-2px)",
-								boxShadow: "0 8px 28px rgba(34, 197, 94, 0.22)",
-							},
+							display: "flex",
+							flexDirection: "column",
+							alignItems: "center",
+							gap: "24px",
 						}}
 					>
-						Créer un exercice
-					</Button>
-				</Box>
+						<CheckCircleIcon sx={{ fontSize: 64, color: "#22c55e" }} />
+						<Typography sx={{ color: "#e2e8f0" }}>
+							Programme complet créé !
+						</Typography>
+						<Box sx={{ display: "flex", gap: 2 }}>
+							<Button onClick={handleReset} startIcon={<RestartAltIcon />}>
+								Créer un autre programme
+							</Button>
+							<Button
+								onClick={() => navigate("/programmes")}
+								variant="outlined"
+							>
+								Voir mes programmes
+							</Button>
+						</Box>
+					</Box>
+				)}
 			</Box>
 			<Typography>
 				<h2 style={{ color: "#fff", margin: "40px 0 24px", padding: "0 36px" }}>
