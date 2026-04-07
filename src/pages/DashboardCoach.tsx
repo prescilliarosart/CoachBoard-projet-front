@@ -6,11 +6,6 @@ import {
 	Step,
 	StepLabel,
 	Stepper,
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableRow,
 	Typography,
 } from "@mui/material";
 import { useState } from "react";
@@ -140,12 +135,12 @@ export default function DashboardCoach() {
 							},
 						}}
 					>
-						Suivre mes élèves
+						Liste de mes élèves
 					</Button>
 
 					<Button
 						variant="contained"
-						onClick={() => navigate("/exercices")}
+						onClick={() => navigate("/suivi")}
 						sx={{
 							zIndex: 2,
 							backgroundColor: "#22c55e",
@@ -162,7 +157,7 @@ export default function DashboardCoach() {
 							},
 						}}
 					>
-						Bibliothèques d'exercices
+						Suivi de mes élèves
 					</Button>
 				</Box>
 			</Box>
@@ -182,7 +177,31 @@ export default function DashboardCoach() {
 					Créer un programme complet
 				</Typography>
 
-				<Stepper activeStep={activeStep} sx={{ mb: "40px" }}>
+				<Stepper
+					activeStep={activeStep}
+					sx={{
+						mb: "40px",
+						"& .MuiStepLabel-label": {
+							color: "#94a3b8",
+							fontWeight: 600,
+						},
+						"& .MuiStepLabel-label.Mui-active": {
+							color: "#22c55e",
+						},
+						"& .MuiStepLabel-label.Mui-completed": {
+							color: "#22c55e",
+						},
+						"& .MuiStepIcon-root": {
+							color: "#334155",
+						},
+						"& .MuiStepIcon-root.Mui-active": {
+							color: "#22c55e",
+						},
+						"& .MuiStepIcon-root.Mui-completed": {
+							color: "#22c55e",
+						},
+					}}
+				>
 					{STEPS.map((label) => (
 						<Step key={label}>
 							<StepLabel>{label}</StepLabel>
@@ -231,40 +250,6 @@ export default function DashboardCoach() {
 						</Box>
 					</Box>
 				)}
-			</Box>
-			<Typography>
-				<h2 style={{ color: "#fff", margin: "40px 0 24px", padding: "0 36px" }}>
-					Historique des séances
-				</h2>
-			</Typography>
-			<Box
-				sx={{
-					background: "#1E293B",
-					borderRadius: "12px",
-					padding: "24px",
-					margin: "40px 36px",
-				}}
-			>
-				<Table>
-					<TableHead>
-						<TableRow>
-							<TableCell sx={{ color: "#fff" }}>Date</TableCell>
-							<TableCell sx={{ color: "#fff" }}>Programme</TableCell>
-							<TableCell sx={{ color: "#fff" }}>Séance</TableCell>
-							<TableCell sx={{ color: "#fff" }}>Statut</TableCell>
-							<TableCell sx={{ color: "#fff" }}>Elève concerné</TableCell>
-						</TableRow>
-					</TableHead>
-					<TableBody>
-						<TableRow>
-							<TableCell sx={{ color: "#fff" }}>2023-10-01</TableCell>
-							<TableCell sx={{ color: "#fff" }}>Programme 1</TableCell>
-							<TableCell sx={{ color: "#fff" }}>50%</TableCell>
-							<TableCell sx={{ color: "#fff" }}>✅</TableCell>
-							<TableCell sx={{ color: "#fff" }}>John Doe</TableCell>
-						</TableRow>
-					</TableBody>
-				</Table>
 			</Box>
 		</div>
 	);
