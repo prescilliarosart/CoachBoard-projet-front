@@ -1,13 +1,16 @@
 import DeleteIcon from "@mui/icons-material/Delete";
+import SearchIcon from "@mui/icons-material/Search";
 import { Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import InputAdornment from "@mui/material/InputAdornment";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import { useEffect, useState } from "react";
+import TextField from "@mui/material/TextField";
+import { useEffect, useMemo, useState } from "react";
 import FormSeance from "../components/FormSeances";
 import Navbar from "../components/Navbar";
 import { ProgressionCanvas } from "../components/useProgressionCanvas";
@@ -17,6 +20,7 @@ export default function Seances() {
 	const { token } = useAuth();
 	const [seances, setSeances] = useState<any[]>([]);
 	const [showForm, setShowForm] = useState(false);
+	const [search, setSearch] = useState("");
 
 	useEffect(() => {
 		fetch("http://localhost:3310/api/seances", {
@@ -44,6 +48,16 @@ export default function Seances() {
 			console.error("Erreur suppression séance :", err);
 		}
 	};
+	const filteredSeances = useMemo(
+		() =>
+			seances.filter(
+				(s) =>
+					s.TITRE.toLowerCase().includes(search.toLowerCase()) ||
+					s.nom_programme.toLowerCase().includes(search.toLowerCase()) ||
+					s.JOUR.toLowerCase().includes(search.toLowerCase()),
+			),
+		[search, seances],
+	);
 
 	return (
 		<div style={{ position: "relative", zIndex: 1 }}>
@@ -116,6 +130,36 @@ export default function Seances() {
 				</Button>
 			</Box>
 
+			<Box sx={{ display: "flex", gap: 2, alignItems: "center", mb: 2 }}>
+				<TextField
+					placeholder="Rechercher une séance"
+					value={search}
+					onChange={(e) => setSearch(e.target.value)}
+					size="small"
+					InputProps={{
+						startAdornment: (
+							<InputAdornment position="start">
+								<SearchIcon sx={{ color: "#7a8fa6", fontSize: 18 }} />
+							</InputAdornment>
+						),
+					}}
+					sx={{
+						"& .MuiOutlinedInput-root": {
+							background: "#111e2c",
+							borderRadius: "6px",
+							fontFamily: "'Barlow',sans-serif",
+							fontSize: "0.88rem",
+							color: "#e2e8f0",
+							height: "40px",
+							"& fieldset": { borderColor: "rgba(34,197,94,0.18)" },
+							"&:hover fieldset": { borderColor: "rgba(34,197,94,0.4)" },
+							"&.Mui-focused fieldset": { borderColor: "#22c55e" },
+						},
+						"& input::placeholder": { color: "#7a8fa6" },
+					}}
+				/>
+			</Box>
+
 			<Box
 				sx={{
 					background: "#1E293B",
@@ -142,7 +186,7 @@ export default function Seances() {
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{seances.map((seance) => (
+						{filteredSeances.map((seance) => (
 							<TableRow key={seance.ID_SEANCE}>
 								<TableCell sx={{ color: "#fff" }}>{seance.TITRE}</TableCell>
 								<TableCell sx={{ color: "#fff" }}>{seance.JOUR}</TableCell>
