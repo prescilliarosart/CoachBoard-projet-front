@@ -1,4 +1,5 @@
-import { Box, Button, Typography } from "@mui/material";
+import PersonIcon from "@mui/icons-material/Person";
+import { Avatar, Box, Button, Typography } from "@mui/material";
 
 export default function EleveCard({ eleve }: { eleve: any }) {
 	return (
@@ -27,11 +28,21 @@ export default function EleveCard({ eleve }: { eleve: any }) {
 					borderBottom: "1px solid rgba(34,197,94,0.08)",
 				}}
 			>
-				<img
+				<Avatar
 					src={eleve.IMAGE_URL}
-					alt={eleve.NOM}
-					style={{ width: "100%", height: "100%", objectFit: "cover" }}
-				/>
+					alt={`${eleve.PRENOM} ${eleve.NOM}`}
+					variant="square"
+					sx={{
+						width: "100%",
+						height: "100%",
+						bgcolor: "#0b1520",
+						"& img": { objectFit: "cover" },
+					}}
+				>
+					<PersonIcon
+						sx={{ fontSize: "4rem", opacity: 0.3, color: "#22c55e" }}
+					/>
+				</Avatar>
 			</Box>
 			<Box
 				sx={{
