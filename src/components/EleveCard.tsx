@@ -1,7 +1,10 @@
 import PersonIcon from "@mui/icons-material/Person";
 import { Avatar, Box, Button, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 export default function EleveCard({ eleve }: { eleve: any }) {
+	const navigate = useNavigate();
+
 	return (
 		<Box
 			sx={{
@@ -77,7 +80,7 @@ export default function EleveCard({ eleve }: { eleve: any }) {
 						{eleve.NOM} {eleve.PRENOM}
 					</Typography>
 					<Button
-						onClick={() => console.log("Détails de l'élève :", eleve)}
+						onClick={() => navigate(`/eleves/${eleve.ID_ELEVE}`)}
 						sx={{
 							background: "#22c55e",
 							color: "#0b1520",

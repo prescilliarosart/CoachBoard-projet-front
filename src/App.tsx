@@ -2,6 +2,7 @@ import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
 import DashboardCoach from "./pages/DashboardCoach";
 import DashboardEleves from "./pages/DashboardEleves";
+import EleveDetails from "./pages/EleveDetails";
 import Eleves from "./pages/Eleves";
 import ExercicesPage from "./pages/ExercicesPage";
 import HomePage from "./pages/HomePage";
@@ -46,6 +47,7 @@ function App() {
 				<Route path="/programmes" element={<Programmes />} />
 				<Route path="/seances" element={<Seances />} />
 				<Route path="/eleves" element={<Eleves />} />
+				<Route path="/eleves/:eleveId" element={<EleveDetails />} />
 			</Route>
 			<Route element={<ProtectedEleve />}>
 				<Route path="/mon-programme" element={<MonProgramme />} />
