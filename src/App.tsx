@@ -42,8 +42,8 @@ function App() {
 			<Route element={<ProtectedCoach />}>
 				<Route path="/dashboard-coach" element={<DashboardCoach />} />
 				<Route path="/exercices" element={<ExercicesPage />} />
-                <Route path="/programmes" element={<Programmes />} />				
-				<Route path="/seances" element={<Seances />} />				
+				<Route path="/programmes" element={<Programmes />} />
+				<Route path="/seances" element={<Seances />} />
 			</Route>
 			<Route element={<ProtectedEleve />}>
 				<Route path="/mon-programme" element={<MonProgramme />} />
