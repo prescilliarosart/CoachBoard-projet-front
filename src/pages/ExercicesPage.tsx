@@ -14,7 +14,7 @@ import {
 	Toolbar,
 	Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import FormExercice from "../components/FormExercices";
 import Navbar from "../components/Navbar";
 import { useProgressionCanvas } from "../components/useProgressionCanvas";
@@ -69,7 +69,13 @@ const MENU = {
 	},
 };
 
-function ExerciceCard({ ex }: { ex: Exercice }) {
+function ExerciceCard({
+	ex,
+	onDelete,
+}: {
+	ex: Exercice;
+	onDelete: () => void;
+}) {
 	return (
 		<Box
 			sx={{
@@ -163,6 +169,20 @@ function ExerciceCard({ ex }: { ex: Exercice }) {
 						</Typography>
 					))}
 				</Box>
+				<Button
+					onClick={onDelete}
+					size="small"
+					sx={{
+						color: "#7a8fa6",
+						fontFamily: "'Barlow',sans-serif",
+						fontSize: "0.72rem",
+						textTransform: "uppercase",
+						mt: "4px",
+						"&:hover": { color: "#ef4444" },
+					}}
+				>
+					Supprimer
+				</Button>
 			</Box>
 		</Box>
 	);
@@ -191,6 +211,22 @@ export default function ExercicesPage() {
 				setExercices(mapped);
 			})
 			.catch((err) => console.error("Erreur chargement exercices :", err));
+	};
+
+	const handleDelete = async (id: number) => {
+		try {
+			const response = await fetch(
+				`http://localhost:3310/api/exercices/${id}`,
+				{
+					method: "DELETE",
+					headers: { Authorization: `Bearer ${token}` },
+				},
+			);
+			if (!response.ok) throw new Error("Erreur suppression");
+			fetchExercices();
+		} catch (err) {
+			console.error("Erreur suppression exercice :", err);
+		}
 	};
 
 	useEffect(() => {
@@ -374,7 +410,11 @@ export default function ExercicesPage() {
 						}}
 					>
 						{filtered.map((ex) => (
-							<ExerciceCard key={ex.id} ex={ex} />
+							<ExerciceCard
+								key={ex.id}
+								ex={ex}
+								onDelete={() => handleDelete(ex.id)}
+							/>
 						))}
 					</Box>
 				)}
