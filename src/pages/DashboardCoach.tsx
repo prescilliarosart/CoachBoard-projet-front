@@ -21,6 +21,24 @@ import { ProgressionCanvas } from "../components/useProgressionCanvas";
 
 const STEPS = ["Programme", "Séance", "Exercice"];
 
+const SX_TOGGLE_ACTIVE = {
+	background: "#22c55e",
+	color: "#0b1520",
+	fontFamily: "'Barlow Condensed',sans-serif",
+	fontStyle: "italic",
+	fontWeight: 700,
+	"&:hover": { background: "#16a34a" },
+};
+
+const SX_TOGGLE_INACTIVE = {
+	borderColor: "rgba(34,197,94,0.4)",
+	color: "#22c55e",
+	fontFamily: "'Barlow Condensed',sans-serif",
+	fontStyle: "italic",
+	fontWeight: 700,
+	"&:hover": { borderColor: "#22c55e", background: "rgba(34,197,94,0.08)" },
+};
+
 export default function DashboardCoach() {
 	const navigate = useNavigate();
 	const [activeStep, setActiveStep] = useState(0);
@@ -241,12 +259,22 @@ export default function DashboardCoach() {
 									<Button
 										variant={modeSeance === "select" ? "contained" : "outlined"}
 										onClick={() => setModeSeance("select")}
+										sx={
+											modeSeance === "select"
+												? SX_TOGGLE_ACTIVE
+												: SX_TOGGLE_INACTIVE
+										}
 									>
 										Choisir existante
 									</Button>
 									<Button
 										variant={modeSeance === "create" ? "contained" : "outlined"}
 										onClick={() => setModeSeance("create")}
+										sx={
+											modeSeance === "create"
+												? SX_TOGGLE_ACTIVE
+												: SX_TOGGLE_INACTIVE
+										}
 									>
 										Créer nouvelle
 									</Button>
@@ -266,6 +294,11 @@ export default function DashboardCoach() {
 											modeExercice === "select" ? "contained" : "outlined"
 										}
 										onClick={() => setModeExercice("select")}
+										sx={
+											modeExercice === "select"
+												? SX_TOGGLE_ACTIVE
+												: SX_TOGGLE_INACTIVE
+										}
 									>
 										Choisir existant
 									</Button>
@@ -274,6 +307,11 @@ export default function DashboardCoach() {
 											modeExercice === "create" ? "contained" : "outlined"
 										}
 										onClick={() => setModeExercice("create")}
+										sx={
+											modeExercice === "create"
+												? SX_TOGGLE_ACTIVE
+												: SX_TOGGLE_INACTIVE
+										}
 									>
 										Créer nouveau
 									</Button>
@@ -291,13 +329,16 @@ export default function DashboardCoach() {
 									/>
 								)}
 								<Box sx={{ display: "flex", gap: 2, mt: 3 }}>
-									<Button variant="outlined" onClick={() => setActiveStep(2)}>
+									<Button
+										onClick={() => setActiveStep(2)}
+										sx={SX_TOGGLE_INACTIVE}
+									>
 										Ajouter un autre exercice
 									</Button>
-									<Button variant="outlined" onClick={handleNewSeance}>
+									<Button onClick={handleNewSeance} sx={SX_TOGGLE_INACTIVE}>
 										Ajouter une autre séance
 									</Button>
-									<Button variant="contained" onClick={handleFinish}>
+									<Button onClick={handleFinish} sx={SX_TOGGLE_ACTIVE}>
 										Terminer le programme
 									</Button>
 								</Box>
