@@ -12,8 +12,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import FormExercice from "../components/FormExercices";
 import FormProgramme from "../components/FormProgramme";
-import FormSeance from "../components/FormSeances";
 import Navbar from "../components/Navbar";
+import SelectSeance from "../components/SelectSeance";
 import { ProgressionCanvas } from "../components/useProgressionCanvas";
 
 const STEPS = ["Programme", "Séance", "Exercice"];
@@ -223,10 +223,7 @@ export default function DashboardCoach() {
 							<FormProgramme onSuccess={handleProgrammeSuccess} />
 						)}
 						{activeStep === 1 && programmeId && (
-							<FormSeance
-								programmeId={programmeId}
-								onSuccess={handleSeanceSuccess}
-							/>
+							<SelectSeance onSuccess={handleSeanceSuccess} />
 						)}
 						{activeStep === 2 && seanceId && (
 							<>
