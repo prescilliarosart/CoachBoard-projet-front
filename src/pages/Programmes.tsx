@@ -4,7 +4,6 @@ import SearchIcon from "@mui/icons-material/Search";
 import {
 	Box,
 	Button,
-	Chip,
 	FormControl,
 	InputAdornment,
 	InputLabel,
@@ -179,7 +178,7 @@ export default function Programmes() {
 				)}
 
 				{/* Barre de recherche */}
-				<Box sx={{ display: "flex", gap: 2, alignItems: "center", mb: 2 }}>
+				<Box sx={{ display: "flex", gap: "16px", alignItems: "center", mb: 2 }}>
 					<TextField
 						placeholder="Rechercher un programme ou un élève"
 						value={search}
@@ -194,7 +193,7 @@ export default function Programmes() {
 						}}
 						sx={{
 							"& .MuiOutlinedInput-root": {
-								background: "#111e2c", // fond neutre pour la recherche
+								background: "#111e2c",
 								borderRadius: "6px",
 								fontFamily: "'Barlow',sans-serif",
 								fontSize: "0.88rem",
@@ -207,6 +206,66 @@ export default function Programmes() {
 							"& input::placeholder": { color: "#7a8fa6" },
 						}}
 					/>
+					<FormControl size="small">
+						<InputLabel
+							sx={{
+								color: "#7a8fa6",
+								fontSize: "0.82rem",
+								"&.Mui-focused": { color: "#22c55e" },
+							}}
+						>
+							Statut
+						</InputLabel>
+						<Select
+							value={statutFilter}
+							label="Statut"
+							onChange={(e) => setStatutFilter(e.target.value)}
+							sx={{
+								background: "#111e2c",
+								color: "#e2e8f0",
+								fontFamily: "'Barlow',sans-serif",
+								fontSize: "0.88rem",
+								borderRadius: "6px",
+								minWidth: 160,
+								height: "40px",
+								"& .MuiOutlinedInput-notchedOutline": {
+									borderColor: "rgba(34,197,94,0.18)",
+								},
+								"&:hover .MuiOutlinedInput-notchedOutline": {
+									borderColor: "rgba(34,197,94,0.4)",
+								},
+								"&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+									borderColor: "#22c55e",
+								},
+								"& .MuiSvgIcon-root": { color: "#7a8fa6" },
+							}}
+							MenuProps={{
+								PaperProps: {
+									sx: {
+										background: "#0f1b27",
+										border: "1px solid rgba(34,197,94,0.18)",
+										"& .MuiMenuItem-root": {
+											fontFamily: "'Barlow',sans-serif",
+											fontSize: "0.88rem",
+											color: "#e2e8f0",
+											"&:hover": { background: "rgba(34,197,94,0.08)" },
+											"&.Mui-selected": {
+												background: "rgba(34,197,94,0.12)",
+												color: "#22c55e",
+											},
+										},
+									},
+								},
+							}}
+						>
+							<MenuItem value="">
+								<em style={{ color: "#7a8fa6" }}>Tous</em>
+							</MenuItem>
+							<MenuItem value="Actif">Actif</MenuItem>
+							<MenuItem value="Terminé">Terminé</MenuItem>
+							<MenuItem value="En pause">En cours</MenuItem>
+						</Select>
+					</FormControl>
 				</Box>
 
 				{/* Table des programmes */}
