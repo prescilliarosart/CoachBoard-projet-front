@@ -1,5 +1,6 @@
-import { AddBox } from "@mui/icons-material";
+import { Box, Container, Toolbar } from "@mui/material";
 import { useEffect, useState } from "react";
+import EleveCard from "../components/EleveCard";
 import Navbar from "../components/Navbar";
 import { ProgressionCanvas } from "../components/useProgressionCanvas";
 import { useAuth } from "../context/AuthContext";
@@ -31,11 +32,29 @@ export default function Eleves() {
 			<Navbar
 				links={[
 					{ label: "Programmes", path: "/programmes" },
-					{ label: "Elèves", path: "/eleves" },
-					{ label: "Progression", path: "/progression" },
+					{ label: "Seances", path: "/seances" },
+					{ label: "Exercices", path: "/exercices" },
 				]}
 				profilLabel="Profil"
 			/>
+			<Toolbar />
+			<Container maxWidth="lg" sx={{ py: 4 }}>
+				<Box
+					sx={{
+						display: "grid",
+						gridTemplateColumns: {
+							xs: "1fr",
+							sm: "repeat(2, 1fr)",
+							md: "repeat(3, 1fr)",
+						},
+						gap: 3,
+					}}
+				>
+					{eleves.map((e) => (
+						<EleveCard key={e.ID_ELEVE} eleve={e} />
+					))}
+				</Box>
+			</Container>
 		</div>
 	);
 }
