@@ -1,16 +1,22 @@
+import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SearchIcon from "@mui/icons-material/Search";
 import {
 	Box,
 	Button,
+	FormControl,
+	InputAdornment,
+	InputLabel,
+	MenuItem,
+	Select,
 	Table,
 	TableBody,
 	TableCell,
 	TableHead,
 	TableRow,
+	Toolbar,
 	Typography,
 } from "@mui/material";
-import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
 import { useEffect, useMemo, useState } from "react";
 import FormProgramme from "../components/FormProgramme";
@@ -23,6 +29,7 @@ export default function Programmes() {
 	const [programmes, setProgrammes] = useState<any[]>([]);
 	const [showForm, setShowForm] = useState(false);
 	const [search, setSearch] = useState("");
+	const [statutFilter, setStatutFilter] = useState("");
 
 	useEffect(() => {
 		console.log("Token :", token);
@@ -86,11 +93,12 @@ export default function Programmes() {
 		() =>
 			programmes.filter(
 				(p) =>
-					p.nom_programme.toLowerCase().includes(search.toLowerCase()) ||
-					p.nom_eleve.toLowerCase().includes(search.toLowerCase()) ||
-					p.prenom_eleve.toLowerCase().includes(search.toLowerCase()),
+					(p.nom_programme.toLowerCase().includes(search.toLowerCase()) ||
+						p.nom_eleve.toLowerCase().includes(search.toLowerCase()) ||
+						p.prenom_eleve.toLowerCase().includes(search.toLowerCase())) &&
+					(statutFilter === "" || p.STATUT === statutFilter),
 			),
-		[search, programmes],
+		[search, statutFilter, programmes],
 	);
 
 	return (
@@ -104,64 +112,55 @@ export default function Programmes() {
 				]}
 				profilLabel="Profil"
 			/>
+			<Toolbar />
 			<Box
 				sx={{
+					px: "36px",
+					py: "18px",
+					borderBottom: "1px solid rgba(34,197,94,0.18)",
 					display: "flex",
-					justifyContent: "space-between",
 					alignItems: "center",
-					minHeight: "200px",
-					margin: "80px 0 0",
-					paddingTop: "60px",
-					padding: "0 36px",
-					paddingBottom: "45px",
+					justifyContent: "space-between",
 					position: "relative",
 					zIndex: 2,
-					borderBottom: "1px solid rgba(34, 197, 94, 0.5)",
 				}}
 			>
-				<Box
-					component="section"
+				<Typography
 					sx={{
-						color: "#fff",
-						padding: "24px 36px",
-						position: "relative",
-						zIndex: 2,
+						fontFamily: "'Barlow Condensed',sans-serif",
+						fontStyle: "italic",
+						fontWeight: 700,
+						fontSize: "1.6rem",
+						color: "#e2e8f0",
+						textTransform: "uppercase",
 					}}
 				>
-					<Typography
-						variant="h1"
-						sx={{
-							fontFamily: "'Barlow Condensed', sans-serif",
-							fontSize: "3.5rem",
-							fontStyle: "italic",
-							fontWeight: 700,
-						}}
-					>
-						Programmes personnalisés
-					</Typography>
-				</Box>
-				<Box
+					Programmes personnalisés
+				</Typography>
+				<Button
+					onClick={() => setShowForm(!showForm)}
+					startIcon={<AddIcon sx={{ fontSize: 15 }} />}
 					sx={{
-						display: "flex",
-						flexDirection: "row",
-						gap: 2,
-						alignSelf: "flex-end",
-						marginRight: "200px",
-						position: "relative",
-						zIndex: 2,
+						background: "#22c55e",
+						color: "#0b1520",
+						fontFamily: "'Barlow Condensed',sans-serif",
+						fontStyle: "italic",
+						fontWeight: 700,
+						fontSize: "0.85rem",
+						textTransform: "uppercase",
+						px: "16px",
+						py: "7px",
+						borderRadius: "4px",
+						transition: "all 0.2s",
+						"&:hover": {
+							background: "#16a34a",
+							transform: "translateY(-1px)",
+							boxShadow: "0 4px 16px rgba(34,197,94,0.3)",
+						},
 					}}
 				>
-					<Button
-						variant="contained"
-						sx={{
-							backgroundColor: "#22c55e",
-							"&:hover": { backgroundColor: "#16a34a" },
-						}}
-						onClick={() => setShowForm(!showForm)}
-					>
-						{showForm ? "Annuler" : "Créer un programme"}
-					</Button>
-				</Box>
+					{showForm ? "Annuler" : "Créer un programme"}
+				</Button>
 			</Box>
 			<Box sx={{ margin: "40px 36px" }}>
 				{/* Formulaire de création */}
@@ -179,7 +178,7 @@ export default function Programmes() {
 				)}
 
 				{/* Barre de recherche */}
-				<Box sx={{ display: "flex", gap: 2, alignItems: "center", mb: 2 }}>
+				<Box sx={{ display: "flex", gap: "16px", alignItems: "center", mb: 2 }}>
 					<TextField
 						placeholder="Rechercher un programme ou un élève"
 						value={search}
@@ -194,7 +193,7 @@ export default function Programmes() {
 						}}
 						sx={{
 							"& .MuiOutlinedInput-root": {
-								background: "#111e2c", // fond neutre pour la recherche
+								background: "#111e2c",
 								borderRadius: "6px",
 								fontFamily: "'Barlow',sans-serif",
 								fontSize: "0.88rem",
@@ -207,6 +206,66 @@ export default function Programmes() {
 							"& input::placeholder": { color: "#7a8fa6" },
 						}}
 					/>
+					<FormControl size="small">
+						<InputLabel
+							sx={{
+								color: "#7a8fa6",
+								fontSize: "0.82rem",
+								"&.Mui-focused": { color: "#22c55e" },
+							}}
+						>
+							Statut
+						</InputLabel>
+						<Select
+							value={statutFilter}
+							label="Statut"
+							onChange={(e) => setStatutFilter(e.target.value)}
+							sx={{
+								background: "#111e2c",
+								color: "#e2e8f0",
+								fontFamily: "'Barlow',sans-serif",
+								fontSize: "0.88rem",
+								borderRadius: "6px",
+								minWidth: 160,
+								height: "40px",
+								"& .MuiOutlinedInput-notchedOutline": {
+									borderColor: "rgba(34,197,94,0.18)",
+								},
+								"&:hover .MuiOutlinedInput-notchedOutline": {
+									borderColor: "rgba(34,197,94,0.4)",
+								},
+								"&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+									borderColor: "#22c55e",
+								},
+								"& .MuiSvgIcon-root": { color: "#7a8fa6" },
+							}}
+							MenuProps={{
+								PaperProps: {
+									sx: {
+										background: "#0f1b27",
+										border: "1px solid rgba(34,197,94,0.18)",
+										"& .MuiMenuItem-root": {
+											fontFamily: "'Barlow',sans-serif",
+											fontSize: "0.88rem",
+											color: "#e2e8f0",
+											"&:hover": { background: "rgba(34,197,94,0.08)" },
+											"&.Mui-selected": {
+												background: "rgba(34,197,94,0.12)",
+												color: "#22c55e",
+											},
+										},
+									},
+								},
+							}}
+						>
+							<MenuItem value="">
+								<em style={{ color: "#7a8fa6" }}>Tous</em>
+							</MenuItem>
+							<MenuItem value="Actif">Actif</MenuItem>
+							<MenuItem value="Terminé">Terminé</MenuItem>
+							<MenuItem value="En pause">En cours</MenuItem>
+						</Select>
+					</FormControl>
 				</Box>
 
 				{/* Table des programmes */}
