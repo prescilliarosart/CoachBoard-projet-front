@@ -1,14 +1,22 @@
+import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SearchIcon from "@mui/icons-material/Search";
-import { Typography } from "@mui/material";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import InputAdornment from "@mui/material/InputAdornment";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
+import {
+	Box,
+	Button,
+	FormControl,
+	InputAdornment,
+	InputLabel,
+	MenuItem,
+	Select,
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableRow,
+	Toolbar,
+	Typography,
+} from "@mui/material";
 import TextField from "@mui/material/TextField";
 import { useEffect, useMemo, useState } from "react";
 import FormSeance from "../components/FormSeances";
@@ -21,6 +29,7 @@ export default function Seances() {
 	const [seances, setSeances] = useState<any[]>([]);
 	const [showForm, setShowForm] = useState(false);
 	const [search, setSearch] = useState("");
+	const [jourFilter, setJourFilter] = useState("");
 
 	useEffect(() => {
 		fetch("http://localhost:3310/api/seances", {
@@ -52,13 +61,13 @@ export default function Seances() {
 		() =>
 			seances.filter(
 				(s) =>
-					s.TITRE.toLowerCase().includes(search.toLowerCase()) ||
-					s.nom_programme.toLowerCase().includes(search.toLowerCase()) ||
-					s.JOUR.toLowerCase().includes(search.toLowerCase()),
+					(s.TITRE.toLowerCase().includes(search.toLowerCase()) ||
+						s.nom_programme.toLowerCase().includes(search.toLowerCase()) ||
+						s.JOUR.toLowerCase().includes(search.toLowerCase())) &&
+					(jourFilter === "" || s.JOUR === jourFilter),
 			),
-		[search, seances],
+		[search, jourFilter, seances],
 	);
-
 	return (
 		<div style={{ position: "relative", zIndex: 1 }}>
 			<ProgressionCanvas />
@@ -70,66 +79,66 @@ export default function Seances() {
 				]}
 				profilLabel="Profil"
 			/>
+			<Toolbar />
 			<Box
 				sx={{
+					px: "36px",
+					py: "18px",
+					borderBottom: "1px solid rgba(34,197,94,0.18)",
 					display: "flex",
-					justifyContent: "space-between",
 					alignItems: "center",
-					minHeight: "200px",
-					margin: "80px 0 0",
-					paddingTop: "60px",
-					padding: "0 36px",
-					paddingBottom: "45px",
+					justifyContent: "space-between",
 					position: "relative",
 					zIndex: 2,
-					borderBottom: "1px solid rgba(34, 197, 94, 0.5)",
 				}}
 			>
-				<Box
-					component="section"
+				<Typography
 					sx={{
-						color: "#fff",
-						padding: "24px 36px",
-						position: "relative",
-						zIndex: 2,
+						fontFamily: "'Barlow Condensed',sans-serif",
+						fontStyle: "italic",
+						fontWeight: 700,
+						fontSize: "1.6rem",
+						color: "#e2e8f0",
+						textTransform: "uppercase",
 					}}
 				>
-					<Typography
-						variant="h1"
-						sx={{
-							fontFamily: "'Barlow Condensed', sans-serif",
-							fontSize: "3.5rem",
-							fontStyle: "italic",
-							fontWeight: 700,
-						}}
-					>
-						Séances personnalisées
-					</Typography>
-				</Box>
-				<Box
-					sx={{
-						display: "flex",
-						flexDirection: "row",
-						gap: 2,
-						alignSelf: "flex-end",
-						marginRight: "200px",
-						position: "relative",
-						zIndex: 2,
-					}}
-				></Box>
+					Séances personnalisées
+				</Typography>
 				<Button
-					variant="contained"
-					sx={{
-						backgroundColor: "#22c55e",
-						"&:hover": { backgroundColor: "#16a34a" },
-					}}
 					onClick={() => setShowForm(!showForm)}
+					startIcon={<AddIcon sx={{ fontSize: 15 }} />}
+					sx={{
+						background: "#22c55e",
+						color: "#0b1520",
+						fontFamily: "'Barlow Condensed',sans-serif",
+						fontStyle: "italic",
+						fontWeight: 700,
+						fontSize: "0.85rem",
+						textTransform: "uppercase",
+						px: "16px",
+						py: "7px",
+						borderRadius: "4px",
+						transition: "all 0.2s",
+						"&:hover": {
+							background: "#16a34a",
+							transform: "translateY(-1px)",
+							boxShadow: "0 4px 16px rgba(34,197,94,0.3)",
+						},
+					}}
 				>
 					{showForm ? "Annuler" : "Créer une séance"}
 				</Button>
 			</Box>
 
-			<Box sx={{ display: "flex", gap: 2, alignItems: "center", mb: 2 }}>
+			<Box
+				sx={{
+					display: "flex",
+					gap: "16px",
+					alignItems: "center",
+					mb: 2,
+					px: "36px",
+				}}
+			>
 				<TextField
 					placeholder="Rechercher une séance"
 					value={search}
@@ -157,6 +166,70 @@ export default function Seances() {
 						"& input::placeholder": { color: "#7a8fa6" },
 					}}
 				/>
+				<FormControl size="small">
+					<InputLabel
+						sx={{
+							color: "#7a8fa6",
+							fontSize: "0.82rem",
+							"&.Mui-focused": { color: "#22c55e" },
+						}}
+					>
+						Jour
+					</InputLabel>
+					<Select
+						value={jourFilter}
+						label="Jour"
+						onChange={(e) => setJourFilter(e.target.value)}
+						sx={{
+							background: "#111e2c",
+							color: "#e2e8f0",
+							fontFamily: "'Barlow',sans-serif",
+							fontSize: "0.88rem",
+							borderRadius: "6px",
+							minWidth: 160,
+							height: "40px",
+							"& .MuiOutlinedInput-notchedOutline": {
+								borderColor: "rgba(34,197,94,0.18)",
+							},
+							"&:hover .MuiOutlinedInput-notchedOutline": {
+								borderColor: "rgba(34,197,94,0.4)",
+							},
+							"&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+								borderColor: "#22c55e",
+							},
+							"& .MuiSvgIcon-root": { color: "#7a8fa6" },
+						}}
+						MenuProps={{
+							PaperProps: {
+								sx: {
+									background: "#0f1b27",
+									border: "1px solid rgba(34,197,94,0.18)",
+									"& .MuiMenuItem-root": {
+										fontFamily: "'Barlow',sans-serif",
+										fontSize: "0.88rem",
+										color: "#e2e8f0",
+										"&:hover": { background: "rgba(34,197,94,0.08)" },
+										"&.Mui-selected": {
+											background: "rgba(34,197,94,0.12)",
+											color: "#22c55e",
+										},
+									},
+								},
+							},
+						}}
+					>
+						<MenuItem value="">
+							<em style={{ color: "#7a8fa6" }}>Tous</em>
+						</MenuItem>
+						<MenuItem value="Lundi">Lundi</MenuItem>
+						<MenuItem value="Mardi">Mardi</MenuItem>
+						<MenuItem value="Mercredi">Mercredi</MenuItem>
+						<MenuItem value="Jeudi">Jeudi</MenuItem>
+						<MenuItem value="Vendredi">Vendredi</MenuItem>
+						<MenuItem value="Samedi">Samedi</MenuItem>
+						<MenuItem value="Dimanche">Dimanche</MenuItem>
+					</Select>
+				</FormControl>
 			</Box>
 
 			<Box
