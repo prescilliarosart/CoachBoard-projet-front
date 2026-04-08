@@ -10,10 +10,12 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import FormExercice from "../components/FormExercices";
+import FormExercices from "../components/FormExercices";
 import FormProgramme from "../components/FormProgramme";
+import FormSeances from "../components/FormSeances";
 import Navbar from "../components/Navbar";
 import SelectSeance from "../components/SelectSeance";
+import SelectExercice from "../components/selectExercice";
 import { ProgressionCanvas } from "../components/useProgressionCanvas";
 
 const STEPS = ["Programme", "Séance", "Exercice"];
@@ -23,6 +25,12 @@ export default function DashboardCoach() {
 	const [activeStep, setActiveStep] = useState(0);
 	const [programmeId, setProgrammeId] = useState<number | null>(null);
 	const [seanceId, setSeanceId] = useState<number | null>(null);
+	const [exerciceId, setExerciceId] = useState<number | null>(null);
+	const [modeSeance, setModeSeance] = useState<"select" | "create">("select");
+	const [modeExercice, setModeExercice] = useState<"select" | "create">(
+		"select",
+	);
+
 	const [done, setDone] = useState(false);
 
 	const handleProgrammeSuccess = (id: number) => {
@@ -35,13 +43,16 @@ export default function DashboardCoach() {
 		setActiveStep(2);
 	};
 
-	const handleExerciceSuccess = () => {
-		setActiveStep(2);
+	const handleExerciceSuccess = (id: number) => {
+		setExerciceId(id);
 	};
 
 	const handleReset = () => {
 		setProgrammeId(null);
 		setSeanceId(null);
+		setExerciceId(null);
+		setModeSeance("select");
+		setModeExercice("select");
 		setDone(false);
 		setActiveStep(0);
 	};
@@ -223,21 +234,61 @@ export default function DashboardCoach() {
 							<FormProgramme onSuccess={handleProgrammeSuccess} />
 						)}
 						{activeStep === 1 && programmeId && (
-							<SelectSeance onSuccess={handleSeanceSuccess} />
+							<>
+								<Box sx={{ display: "flex", gap: 1, mb: 2 }}>
+									<Button
+										variant={modeSeance === "select" ? "contained" : "outlined"}
+										onClick={() => setModeSeance("select")}
+									>
+										Choisir existante
+									</Button>
+									<Button
+										variant={modeSeance === "create" ? "contained" : "outlined"}
+										onClick={() => setModeSeance("create")}
+									>
+										Créer nouvelle
+									</Button>
+								</Box>
+								{modeSeance === "select" ? (
+									<SelectSeance onSuccess={handleSeanceSuccess} />
+								) : (
+									<FormSeances onSuccess={handleSeanceSuccess} />
+								)}
+							</>
 						)}
 						{activeStep === 2 && seanceId && (
 							<>
-								<FormExercice onSuccess={handleExerciceSuccess} />
+								<Box sx={{ display: "flex", gap: 1, mb: 2 }}>
+									<Button
+										variant={
+											modeExercice === "select" ? "contained" : "outlined"
+										}
+										onClick={() => setModeExercice("select")}
+									>
+										Choisir existant
+									</Button>
+									<Button
+										variant={
+											modeExercice === "create" ? "contained" : "outlined"
+										}
+										onClick={() => setModeExercice("create")}
+									>
+										Créer nouveau
+									</Button>
+								</Box>
+								{modeExercice === "select" ? (
+									<SelectExercice onSuccess={handleExerciceSuccess} />
+								) : (
+									<FormExercices onSuccess={handleExerciceSuccess} />
+								)}
 
 								<Box sx={{ display: "flex", gap: 2, mt: 3 }}>
 									<Button variant="outlined" onClick={() => setActiveStep(2)}>
 										Ajouter un autre exercice
 									</Button>
-
 									<Button variant="outlined" onClick={handleNewSeance}>
 										Ajouter une autre séance
 									</Button>
-
 									<Button variant="contained" onClick={handleFinish}>
 										Terminer le programme
 									</Button>
