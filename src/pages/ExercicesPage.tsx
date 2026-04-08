@@ -15,7 +15,6 @@ import {
 	Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import FormExercice from "../components/FormExercices";
 import Navbar from "../components/Navbar";
 import { useProgressionCanvas } from "../components/useProgressionCanvas";
@@ -252,7 +251,7 @@ export default function ExercicesPage() {
 					<FitnessCenterIcon sx={{ color: "#22c55e", fontSize: 22 }} />
 				</Box>
 				<Button
-					onClick={() => navigate("/exercices/nouveau")}
+					onClick={() => setShowForm(!showForm)}
 					startIcon={<AddIcon sx={{ fontSize: 15 }} />}
 					sx={{
 						background: "#22c55e",
@@ -273,7 +272,7 @@ export default function ExercicesPage() {
 						},
 					}}
 				>
-					Ajouter un exercice
+					{showForm ? "Annuler" : "Ajouter un exercice"}
 				</Button>
 			</Box>
 			<Box
@@ -286,6 +285,14 @@ export default function ExercicesPage() {
 					zIndex: 2,
 				}}
 			>
+				{showForm && (
+					<FormExercice
+						onSuccess={() => {
+							setShowForm(false);
+							fetchExercices();
+						}}
+					/>
+				)}
 				<Box sx={{ display: "flex", gap: "16px", alignItems: "center" }}>
 					<TextField
 						placeholder="Rechercher"
