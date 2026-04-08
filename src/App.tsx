@@ -6,9 +6,6 @@ import ExercicesPage from "./pages/ExercicesPage";
 import HomePage from "./pages/HomePage";
 import Login from "./pages/Login";
 import MonSuivi from "./pages/MonSuivi";
-import NouveauProgramme from "./pages/NouveauProgramme";
-import NouvelExercicePage from "./pages/NouvelExercicePage";
-import NouvelleSeance from "./pages/NouvelleSeance";
 import MonProgramme from "./pages/ProgrammeEleve";
 import Programmes from "./pages/Programmes";
 import Seances from "./pages/Seances";
@@ -44,14 +41,9 @@ function App() {
 			<Route path="/login" element={<Login />} />
 			<Route element={<ProtectedCoach />}>
 				<Route path="/dashboard-coach" element={<DashboardCoach />} />
-
 				<Route path="/exercices" element={<ExercicesPage />} />
-				<Route path="/exercices/nouveau" element={<NouvelExercicePage />} />
-
 				<Route path="/programmes" element={<Programmes />} />
-				<Route path="/programmes/nouveau" element={<NouveauProgramme />} />
 				<Route path="/seances" element={<Seances />} />
-				<Route path="/seances/nouvelle" element={<NouvelleSeance />} />
 			</Route>
 			<Route element={<ProtectedEleve />}>
 				<Route path="/mon-programme" element={<MonProgramme />} />
