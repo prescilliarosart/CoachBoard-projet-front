@@ -12,6 +12,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import FormExercices from "../components/FormExercices";
 import FormProgramme from "../components/FormProgramme";
+import FormSeanceExercice from "../components/FormSeanceExercice";
 import FormSeances from "../components/FormSeances";
 import Navbar from "../components/Navbar";
 import SelectSeance from "../components/SelectSeance";
@@ -30,6 +31,7 @@ export default function DashboardCoach() {
 	const [modeExercice, setModeExercice] = useState<"select" | "create">(
 		"select",
 	);
+	const [showParamsExercice, setShowParamsExercice] = useState(false);
 
 	const [done, setDone] = useState(false);
 
@@ -45,8 +47,8 @@ export default function DashboardCoach() {
 
 	const handleExerciceSuccess = (id: number) => {
 		setExerciceId(id);
+		setShowParamsExercice(true);
 	};
-
 	const handleReset = () => {
 		setProgrammeId(null);
 		setSeanceId(null);
@@ -281,7 +283,13 @@ export default function DashboardCoach() {
 								) : (
 									<FormExercices onSuccess={handleExerciceSuccess} />
 								)}
-
+								{showParamsExercice && exerciceId && seanceId && (
+									<FormSeanceExercice
+										seanceId={seanceId}
+										exerciceId={exerciceId}
+										onSuccess={() => setShowParamsExercice(false)}
+									/>
+								)}
 								<Box sx={{ display: "flex", gap: 2, mt: 3 }}>
 									<Button variant="outlined" onClick={() => setActiveStep(2)}>
 										Ajouter un autre exercice
