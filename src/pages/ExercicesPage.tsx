@@ -14,10 +14,12 @@ import {
 	Toolbar,
 	Typography,
 } from "@mui/material";
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import FormExercice from "../components/FormExercices";
 import Navbar from "../components/Navbar";
 import { useProgressionCanvas } from "../components/useProgressionCanvas";
+import { useAuth } from "../context/AuthContext";
 
 type TypeExercice = "Cardio" | "Muscu" | "Mobilité" | "HIIT" | "Stretching";
 const TYPES: TypeExercice[] = [
@@ -33,17 +35,6 @@ interface Exercice {
 	muscles: string[];
 	type: TypeExercice;
 }
-
-const MOCK: Exercice[] = [
-	{ id: 1, nom: "Squat", muscles: ["Fessiers", "Biceps"], type: "Muscu" },
-	{ id: 2, nom: "Pompes", muscles: ["Pectoraux", "Triceps"], type: "Muscu" },
-	{ id: 3, nom: "Gainage", muscles: ["Abdos", "Lombaires"], type: "Cardio" },
-	{ id: 4, nom: "Fentes", muscles: ["Fessiers", "Biceps"], type: "Muscu" },
-	{ id: 5, nom: "Burpees", muscles: ["Épaule", "Abdos"], type: "HIIT" },
-	{ id: 6, nom: "Tractions", muscles: ["Dos", "Biceps"], type: "Muscu" },
-	{ id: 7, nom: "Course", muscles: [], type: "Cardio" },
-	{ id: 8, nom: "Étirements", muscles: ["Épaule", "Dos"], type: "Stretching" },
-];
 
 const SX_SEL = {
 	background: "#111e2c",
@@ -180,19 +171,42 @@ function ExerciceCard({ ex }: { ex: Exercice }) {
 
 export default function ExercicesPage() {
 	useProgressionCanvas();
-	const navigate = useNavigate();
+	const { token } = useAuth();
+	const [exercices, setExercices] = useState<Exercice[]>([]);
+	const [showForm, setShowForm] = useState(false);
 	const [search, setSearch] = useState("");
 	const [typeFilter, setTypeFilter] = useState<TypeExercice | "">("");
+
+	const fetchExercices = () => {
+		fetch("http://localhost:3310/api/exercices", {
+			headers: { Authorization: `Bearer ${token}` },
+		})
+			.then((res) => res.json())
+			.then((data) => {
+				const mapped = data.map((ex: any) => ({
+					id: ex.ID_EXERCICE,
+					nom: ex.NOM,
+					type: ex.TYPE as TypeExercice,
+					muscles: ex.GROUPE_MUSCULAIRE ? ex.GROUPE_MUSCULAIRE.split(", ") : [],
+				}));
+				setExercices(mapped);
+			})
+			.catch((err) => console.error("Erreur chargement exercices :", err));
+	};
+
+	useEffect(() => {
+		fetchExercices();
+	}, []);
+
 	const filtered = useMemo(
 		() =>
-			MOCK.filter(
+			exercices.filter(
 				(ex) =>
 					ex.nom.toLowerCase().includes(search.toLowerCase()) &&
 					(typeFilter === "" || ex.type === typeFilter),
 			),
-		[search, typeFilter],
+		[search, typeFilter, exercices],
 	);
-
 	return (
 		<div style={{ position: "relative", zIndex: 1 }}>
 			<canvas
