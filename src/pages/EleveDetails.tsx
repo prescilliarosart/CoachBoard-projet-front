@@ -5,6 +5,8 @@ import {
 	Button,
 	Chip,
 	Container,
+	Grid,
+	Paper,
 	Toolbar,
 	Typography,
 } from "@mui/material";
@@ -84,13 +86,13 @@ function EleveDetails() {
 					p: 4,
 				}}
 			>
-				<Container maxWidth="lg" sx={{ py: 4 }}>
+				<Container maxWidth="sm">
 					<Button
 						startIcon={<ArrowBack />}
 						onClick={() => navigate(-1)}
 						sx={{
 							color: "#22c55e",
-							bbackgroundColor: "transparent",
+							backgroundColor: "transparent",
 							mb: 3,
 							"&:hover": {
 								backgroundColor: "rgba(34,197,94,0.1)",
@@ -100,81 +102,145 @@ function EleveDetails() {
 						Retour
 					</Button>
 
-					<Box
+					<Paper
 						sx={{
-							maxWidth: 480,
-							margin: "auto",
 							backgroundColor: "#0f1b27",
-							borderRadius: 3,
-							border: "1px solid rgba(34,197,94,0.13)",
+							borderRadius: "16px",
+							border: "1px solid rgba(34,197,94,0.15)",
+							overflow: "hidden",
 							p: 4,
 						}}
 					>
-						<Avatar
-							src={eleve.IMAGE_URL}
-							alt={`${eleve.PRENOM} ${eleve.NOM}`}
-							sx={{ width: 120, height: 120 }}
-						/>
-						<Typography
-							sx={{
-								fontFamily: "'Barlow Condensed',sans-serif",
-								fontStyle: "italic",
-								fontWeight: 700,
-								fontSize: "1.5rem",
-								color: "#e2e8f0",
-							}}
-						>
-							{eleve.PRENOM} {eleve.NOM}
-						</Typography>
-						<Box sx={{ display: "flex", gap: 1 }}>
-							<Chip label={`Objectif : ${eleve.OBJECTIF}`} color="success" />
-							<Chip label={`Niveau : ${eleve.NIVEAU}`} color="info" />
+						<Box sx={{ textAlign: "center", mb: 4 }}>
+							<Avatar
+								src={eleve.IMAGE_URL}
+								sx={{
+									width: 100,
+									height: 100,
+									margin: "0 auto 16px",
+									border: "3px solid #22c55e",
+									boxShadow: "0 0 15px rgba(34,197,94,0.2)",
+								}}
+							>
+								<Person sx={{ fontSize: "3rem" }} />
+							</Avatar>
+							<Typography
+								variant="h5"
+								sx={{
+									fontWeight: 800,
+									fontFamily: "'Barlow Condensed'",
+									fontStyle: "italic",
+									textTransform: "uppercase",
+									color: "#fff",
+								}}
+							>
+								{eleve.PRENOM} {eleve.NOM}
+							</Typography>
+							<Typography
+								sx={{ color: "rgba(226, 232, 240, 0.6)", fontSize: "0.9rem" }}
+							>
+								{eleve.EMAIL}
+							</Typography>
 						</Box>
-						<Typography
+
+						<Grid container spacing={3}>
+							<Grid size={6}>
+								<Typography
+									sx={{
+										color: "#22c55e",
+										fontSize: "0.75rem",
+										fontWeight: 700,
+										textTransform: "uppercase",
+									}}
+								>
+									Âge
+								</Typography>
+								<Typography
+									sx={{ fontSize: "1.2rem", fontWeight: 600, color: "#fff" }}
+								>
+									{eleve.AGE} ans
+								</Typography>
+							</Grid>
+							<Grid size={6}>
+								<Typography
+									sx={{
+										color: "#22c55e",
+										fontSize: "0.75rem",
+										fontWeight: 700,
+										textTransform: "uppercase",
+									}}
+								>
+									Poids
+								</Typography>
+								<Typography
+									sx={{ fontSize: "1.2rem", fontWeight: 600, color: "#fff" }}
+								>
+									{eleve.POIDS_INITIAL} kg
+								</Typography>
+							</Grid>
+							<Grid size={6}>
+								<Typography
+									sx={{
+										color: "#22c55e",
+										fontSize: "0.75rem",
+										fontWeight: 700,
+										textTransform: "uppercase",
+									}}
+								>
+									Taille
+								</Typography>
+								<Typography
+									sx={{ fontSize: "1.2rem", fontWeight: 600, color: "#fff" }}
+								>
+									{eleve.TAILLE} cm
+								</Typography>
+							</Grid>
+							<Grid size={6}>
+								<Typography
+									sx={{
+										color: "#22c55e",
+										fontSize: "0.75rem",
+										fontWeight: 700,
+										textTransform: "uppercase",
+									}}
+								>
+									Niveau
+								</Typography>
+								<Chip
+									label={eleve.NIVEAU}
+									size="small"
+									sx={{
+										bgcolor: "rgba(34,197,94,0.1)",
+										color: "#fff",
+										fontWeight: 600,
+									}}
+								/>
+							</Grid>
+						</Grid>
+
+						<Box
 							sx={{
-								fontFamily: "'Barlow Condensed',sans-serif",
-								fontStyle: "italic",
-								fontWeight: 700,
-								fontSize: "1.25rem",
-								color: "#e2e8f0",
+								mt: 4,
+								pt: 3,
+								borderTop: "1px solid rgba(255,255,255,0.05)",
 							}}
 						>
-							{eleve.EMAIL}
-						</Typography>
-						<Typography
-							sx={{
-								fontFamily: "'Barlow Condensed',sans-serif",
-								fontStyle: "italic",
-								fontWeight: 700,
-								fontSize: "1.25rem",
-								color: "#e2e8f0",
-							}}
-						>
-							{eleve.AGE} ans
-						</Typography>
-						<Typography
-							sx={{
-								fontFamily: "'Barlow Condensed',sans-serif",
-								fontStyle: "italic",
-								fontWeight: 700,
-								fontSize: "1.25rem",
-								color: "#e2e8f0",
-							}}
-						>
-							{eleve.POIDS_INITIAL} kg
-						</Typography>
-						<Typography
-							sx={{
-								fontFamily: "'Barlow Condensed',sans-serif",
-								fontStyle: "italic",
-								fontWeight: 700,
-								fontSize: "1.25rem",
-								color: "#e2e8f0",
-							}}
-						>
-							{eleve.TAILLE} cm
-						</Typography>
-					</Box>
+							<Typography
+								sx={{
+									color: "rgba(226, 232, 240, 0.5)",
+									fontSize: "0.8rem",
+									mb: 1,
+								}}
+							>
+								OBJECTIF ACTUEL
+							</Typography>
+							<Typography
+								sx={{ fontWeight: 700, color: "#fff", fontSize: "1.1rem" }}
+							>
+								{eleve.OBJECTIF}
+							</Typography>
+						</Box>
+					</Paper>
 				</Container>
 			</Box>
 		</div>
