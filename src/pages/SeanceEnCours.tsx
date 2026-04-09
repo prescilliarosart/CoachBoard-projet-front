@@ -310,4 +310,117 @@ export default function SeanceEnCours() {
 			</>
 		);
 	}
+	if (done) {
+		return (
+			<>
+				<Navbar links={elevLinks} />
+				<Box
+					sx={{
+						mt: 12,
+						maxWidth: 480,
+						mx: "auto",
+						p: 3,
+						display: "flex",
+						flexDirection: "column",
+						gap: 3,
+					}}
+				>
+					<Typography
+						sx={{
+							fontFamily: "'Barlow Condensed',sans-serif",
+							fontStyle: "italic",
+							fontWeight: 700,
+							fontSize: "1.6rem",
+							color: "#e2e8f0",
+							textTransform: "uppercase",
+						}}
+					>
+						Comment s'est passée la séance ?
+					</Typography>
+
+					<Box>
+						<Typography
+							sx={{
+								color: "#7a8fa6",
+								fontSize: "0.78rem",
+								fontFamily: "'Barlow',sans-serif",
+								textTransform: "uppercase",
+								letterSpacing: "0.08em",
+								mb: 1,
+							}}
+						>
+							Ressenti
+						</Typography>
+						<Box sx={{ display: "flex", gap: 2 }}>
+							{(["Facile", "Moyen", "Difficile"] as const).map((r) => (
+								<Box
+									key={r}
+									onClick={() => setRessenti(r)}
+									sx={{
+										flex: 1,
+										py: 1.5,
+										borderRadius: "6px",
+										cursor: "pointer",
+										textAlign: "center",
+										border:
+											ressenti === r
+												? "1px solid #22c55e"
+												: "1px solid rgba(34,197,94,0.2)",
+										background:
+											ressenti === r
+												? "rgba(34,197,94,0.15)"
+												: "rgba(255,255,255,0.03)",
+										transition: "all 0.18s",
+									}}
+								>
+									<Typography
+										sx={{
+											color: ressenti === r ? "#22c55e" : "#7a8fa6",
+											fontFamily: "'Barlow',sans-serif",
+											fontSize: "0.88rem",
+										}}
+									>
+										{r}
+									</Typography>
+								</Box>
+							))}
+						</Box>
+					</Box>
+
+					<TextField
+						label="Poids corporel (kg)"
+						value={poidsCorporel}
+						onChange={(e) => setPoidsCorporel(e.target.value)}
+						type="number"
+						sx={SX_IN}
+					/>
+					<TextField
+						label="Commentaire"
+						value={commentaires}
+						onChange={(e) => setCommentaires(e.target.value)}
+						multiline
+						rows={3}
+						sx={SX_IN}
+					/>
+
+					<Button
+						onClick={handleSubmit}
+						disabled={!ressenti}
+						sx={{
+							background: ressenti ? "#22c55e" : "rgba(34,197,94,0.2)",
+							color: "#0b1520",
+							fontFamily: "'Barlow Condensed',sans-serif",
+							fontStyle: "italic",
+							fontWeight: 700,
+							textTransform: "uppercase",
+							py: 1.5,
+							borderRadius: "4px",
+						}}
+					>
+						Enregistrer mon suivi
+					</Button>
+				</Box>
+			</>
+		);
+	}
 }
