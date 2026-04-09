@@ -478,3 +478,54 @@ function CalculIMC() {
 		</Paper>
 	);
 }
+
+export default function SuiviCoach() {
+	return (
+		<Box
+			sx={{
+				minHeight: "100vh",
+				background: BG,
+				fontFamily: "'Barlow Condensed', sans-serif",
+			}}
+		>
+			<Navbar links={navLinks} profilLabel="Profil" />
+			<Toolbar />
+			<Box sx={{ px: { xs: 2, md: 4 }, py: 3, maxWidth: 1200, mx: "auto" }}>
+				<Typography
+					variant="h5"
+					sx={{
+						color: "#fff",
+						fontFamily: "'Barlow Condensed', sans-serif",
+						fontWeight: 700,
+						letterSpacing: "0.04em",
+						mb: 3,
+					}}
+				>
+					Suivi de mes élèves 🏅
+				</Typography>
+				<Box
+					sx={{
+						display: "grid",
+						gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+						gap: 3,
+						mb: 3,
+					}}
+				>
+					<CourbeProgression />
+					<PhotoPlaceholder />
+				</Box>
+				<Box
+					sx={{
+						display: "grid",
+						gridTemplateColumns: { xs: "1fr", md: "1fr auto" },
+						gap: 3,
+						alignItems: "start",
+					}}
+				>
+					<TableauPerformances />
+					<CalculIMC />
+				</Box>
+			</Box>
+		</Box>
+	);
+}
