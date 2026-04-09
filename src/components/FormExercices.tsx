@@ -44,7 +44,7 @@ interface FormData {
 }
 
 interface Props {
-	onSuccess: () => void;
+	onSuccess: (id: number) => void;
 }
 
 const SX_IN = {
@@ -291,8 +291,8 @@ export default function FormExercice({ onSuccess }: Props) {
 			});
 
 			if (!response.ok) throw new Error("Erreur création exercice");
-
-			onSuccess();
+			const data = await response.json();
+			onSuccess(data.id);
 		} catch (err) {
 			console.error("Erreur FormExercice :", err);
 			alert("Impossible de créer l'exercice.");
