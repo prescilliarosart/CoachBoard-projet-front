@@ -4,6 +4,10 @@ import SearchIcon from "@mui/icons-material/Search";
 import {
 	Box,
 	Button,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogTitle,
 	FormControl,
 	InputAdornment,
 	InputLabel,
@@ -30,6 +34,8 @@ export default function Programmes() {
 	const [showForm, setShowForm] = useState(false);
 	const [search, setSearch] = useState("");
 	const [statutFilter, setStatutFilter] = useState("");
+	const [isOpen, setIsOpen] = useState(false);
+	const [selectedProgramme, setSelectedProgramme] = useState<any>(null);
 
 	useEffect(() => {
 		console.log("Token :", token);
@@ -50,6 +56,16 @@ export default function Programmes() {
 				console.error("Erreur lors de la récupération des programmes :", error);
 			});
 	}, []);
+
+	const handleOpenModal = (programme: any) => {
+		setSelectedProgramme(programme);
+		setIsOpen(true);
+	};
+
+	const handleCloseModal = () => {
+		setSelectedProgramme(null);
+		setIsOpen(false);
+	};
 
 	const handleDelete = async (
 		idProgramme: number,
@@ -292,7 +308,11 @@ export default function Programmes() {
 								const dateFin = new Date(programme.DATE_DEBUT);
 								dateFin.setDate(dateFin.getDate() + programme.duree_programme);
 								return (
-									<TableRow key={programme.ID_PROGRAMME}>
+									<TableRow
+										key={programme.ID_PROGRAMME}
+										onClick={() => handleOpenModal(programme)}
+										sx={{ cursor: "pointer" }}
+									>
 										<TableCell sx={{ color: "#fff" }}>
 											{new Date(programme.DATE_DEBUT).toLocaleDateString(
 												"fr-FR",
@@ -333,6 +353,15 @@ export default function Programmes() {
 					</Table>
 				</Box>
 			</Box>
+			<Dialog open={isOpen} onClose={handleCloseModal}>
+				<DialogTitle>{selectedProgramme?.nom_programme}</DialogTitle>
+				<DialogContent></DialogContent>
+				<DialogActions>
+					<Button onClick={handleCloseModal} sx={{ color: "#22c55e" }}>
+						Fermer
+					</Button>
+				</DialogActions>
+			</Dialog>
 		</div>
 	);
 }
