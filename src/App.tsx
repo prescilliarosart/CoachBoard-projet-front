@@ -11,6 +11,7 @@ import MonSuivi from "./pages/MonSuivi";
 import MonProgramme from "./pages/ProgrammeEleve";
 import Programmes from "./pages/Programmes";
 import Seances from "./pages/Seances";
+import SuiviCoach from "./pages/SuiviCoach";
 
 function ProtectedRoute({
 	allowedRoles,
@@ -48,6 +49,7 @@ function App() {
 				<Route path="/seances" element={<Seances />} />
 				<Route path="/eleves" element={<Eleves />} />
 				<Route path="/eleves/:eleveId" element={<EleveDetails />} />
+				<Route path="/suivi" element={<SuiviCoach />} />
 			</Route>
 			<Route element={<ProtectedEleve />}>
 				<Route path="/mon-programme" element={<MonProgramme />} />
