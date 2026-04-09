@@ -28,11 +28,20 @@ const TYPES: TypeExercice[] = [
 	"HIIT",
 	"Stretching",
 ];
+
 interface Exercice {
 	id: number;
 	nom: string;
 	muscles: string[];
 	type: TypeExercice;
+	image_url?: string;
+}
+
+interface GifData {
+	id: number;
+	nom: string;
+	categorie: string;
+	gif_url: string;
 }
 
 const SX_SEL = {
@@ -50,6 +59,7 @@ const SX_SEL = {
 	"&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "#22c55e" },
 	"& .MuiSvgIcon-root": { color: "#7a8fa6" },
 };
+
 const MENU = {
 	PaperProps: {
 		sx: {
@@ -71,9 +81,11 @@ const MENU = {
 
 function ExerciceCard({
 	ex,
+	gifUrl,
 	onDelete,
 }: {
 	ex: Exercice;
+	gifUrl: string | null;
 	onDelete: () => void;
 }) {
 	return (
@@ -100,11 +112,20 @@ function ExerciceCard({
 					alignItems: "center",
 					justifyContent: "center",
 					borderBottom: "1px solid rgba(34,197,94,0.08)",
+					overflow: "hidden",
 				}}
 			>
-				<Typography sx={{ color: "#3a5060", fontSize: "0.75rem" }}>
-					Image
-				</Typography>
+				{gifUrl ? (
+					<img
+						src={`http://localhost:3310${gifUrl}`}
+						alt={ex.nom}
+						style={{ width: "100%", height: "100%", objectFit: "contain" }}
+					/>
+				) : (
+					<Typography sx={{ color: "#3a5060", fontSize: "0.75rem" }}>
+						Aucun GIF
+					</Typography>
+				)}
 			</Box>
 			<Box
 				sx={{
@@ -192,6 +213,7 @@ export default function ExercicesPage() {
 	useProgressionCanvas();
 	const { token } = useAuth();
 	const [exercices, setExercices] = useState<Exercice[]>([]);
+	const [gifs, setGifs] = useState<GifData[]>([]);
 	const [showForm, setShowForm] = useState(false);
 	const [search, setSearch] = useState("");
 	const [typeFilter, setTypeFilter] = useState<TypeExercice | "">("");
@@ -207,10 +229,29 @@ export default function ExercicesPage() {
 					nom: ex.NOM,
 					type: ex.TYPE as TypeExercice,
 					muscles: ex.GROUPE_MUSCULAIRE ? ex.GROUPE_MUSCULAIRE.split(", ") : [],
+					image_url: ex.IMAGE_URL ?? null,
 				}));
 				setExercices(mapped);
 			})
 			.catch((err) => console.error("Erreur chargement exercices :", err));
+	};
+
+	const fetchGifs = () => {
+		fetch("http://localhost:3310/api/gifs")
+			.then((res) => res.json())
+			.then((data) => setGifs(data))
+			.catch((err) => console.error("Erreur chargement GIFs :", err));
+	};
+
+	const getGifForExercice = (ex: Exercice): string | null => {
+		if (ex.image_url) return ex.image_url;
+		const nomLower = ex.nom.toLowerCase();
+		const match = gifs.find(
+			(g) =>
+				g.nom.toLowerCase().includes(nomLower) ||
+				nomLower.includes(g.nom.toLowerCase()),
+		);
+		return match ? match.gif_url : null;
 	};
 
 	const handleDelete = async (id: number) => {
@@ -231,6 +272,7 @@ export default function ExercicesPage() {
 
 	useEffect(() => {
 		fetchExercices();
+		fetchGifs();
 	}, []);
 
 	const filtered = useMemo(
@@ -242,8 +284,18 @@ export default function ExercicesPage() {
 			),
 		[search, typeFilter, exercices],
 	);
+
 	return (
-		<div style={{ position: "relative", zIndex: 1 }}>
+		<div
+			style={{
+				position: "relative",
+				zIndex: 1,
+				height: "100vh",
+				display: "flex",
+				flexDirection: "column",
+				overflow: "hidden",
+			}}
+		>
 			<canvas
 				id="progression-canvas"
 				className="home__sticky-canvas"
@@ -257,8 +309,8 @@ export default function ExercicesPage() {
 				]}
 				profilLabel="Mon profil - Coach"
 			/>
-
 			<Toolbar />
+
 			<Box
 				sx={{
 					px: "36px",
@@ -269,6 +321,7 @@ export default function ExercicesPage() {
 					justifyContent: "space-between",
 					position: "relative",
 					zIndex: 2,
+					flexShrink: 0,
 				}}
 			>
 				<Box sx={{ display: "flex", alignItems: "center", gap: "10px" }}>
@@ -311,14 +364,23 @@ export default function ExercicesPage() {
 					{showForm ? "Annuler" : "Ajouter un exercice"}
 				</Button>
 			</Box>
+
 			<Box
 				sx={{
-					p: "32px 36px",
+					p: "24px 36px",
 					display: "flex",
 					flexDirection: "column",
-					gap: "24px",
+					gap: "20px",
 					position: "relative",
 					zIndex: 2,
+					flex: 1,
+					overflowY: "auto",
+					"&::-webkit-scrollbar": { width: "4px" },
+					"&::-webkit-scrollbar-track": { background: "transparent" },
+					"&::-webkit-scrollbar-thumb": {
+						background: "rgba(34,197,94,0.3)",
+						borderRadius: "2px",
+					},
 				}}
 			>
 				{showForm && (
@@ -329,94 +391,101 @@ export default function ExercicesPage() {
 						}}
 					/>
 				)}
-				<Box sx={{ display: "flex", gap: "16px", alignItems: "center" }}>
-					<TextField
-						placeholder="Rechercher"
-						value={search}
-						onChange={(e) => setSearch(e.target.value)}
-						size="small"
-						InputProps={{
-							startAdornment: (
-								<InputAdornment position="start">
-									<SearchIcon sx={{ color: "#7a8fa6", fontSize: 18 }} />
-								</InputAdornment>
-							),
-						}}
-						sx={{
-							"& .MuiOutlinedInput-root": {
-								background: "#111e2c",
-								borderRadius: "6px",
-								fontFamily: "'Barlow',sans-serif",
-								fontSize: "0.88rem",
-								color: "#e2e8f0",
-								height: "40px",
-								"& fieldset": { borderColor: "rgba(34,197,94,0.18)" },
-								"&:hover fieldset": { borderColor: "rgba(34,197,94,0.4)" },
-								"&.Mui-focused fieldset": { borderColor: "#22c55e" },
-							},
-							"& input::placeholder": { color: "#7a8fa6" },
-						}}
-					/>
-					<FormControl size="small">
-						<InputLabel
-							sx={{
-								color: "#7a8fa6",
-								fontSize: "0.82rem",
-								"&.Mui-focused": { color: "#22c55e" },
-							}}
-						>
-							Type d'exercice
-						</InputLabel>
-						<Select
-							value={typeFilter}
-							label="Type d'exercice"
-							onChange={(e) =>
-								setTypeFilter(e.target.value as TypeExercice | "")
-							}
-							sx={SX_SEL}
-							MenuProps={MENU}
-						>
-							<MenuItem value="">
-								<em style={{ color: "#7a8fa6" }}>Tous</em>
-							</MenuItem>
-							{TYPES.map((t) => (
-								<MenuItem key={t} value={t}>
-									{t}
-								</MenuItem>
-							))}
-						</Select>
-					</FormControl>
-				</Box>
-				{filtered.length === 0 ? (
-					<Box sx={{ textAlign: "center", py: "60px" }}>
-						<Typography
-							sx={{ color: "#7a8fa6", fontFamily: "'Barlow',sans-serif" }}
-						>
-							Aucun exercice trouvé
-						</Typography>
-					</Box>
-				) : (
-					<Box
-						sx={{
-							display: "grid",
-							gridTemplateColumns: "repeat(4, 1fr)",
-							gap: "16px",
-							"@media (max-width: 1100px)": {
-								gridTemplateColumns: "repeat(3, 1fr)",
-							},
-							"@media (max-width: 750px)": {
-								gridTemplateColumns: "repeat(2, 1fr)",
-							},
-						}}
-					>
-						{filtered.map((ex) => (
-							<ExerciceCard
-								key={ex.id}
-								ex={ex}
-								onDelete={() => handleDelete(ex.id)}
+
+				{!showForm && (
+					<>
+						<Box sx={{ display: "flex", gap: "16px", alignItems: "center" }}>
+							<TextField
+								placeholder="Rechercher"
+								value={search}
+								onChange={(e) => setSearch(e.target.value)}
+								size="small"
+								InputProps={{
+									startAdornment: (
+										<InputAdornment position="start">
+											<SearchIcon sx={{ color: "#7a8fa6", fontSize: 18 }} />
+										</InputAdornment>
+									),
+								}}
+								sx={{
+									"& .MuiOutlinedInput-root": {
+										background: "#111e2c",
+										borderRadius: "6px",
+										fontFamily: "'Barlow',sans-serif",
+										fontSize: "0.88rem",
+										color: "#e2e8f0",
+										height: "40px",
+										"& fieldset": { borderColor: "rgba(34,197,94,0.18)" },
+										"&:hover fieldset": { borderColor: "rgba(34,197,94,0.4)" },
+										"&.Mui-focused fieldset": { borderColor: "#22c55e" },
+									},
+									"& input::placeholder": { color: "#7a8fa6" },
+								}}
 							/>
-						))}
-					</Box>
+							<FormControl size="small">
+								<InputLabel
+									sx={{
+										color: "#7a8fa6",
+										fontSize: "0.82rem",
+										"&.Mui-focused": { color: "#22c55e" },
+									}}
+								>
+									Type d'exercice
+								</InputLabel>
+								<Select
+									value={typeFilter}
+									label="Type d'exercice"
+									onChange={(e) =>
+										setTypeFilter(e.target.value as TypeExercice | "")
+									}
+									sx={SX_SEL}
+									MenuProps={MENU}
+								>
+									<MenuItem value="">
+										<em style={{ color: "#7a8fa6" }}>Tous</em>
+									</MenuItem>
+									{TYPES.map((t) => (
+										<MenuItem key={t} value={t}>
+											{t}
+										</MenuItem>
+									))}
+								</Select>
+							</FormControl>
+						</Box>
+
+						{filtered.length === 0 ? (
+							<Box sx={{ textAlign: "center", py: "60px" }}>
+								<Typography
+									sx={{ color: "#7a8fa6", fontFamily: "'Barlow',sans-serif" }}
+								>
+									Aucun exercice trouvé
+								</Typography>
+							</Box>
+						) : (
+							<Box
+								sx={{
+									display: "grid",
+									gridTemplateColumns: "repeat(4, 1fr)",
+									gap: "16px",
+									"@media (max-width: 1100px)": {
+										gridTemplateColumns: "repeat(3, 1fr)",
+									},
+									"@media (max-width: 750px)": {
+										gridTemplateColumns: "repeat(2, 1fr)",
+									},
+								}}
+							>
+								{filtered.map((ex) => (
+									<ExerciceCard
+										key={ex.id}
+										ex={ex}
+										gifUrl={getGifForExercice(ex)}
+										onDelete={() => handleDelete(ex.id)}
+									/>
+								))}
+							</Box>
+						)}
+					</>
 				)}
 			</Box>
 		</div>
