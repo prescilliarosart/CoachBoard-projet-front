@@ -184,13 +184,18 @@ export default function FormProgramme({ onSuccess }: Props) {
 					fullWidth
 					sx={SX_IN}
 				/>
-				<TextField
-					label="Objectif"
-					value={form.objectif}
-					onChange={(e) => setForm({ ...form, objectif: e.target.value })}
-					fullWidth
-					sx={SX_IN}
-				/>
+				<FormControl fullWidth sx={SX_IN}>
+					<InputLabel>Objectif</InputLabel>
+					<Select
+						value={form.objectif}
+						label="Objectif"
+						onChange={(e) => setForm({ ...form, objectif: e.target.value })}
+					>
+						<MenuItem value="Perte de poids">Perte de poids</MenuItem>
+						<MenuItem value="Prise de masse">Prise de masse</MenuItem>
+						<MenuItem value="Remise en forme">Remise en forme</MenuItem>
+					</Select>
+				</FormControl>
 				<TextField
 					label="Durée (jours)"
 					type="number"
