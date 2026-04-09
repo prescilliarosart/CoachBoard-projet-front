@@ -109,7 +109,7 @@ export default function SeanceEnCours() {
 		fetch(`/api/eleves-programmes/eleve/${user.id}`, { headers })
 			.then((r) => r.json())
 			.then(async (progs) => {
-				const actif = progs.find((p: any) => p.statut === "actif");
+				const actif = progs[progs.length - 1];
 				if (!actif) {
 					setErreur("Aucun programme actif pour le moment.");
 					setLoading(false);
