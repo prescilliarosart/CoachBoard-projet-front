@@ -15,8 +15,8 @@ import FormProgramme from "../components/FormProgramme";
 import FormSeanceExercice from "../components/FormSeanceExercice";
 import FormSeances from "../components/FormSeances";
 import Navbar from "../components/Navbar";
-import SelectExercice from "../components/SelectExercice";
 import SelectSeance from "../components/SelectSeance";
+import SelectExercice from "../components/selectExercice";
 import { ProgressionCanvas } from "../components/useProgressionCanvas";
 import { useAuth } from "../context/AuthContext";
 
