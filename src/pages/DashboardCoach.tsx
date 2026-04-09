@@ -340,6 +340,7 @@ export default function DashboardCoach() {
 									<FormSeanceExercice
 										seanceId={seanceId}
 										exerciceId={exerciceId}
+										modeExercice={modeExercice}
 										onSuccess={() => setShowParamsExercice(false)}
 									/>
 								)}

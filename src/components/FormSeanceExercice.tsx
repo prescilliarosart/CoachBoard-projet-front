@@ -7,6 +7,7 @@ interface Props {
 	seanceId: number;
 	exerciceId: number;
 	onSuccess: () => void;
+	modeExercice: "select" | "create";
 }
 
 const SX_IN = {
@@ -41,6 +42,7 @@ const SX_BTN = {
 export default function FormSeanceExercice({
 	seanceId,
 	exerciceId,
+	modeExercice,
 	onSuccess,
 }: Props) {
 	const { token } = useAuth();
@@ -66,6 +68,7 @@ export default function FormSeanceExercice({
 					id_seance: seanceId,
 					id_exercice: exerciceId,
 					...form,
+					workflow: modeExercice,
 				}),
 			});
 			onSuccess();
