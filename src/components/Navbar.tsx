@@ -13,7 +13,7 @@ type NavbarProps = {
 
 export default function Navbar({ links }: NavbarProps) {
 	const navigate = useNavigate();
-	const { logout, token } = useAuth();
+	const { logout, token, user } = useAuth();
 	const location = useLocation();
 	return (
 		<AppBar
@@ -24,7 +24,14 @@ export default function Navbar({ links }: NavbarProps) {
 			}}
 		>
 			<Toolbar sx={{ alignItems: "center" }}>
-				<Link to="/dashboard-coach" style={{ textDecoration: "none" }}>
+				<Link
+					to={
+						(user as any)?.role === "coach"
+							? "/dashboard-coach"
+							: "/dashboard-eleves"
+					}
+					style={{ textDecoration: "none" }}
+				>
 					<Typography
 						variant="h6"
 						component="div"
