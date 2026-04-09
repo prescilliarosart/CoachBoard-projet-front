@@ -289,18 +289,6 @@ export default function ExercicesPage() {
 		fetchGifs();
 	}, []);
 
-	useEffect(() => {
-		if (exercices.length && gifs.length) {
-			console.table(
-				exercices.map((e) => ({
-					nom: e.nom,
-					type: e.type,
-					gif: getGifForExercice(e),
-				})),
-			);
-		}
-	}, [exercices, gifs]);
-
 	const filtered = useMemo(
 		() =>
 			exercices.filter(
