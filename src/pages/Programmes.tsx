@@ -476,6 +476,18 @@ export default function Programmes() {
 							gap: 2,
 						}}
 					>
+						<Typography variant="body2" sx={{ color: "#7a8fa6" }}>
+							Durée : {selectedProgramme?.duree} semaines · Du{" "}
+							{new Date(selectedProgramme?.date_debut).toLocaleDateString(
+								"fr-FR",
+							)}{" "}
+							au {(() => {
+								const fin = new Date(selectedProgramme?.date_debut);
+								fin.setDate(fin.getDate() + selectedProgramme?.duree * 7);
+								return fin.toLocaleDateString("fr-FR");
+							})()}
+						</Typography>
+
 						{seances.map((seance, index) => (
 							<Paper
 								key={seance.ID_SEANCE}
@@ -531,7 +543,7 @@ export default function Programmes() {
 												mb: 0.3,
 											}}
 										>
-											Séance
+											{seance.JOUR ? `Séance · ${seance.JOUR}` : "Séance"}
 										</Typography>
 										<Typography
 											sx={{
@@ -558,7 +570,7 @@ export default function Programmes() {
 										.filter((ex) => ex.ID_SEANCE === seance.ID_SEANCE)
 										.map((ex) => (
 											<Box
-												key={ex.ID_EXERCICE}
+												key={ex.ID_SEANCES_EXERCICES ?? ex.ID_EXERCICE}
 												sx={{
 													display: "flex",
 													alignItems: "center",
@@ -576,18 +588,13 @@ export default function Programmes() {
 												>
 													{ex.NOM_EXERCICE}
 												</Typography>
-												<Chip
-													label={`${ex.SERIES} × ${ex.REPS}`}
-													size="small"
-													sx={{
-														bgcolor: "rgba(34,197,94,0.08)",
-														color: "#22c55e",
-														fontWeight: 700,
-														fontSize: "0.75rem",
-														border: "1px solid rgba(34,197,94,0.2)",
-														borderRadius: "6px",
-													}}
-												/>
+												<Typography
+													sx={{ color: "#7a8fa6", fontSize: "0.8rem", ml: 2 }}
+												>
+													{ex.SERIES}x{ex.REPS}
+													{ex.CHARGE != null ? ` · ${ex.CHARGE}kg` : ""}
+													{ex.REPOS != null ? ` · repos ${ex.REPOS}s` : ""}
+												</Typography>
 											</Box>
 										))}
 								</Box>
