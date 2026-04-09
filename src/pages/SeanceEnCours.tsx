@@ -67,3 +67,143 @@ function getGif(ex: Exercice, gifs: GifData[]): string | null {
 
 	return null;
 }
+
+export default function SeanceEnCours() {
+	const { token, user } = useAuth();
+	const navigate = useNavigate();
+
+	const JOURS = [
+		"Dimanche",
+		"Lundi",
+		"Mardi",
+		"Mercredi",
+		"Jeudi",
+		"Vendredi",
+		"Samedi",
+	];
+	const aujourdhui = JOURS[new Date().getDay()];
+
+	const [exercices, setExercices] = useState<Exercice[]>([]);
+	const [gifs, setGifs] = useState<GifData[]>([]);
+	const [titreSeance, setTitreSeance] = useState("");
+	const [idSeance, setIdSeance] = useState<number | null>(null);
+	const [idEleveProgramme, setIdEleveProgramme] = useState<number | null>(null);
+	const [loading, setLoading] = useState(true);
+	const [erreur, setErreur] = useState("");
+
+	const [current, setCurrent] = useState(0);
+	const [restTimer, setRestTimer] = useState<number | null>(null);
+	const [done, setDone] = useState(false);
+	const [submitted, setSubmitted] = useState(false);
+
+	const [ressenti, setRessenti] = useState<
+		"Facile" | "Moyen" | "Difficile" | ""
+	>("");
+	const [commentaires, setCommentaires] = useState("");
+	const [poidsCorporel, setPoidsCorporel] = useState("");
+
+	useEffect(() => {
+		if (!user) return;
+		const headers = { Authorization: `Bearer ${token}` };
+
+		fetch(`/api/eleves-programmes/eleve/${user.id}`, { headers })
+			.then((r) => r.json())
+			.then(async (progs) => {
+				const actif = progs.find((p: any) => p.statut === "actif");
+				if (!actif) {
+					setErreur("Aucun programme actif pour le moment.");
+					setLoading(false);
+					return;
+				}
+				setIdEleveProgramme(actif.id_eleve_programme);
+
+				const seances = await fetch(
+					`/api/seances/programme/${actif.id_programme}`,
+					{ headers },
+				).then((r) => r.json());
+
+				const seanceDuJour = seances.find(
+					(s: any) => s.JOUR?.toLowerCase() === aujourdhui.toLowerCase(),
+				);
+
+				if (!seanceDuJour) {
+					setErreur(`Aucune séance prévue aujourd'hui (${aujourdhui}).`);
+					setLoading(false);
+					return;
+				}
+
+				setTitreSeance(seanceDuJour.TITRE);
+				setIdSeance(seanceDuJour.ID_SEANCE);
+
+				const exos = await fetch(
+					`/api/seances_exercices/seance/${seanceDuJour.ID_SEANCE}`,
+					{ headers },
+				).then((r) => r.json());
+
+				setExercices(exos);
+				setLoading(false);
+			})
+			.catch(() => {
+				setErreur("Erreur lors du chargement de la séance.");
+				setLoading(false);
+			});
+
+		fetch("/api/gifs")
+			.then((r) => r.json())
+			.then(setGifs)
+			.catch(console.error);
+	}, [user, token]);
+
+	// Countdown timer
+	useEffect(() => {
+		if (!restTimer) return;
+		const t = setTimeout(() => setRestTimer((r) => (r ?? 1) - 1), 1000);
+		return () => clearTimeout(t);
+	}, [restTimer]);
+
+	const handleNext = () => {
+		const repos = exercices[current].REPOS;
+		if (repos > 0 && restTimer === null) {
+			setRestTimer(repos);
+			return;
+		}
+		setRestTimer(null);
+		if (current + 1 >= exercices.length) {
+			setDone(true);
+		} else {
+			setCurrent((c) => c + 1);
+		}
+	};
+
+	const handleSubmit = async () => {
+		if (!ressenti || !idSeance || !idEleveProgramme) return;
+		try {
+			await Promise.all(
+				exercices.map((ex) =>
+					fetch("/api/suivi", {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+							Authorization: `Bearer ${token}`,
+						},
+						body: JSON.stringify({
+							charge_soulevee: ex.CHARGE,
+							reps_reelle: ex.REPS,
+							poids_corporel: poidsCorporel ? parseFloat(poidsCorporel) : null,
+							ressenti,
+							commentaires,
+							date: new Date().toISOString().split("T")[0],
+							statut: "terminé",
+							id_seance: idSeance,
+							id_seances_exercices: ex.ID_SEANCES_EXERCICES,
+							id_eleve_programme: idEleveProgramme,
+						}),
+					}),
+				),
+			);
+			setSubmitted(true);
+		} catch (err) {
+			console.error(err);
+		}
+	};
+}
