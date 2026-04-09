@@ -91,3 +91,170 @@ const performancesData = [
 		effort: "5/5",
 	},
 ];
+
+function CourbeProgression() {
+	const [exercice, setExercice] = useState("Squat");
+	const data = progressionData[exercice];
+	const maxPoids = Math.max(...data.map((d) => d.poids));
+
+	return (
+		<Paper
+			sx={{
+				background: CARD_BG,
+				border: `1px solid ${BORDER}`,
+				borderRadius: 2,
+				p: 2,
+			}}
+		>
+			<Typography
+				sx={{
+					color: "#7a8fa6",
+					fontSize: "0.78rem",
+					fontFamily: "'Barlow Condensed', sans-serif",
+					letterSpacing: "0.08em",
+					mb: 1,
+				}}
+			>
+				Courbe de progression
+			</Typography>
+			<FormControl size="small" sx={{ mb: 2, minWidth: 160 }}>
+				<InputLabel
+					sx={{
+						color: GREEN,
+						fontFamily: "'Barlow Condensed', sans-serif",
+						fontSize: "0.85rem",
+					}}
+				>
+					Exercices
+				</InputLabel>
+				<Select
+					value={exercice}
+					label="Exercices"
+					onChange={(e) => setExercice(e.target.value)}
+					sx={{
+						color: GREEN,
+						fontFamily: "'Barlow Condensed', sans-serif",
+						fontSize: "0.85rem",
+						"& .MuiOutlinedInput-notchedOutline": { borderColor: GREEN },
+						"& .MuiSvgIcon-root": { color: GREEN },
+					}}
+				>
+					{exercicesDisponibles.map((ex) => (
+						<MenuItem
+							key={ex}
+							value={ex}
+							sx={{
+								fontFamily: "'Barlow Condensed', sans-serif",
+								fontSize: "0.85rem",
+							}}
+						>
+							{ex}
+						</MenuItem>
+					))}
+				</Select>
+			</FormControl>
+			<ResponsiveContainer width="100%" height={220}>
+				<BarChart
+					data={data}
+					margin={{ top: 20, right: 10, left: -20, bottom: 0 }}
+				>
+					<CartesianGrid
+						strokeDasharray="3 3"
+						stroke="rgba(255,255,255,0.05)"
+					/>
+					<XAxis
+						dataKey="semaine"
+						tick={{
+							fill: "#7a8fa6",
+							fontSize: 11,
+							fontFamily: "'Barlow Condensed', sans-serif",
+						}}
+						axisLine={false}
+						tickLine={false}
+					/>
+					<YAxis
+						tick={{
+							fill: "#7a8fa6",
+							fontSize: 11,
+							fontFamily: "'Barlow Condensed', sans-serif",
+						}}
+						axisLine={false}
+						tickLine={false}
+					/>
+					<Tooltip
+						contentStyle={{
+							background: "#0b1520",
+							border: `1px solid ${GREEN}`,
+							borderRadius: 6,
+							fontFamily: "'Barlow Condensed', sans-serif",
+							color: "#fff",
+						}}
+						formatter={(value) => [`${String(value)} KG`, "Poids"]}
+					/>
+					<Bar dataKey="poids" radius={[3, 3, 0, 0]}>
+						{data.map((entry) => (
+							<Cell
+								key={entry.semaine}
+								fill={entry.poids === maxPoids ? GREEN : "rgba(34,197,94,0.45)"}
+							/>
+						))}
+					</Bar>
+				</BarChart>
+			</ResponsiveContainer>
+		</Paper>
+	);
+}
+
+function PhotoPlaceholder() {
+	return (
+		<Paper
+			sx={{
+				background: CARD_BG,
+				border: `1px solid ${BORDER}`,
+				borderRadius: 2,
+				display: "flex",
+				alignItems: "center",
+				justifyContent: "center",
+				minHeight: 280,
+				position: "relative",
+				overflow: "hidden",
+			}}
+		>
+			<Box
+				component="svg"
+				viewBox="0 0 100 100"
+				preserveAspectRatio="none"
+				sx={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
+			>
+				<line
+					x1="0"
+					y1="0"
+					x2="100"
+					y2="100"
+					stroke="rgba(34,197,94,0.15)"
+					strokeWidth="0.5"
+					vectorEffect="non-scaling-stroke"
+				/>
+				<line
+					x1="100"
+					y1="0"
+					x2="0"
+					y2="100"
+					stroke="rgba(34,197,94,0.15)"
+					strokeWidth="0.5"
+					vectorEffect="non-scaling-stroke"
+				/>
+			</Box>
+			<Typography
+				sx={{
+					color: "#7a8fa6",
+					fontFamily: "'Barlow Condensed', sans-serif",
+					fontSize: "0.9rem",
+					zIndex: 1,
+				}}
+			>
+				Texte ou photo à voir
+			</Typography>
+		</Paper>
+	);
+}
