@@ -206,4 +206,108 @@ export default function SeanceEnCours() {
 			console.error(err);
 		}
 	};
+
+	if (loading) {
+		return (
+			<>
+				<Navbar links={elevLinks} />
+				<Box sx={{ mt: 14, textAlign: "center" }}>
+					<Typography
+						sx={{ color: "#7a8fa6", fontFamily: "'Barlow',sans-serif" }}
+					>
+						Chargement de ta séance...
+					</Typography>
+				</Box>
+			</>
+		);
+	}
+
+	if (erreur) {
+		return (
+			<>
+				<Navbar links={elevLinks} />
+				<Box
+					sx={{
+						mt: 14,
+						textAlign: "center",
+						display: "flex",
+						flexDirection: "column",
+						alignItems: "center",
+						gap: 3,
+					}}
+				>
+					<Typography
+						sx={{ color: "#7a8fa6", fontFamily: "'Barlow',sans-serif" }}
+					>
+						{erreur}
+					</Typography>
+					<Button
+						onClick={() => navigate("/dashboard-eleves")}
+						sx={{
+							background: "#22c55e",
+							color: "#0b1520",
+							fontFamily: "'Barlow Condensed',sans-serif",
+							fontStyle: "italic",
+							fontWeight: 700,
+							textTransform: "uppercase",
+							px: 3,
+							borderRadius: "4px",
+						}}
+					>
+						Retour
+					</Button>
+				</Box>
+			</>
+		);
+	}
+
+	if (submitted) {
+		return (
+			<>
+				<Navbar links={elevLinks} />
+				<Box
+					sx={{
+						mt: 14,
+						display: "flex",
+						flexDirection: "column",
+						alignItems: "center",
+						gap: 3,
+					}}
+				>
+					<Typography
+						sx={{
+							fontFamily: "'Barlow Condensed',sans-serif",
+							fontStyle: "italic",
+							fontWeight: 700,
+							fontSize: "2rem",
+							color: "#22c55e",
+							textTransform: "uppercase",
+						}}
+					>
+						Séance terminée 🎉
+					</Typography>
+					<Typography
+						sx={{ color: "#7a8fa6", fontFamily: "'Barlow',sans-serif" }}
+					>
+						Ton suivi a bien été enregistré.
+					</Typography>
+					<Button
+						onClick={() => navigate("/dashboard-eleves")}
+						sx={{
+							background: "#22c55e",
+							color: "#0b1520",
+							fontFamily: "'Barlow Condensed',sans-serif",
+							fontStyle: "italic",
+							fontWeight: 700,
+							textTransform: "uppercase",
+							px: 3,
+							borderRadius: "4px",
+						}}
+					>
+						Retour au dashboard
+					</Button>
+				</Box>
+			</>
+		);
+	}
 }
