@@ -71,6 +71,14 @@ export default function DashboardCoach() {
 				body: JSON.stringify({ id_programme: programmeId }),
 			});
 		}
+
+		if (modeSeance === "select") {
+			await fetch(`/api/seances_exercices/seance/${id}`, {
+				method: "DELETE",
+				headers: { Authorization: `Bearer ${token}` },
+			});
+		}
+
 		setSeanceId(id);
 		setActiveStep(2);
 	};
