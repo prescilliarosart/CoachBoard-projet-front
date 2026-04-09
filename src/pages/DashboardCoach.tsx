@@ -18,6 +18,7 @@ import Navbar from "../components/Navbar";
 import SelectExercice from "../components/SelectExercice";
 import SelectSeance from "../components/SelectSeance";
 import { ProgressionCanvas } from "../components/useProgressionCanvas";
+import { useAuth } from "../context/AuthContext";
 
 const STEPS = ["Programme", "Séance", "Exercice"];
 
@@ -50,6 +51,7 @@ export default function DashboardCoach() {
 		"select",
 	);
 	const [showParamsExercice, setShowParamsExercice] = useState(false);
+	const { token } = useAuth();
 
 	const [done, setDone] = useState(false);
 
@@ -58,7 +60,17 @@ export default function DashboardCoach() {
 		setActiveStep(1);
 	};
 
-	const handleSeanceSuccess = (id: number) => {
+	const handleSeanceSuccess = async (id: number) => {
+		if (programmeId) {
+			await fetch(`/api/seances/${id}`, {
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`,
+				},
+				body: JSON.stringify({ id_programme: programmeId }),
+			});
+		}
 		setSeanceId(id);
 		setActiveStep(2);
 	};
