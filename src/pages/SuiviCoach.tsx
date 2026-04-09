@@ -258,3 +258,114 @@ function PhotoPlaceholder() {
 		</Paper>
 	);
 }
+
+function TableauPerformances() {
+	return (
+		<Box>
+			<Typography
+				sx={{
+					color: "#fff",
+					fontFamily: "'Barlow Condensed', sans-serif",
+					fontWeight: 600,
+					fontSize: "1rem",
+					mb: 2,
+					letterSpacing: "0.04em",
+				}}
+			>
+				Suivi des performances
+			</Typography>
+			<TableContainer
+				component={Paper}
+				sx={{
+					background: CARD_BG,
+					border: `1px solid ${BORDER}`,
+					borderRadius: 2,
+				}}
+			>
+				<Table size="small">
+					<TableHead>
+						<TableRow>
+							{["Poids", "Exercices", "Répétition", "Effort 1/5"].map((col) => (
+								<TableCell
+									key={col}
+									sx={{
+										color: "#7a8fa6",
+										fontFamily: "'Barlow Condensed', sans-serif",
+										fontSize: "0.82rem",
+										borderBottom: `1px solid ${BORDER}`,
+										letterSpacing: "0.05em",
+									}}
+								>
+									{col}
+								</TableCell>
+							))}
+						</TableRow>
+					</TableHead>
+					<TableBody>
+						{performancesData.map((row) => (
+							<TableRow key={row.id} sx={{ "&:last-child td": { border: 0 } }}>
+								<TableCell
+									sx={{
+										color: GREEN,
+										fontFamily: "'Barlow Condensed', sans-serif",
+										fontWeight: 700,
+										borderBottom: `1px solid ${BORDER}`,
+									}}
+								>
+									{row.poids}
+								</TableCell>
+								<TableCell
+									sx={{
+										color: "#fff",
+										fontFamily: "'Barlow Condensed', sans-serif",
+										borderBottom: `1px solid ${BORDER}`,
+									}}
+								>
+									{row.exercice}
+								</TableCell>
+								<TableCell
+									sx={{
+										color: "#fff",
+										fontFamily: "'Barlow Condensed', sans-serif",
+										borderBottom: `1px solid ${BORDER}`,
+									}}
+								>
+									{row.repetition}
+								</TableCell>
+								<TableCell
+									sx={{
+										color: "#fff",
+										fontFamily: "'Barlow Condensed', sans-serif",
+										borderBottom: `1px solid ${BORDER}`,
+									}}
+								>
+									{row.effort}
+								</TableCell>
+							</TableRow>
+						))}
+					</TableBody>
+				</Table>
+			</TableContainer>
+		</Box>
+	);
+}
+
+function CalculIMC() {
+	const [taille, setTaille] = useState("170");
+	const [poids, setPoids] = useState("65");
+	const [imc, setImc] = useState<number | null>(null);
+
+	const calculer = () => {
+		const t = Number.parseFloat(taille) / 100;
+		const p = Number.parseFloat(poids);
+		if (t > 0 && p > 0) setImc(Math.round((p / (t * t)) * 10) / 10);
+	};
+
+	const getImcLabel = (val: number) => {
+		if (val < 18.5)
+			return { label: "Insuffisance pondérale", color: "#60a5fa" };
+		if (val < 25) return { label: "Poids normal", color: GREEN };
+		if (val < 30) return { label: "Surpoids", color: "#facc15" };
+		return { label: "Obésité", color: "#ef4444" };
+	};
+}
