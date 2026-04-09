@@ -4,6 +4,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import {
 	Box,
 	Button,
+	Chip,
 	Dialog,
 	DialogActions,
 	DialogContent,
@@ -12,6 +13,7 @@ import {
 	InputAdornment,
 	InputLabel,
 	MenuItem,
+	Paper,
 	Select,
 	Table,
 	TableBody,
@@ -36,6 +38,8 @@ export default function Programmes() {
 	const [statutFilter, setStatutFilter] = useState("");
 	const [isOpen, setIsOpen] = useState(false);
 	const [selectedProgramme, setSelectedProgramme] = useState<any>(null);
+	const [seances, setSeances] = useState<any[]>([]);
+	const [exercices, setExercices] = useState<any[]>([]);
 
 	useEffect(() => {
 		console.log("Token :", token);
@@ -56,6 +60,43 @@ export default function Programmes() {
 				console.error("Erreur lors de la récupération des programmes :", error);
 			});
 	}, []);
+
+	useEffect(() => {
+		if (selectedProgramme) {
+			fetch(
+				`http://localhost:3310/api/seances/programme/${selectedProgramme.ID_PROGRAMME}`,
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				},
+			)
+				.then((res) => res.json())
+				.then((data) => setSeances(data));
+		}
+	}, [selectedProgramme]);
+
+	useEffect(() => {
+		if (seances.length > 0) {
+			Promise.all(
+				seances.map((seance) => {
+					console.log("ID_SEANCE :", seance.ID_SEANCE);
+					return fetch(
+						`http://localhost:3310/api/seances_exercices/seance/${seance.ID_SEANCE}`,
+						{
+							headers: {
+								Authorization: `Bearer ${token}`,
+							},
+						},
+					).then((res) => res.json());
+				}),
+			).then((results) => {
+				const allExercices = results.flat();
+				console.log("Exercices récupérés :", allExercices);
+				setExercices(allExercices);
+			});
+		}
+	}, [seances]);
 
 	const handleOpenModal = (programme: any) => {
 		setSelectedProgramme(programme);
@@ -179,7 +220,6 @@ export default function Programmes() {
 				</Button>
 			</Box>
 			<Box sx={{ margin: "40px 36px" }}>
-				{/* Formulaire de création */}
 				{showForm && (
 					<Box
 						sx={{
@@ -353,11 +393,231 @@ export default function Programmes() {
 					</Table>
 				</Box>
 			</Box>
-			<Dialog open={isOpen} onClose={handleCloseModal}>
-				<DialogTitle>{selectedProgramme?.nom_programme}</DialogTitle>
-				<DialogContent></DialogContent>
-				<DialogActions>
-					<Button onClick={handleCloseModal} sx={{ color: "#22c55e" }}>
+			<Dialog
+				open={isOpen}
+				onClose={handleCloseModal}
+				maxWidth="sm"
+				fullWidth
+				PaperProps={{
+					sx: {
+						backgroundColor: "#0f1b27",
+						borderRadius: "16px",
+						border: "1px solid rgba(34,197,94,0.15)",
+						overflow: "hidden",
+					},
+				}}
+			>
+				<DialogTitle sx={{ p: 0 }}>
+					<Box
+						sx={{
+							backgroundColor: "#0b1520",
+							px: 4,
+							py: 3,
+							borderBottom: "1px solid rgba(34,197,94,0.15)",
+						}}
+					>
+						<Typography
+							sx={{
+								color: "#22c55e",
+								fontSize: "0.7rem",
+								fontWeight: 700,
+								textTransform: "uppercase",
+								letterSpacing: "0.1em",
+								mb: 0.5,
+							}}
+						>
+							Programme
+						</Typography>
+						<Typography
+							variant="h6"
+							sx={{
+								fontWeight: 800,
+								fontFamily: "'Barlow Condensed'",
+								fontStyle: "italic",
+								textTransform: "uppercase",
+								color: "#fff",
+								lineHeight: 1.2,
+							}}
+						>
+							{selectedProgramme?.nom_programme}
+						</Typography>
+						<Box
+							sx={{ display: "flex", alignItems: "center", gap: 1.5, mt: 1 }}
+						>
+							<Typography
+								sx={{ color: "rgba(226,232,240,0.6)", fontSize: "0.85rem" }}
+							>
+								{selectedProgramme?.prenom_eleve} {selectedProgramme?.nom_eleve}
+							</Typography>
+							{selectedProgramme?.duree && (
+								<Chip
+									label={selectedProgramme.duree}
+									size="small"
+									sx={{
+										bgcolor: "rgba(34,197,94,0.1)",
+										color: "#22c55e",
+										fontWeight: 600,
+										fontSize: "0.7rem",
+										border: "1px solid rgba(34,197,94,0.3)",
+									}}
+								/>
+							)}
+						</Box>
+					</Box>
+				</DialogTitle>
+
+				<DialogContent sx={{ p: 0, "&.MuiDialogContent-root": { pt: 0 } }}>
+					<Box
+						sx={{
+							px: 4,
+							py: 3,
+							display: "flex",
+							flexDirection: "column",
+							gap: 2,
+						}}
+					>
+						{seances.map((seance, index) => (
+							<Paper
+								key={seance.ID_SEANCE}
+								sx={{
+									backgroundColor: "#0b1520",
+									borderRadius: "12px",
+									border: "1px solid rgba(255,255,255,0.05)",
+									overflow: "hidden",
+								}}
+							>
+								<Box
+									sx={{
+										px: 3,
+										py: 1.5,
+										borderBottom: "1px solid rgba(255,255,255,0.05)",
+										display: "flex",
+										alignItems: "center",
+										gap: 1.5,
+									}}
+								>
+									<Box
+										sx={{
+											width: 24,
+											height: 24,
+											borderRadius: "50%",
+											backgroundColor: "rgba(34,197,94,0.15)",
+											border: "1px solid rgba(34,197,94,0.4)",
+											display: "flex",
+											alignItems: "center",
+											justifyContent: "center",
+											flexShrink: 0,
+										}}
+									>
+										<Typography
+											sx={{
+												color: "#22c55e",
+												fontSize: "0.65rem",
+												fontWeight: 700,
+											}}
+										>
+											{index + 1}
+										</Typography>
+									</Box>
+									<Box>
+										<Typography
+											sx={{
+												color: "#22c55e",
+												fontSize: "0.65rem",
+												fontWeight: 700,
+												textTransform: "uppercase",
+												letterSpacing: "0.08em",
+												lineHeight: 1,
+												mb: 0.3,
+											}}
+										>
+											Séance
+										</Typography>
+										<Typography
+											sx={{
+												color: "#fff",
+												fontWeight: 700,
+												fontSize: "0.95rem",
+											}}
+										>
+											{seance.TITRE}
+										</Typography>
+									</Box>
+								</Box>
+
+								<Box
+									sx={{
+										px: 3,
+										py: 1.5,
+										display: "flex",
+										flexDirection: "column",
+										gap: 1,
+									}}
+								>
+									{exercices
+										.filter((ex) => ex.ID_SEANCE === seance.ID_SEANCE)
+										.map((ex) => (
+											<Box
+												key={ex.ID_EXERCICE}
+												sx={{
+													display: "flex",
+													alignItems: "center",
+													justifyContent: "space-between",
+													py: 0.75,
+													borderBottom: "1px solid rgba(255,255,255,0.04)",
+													"&:last-child": { borderBottom: "none" },
+												}}
+											>
+												<Typography
+													sx={{
+														color: "rgba(226,232,240,0.85)",
+														fontSize: "0.875rem",
+													}}
+												>
+													{ex.NOM_EXERCICE}
+												</Typography>
+												<Chip
+													label={`${ex.SERIES} × ${ex.REPS}`}
+													size="small"
+													sx={{
+														bgcolor: "rgba(34,197,94,0.08)",
+														color: "#22c55e",
+														fontWeight: 700,
+														fontSize: "0.75rem",
+														border: "1px solid rgba(34,197,94,0.2)",
+														borderRadius: "6px",
+													}}
+												/>
+											</Box>
+										))}
+								</Box>
+							</Paper>
+						))}
+					</Box>
+				</DialogContent>
+
+				<DialogActions
+					sx={{
+						px: 4,
+						py: 2.5,
+						borderTop: "1px solid rgba(255,255,255,0.05)",
+						backgroundColor: "#0b1520",
+					}}
+				>
+					<Button
+						onClick={handleCloseModal}
+						sx={{
+							color: "#22c55e",
+							backgroundColor: "rgba(34,197,94,0.08)",
+							border: "1px solid rgba(34,197,94,0.25)",
+							borderRadius: "10px",
+							px: 3,
+							fontWeight: 600,
+							"&:hover": {
+								backgroundColor: "rgba(34,197,94,0.15)",
+							},
+						}}
+					>
 						Fermer
 					</Button>
 				</DialogActions>
