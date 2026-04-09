@@ -28,7 +28,7 @@ export default function Navbar({ links }: NavbarProps) {
 					to={
 						(user as any)?.role === "coach"
 							? "/dashboard-coach"
-							: "/dashboard-eleve"
+							: "/dashboard-eleves"
 					}
 					style={{ textDecoration: "none" }}
 				>
