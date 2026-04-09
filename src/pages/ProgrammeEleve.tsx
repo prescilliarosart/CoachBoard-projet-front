@@ -130,7 +130,13 @@ export default function MonProgramme() {
 								{p.objectif}
 							</Typography>
 							<Typography variant="body2" sx={{ color: "#7a8fa6", mb: 3 }}>
-								Durée : {p.duree} semaines · Du {p.date_debut} au {p.date_fin}
+								Durée : {p.duree} semaines · Du{" "}
+								{new Date(p.date_debut).toLocaleDateString("fr-FR")} au{" "}
+								{(() => {
+									const fin = new Date(p.date_debut);
+									fin.setDate(fin.getDate() + p.duree * 7);
+									return fin.toLocaleDateString("fr-FR");
+								})()}
 							</Typography>
 
 							{/* Séances */}
