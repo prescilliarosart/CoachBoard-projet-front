@@ -38,8 +38,6 @@ const navLinks = [
 	{ label: "Programmes", path: "/programmes" },
 	{ label: "Séances", path: "/seances" },
 	{ label: "Exercices", path: "/exercices" },
-	{ label: "Élèves", path: "/eleves" },
-	{ label: "Suivi", path: "/suivi" },
 ];
 
 const exercicesDisponibles = ["Squat", "Développé couché", "Soulevé de terre"];
