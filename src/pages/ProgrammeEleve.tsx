@@ -8,7 +8,7 @@ import { useAuth } from "../context/AuthContext";
 type Exercice = {
 	ID_SEANCES_EXERCICES: number;
 	ID_EXERCICE: number;
-	NOM: string;
+	NOM_EXERCICE: string;
 	SERIES: number;
 	REPS: number;
 	CHARGE: number;
@@ -164,7 +164,7 @@ export default function MonProgramme() {
 											<Typography
 												sx={{ color: "#e2e8f0", flex: 1, fontSize: "0.9rem" }}
 											>
-												{e.NOM}
+												{e.NOM_EXERCICE}
 											</Typography>
 											<Typography sx={{ color: "#7a8fa6", fontSize: "0.8rem" }}>
 												{e.SERIES}×{e.REPS} · {e.CHARGE}kg · repos {e.REPOS}s
