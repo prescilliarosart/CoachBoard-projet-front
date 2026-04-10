@@ -141,7 +141,9 @@ export default function Programmes() {
 			if (!response2.ok)
 				throw new Error("Erreur lors de la suppression du programme");
 
-			setProgrammes(programmes.filter((p) => p.ID_PROGRAMME !== idProgramme));
+			setProgrammes((prev) =>
+				prev.filter((p) => p.ID_PROGRAMME !== idProgramme),
+			);
 		} catch (error) {
 			console.error("Erreur lors de la suppression du programme :", error);
 		}
@@ -350,24 +352,38 @@ export default function Programmes() {
 								return (
 									<TableRow
 										key={programme.ID_PROGRAMME}
-										onClick={() => handleOpenModal(programme)}
 										sx={{ cursor: "pointer" }}
 									>
-										<TableCell sx={{ color: "#fff" }}>
+										<TableCell
+											sx={{ color: "#fff" }}
+											onClick={() => handleOpenModal(programme)}
+										>
 											{new Date(programme.DATE_DEBUT).toLocaleDateString(
 												"fr-FR",
 											)}
 										</TableCell>
-										<TableCell sx={{ color: "#fff" }}>
+										<TableCell
+											sx={{ color: "#fff" }}
+											onClick={() => handleOpenModal(programme)}
+										>
 											{dateFin.toLocaleDateString("fr-FR")}
 										</TableCell>
-										<TableCell sx={{ color: "#fff" }}>
+										<TableCell
+											sx={{ color: "#fff" }}
+											onClick={() => handleOpenModal(programme)}
+										>
 											{programme.nom_programme}
 										</TableCell>
-										<TableCell sx={{ color: "#fff" }}>
+										<TableCell
+											sx={{ color: "#fff" }}
+											onClick={() => handleOpenModal(programme)}
+										>
 											{programme.STATUT}
 										</TableCell>
-										<TableCell sx={{ color: "#fff" }}>
+										<TableCell
+											sx={{ color: "#fff" }}
+											onClick={() => handleOpenModal(programme)}
+										>
 											{programme.nom_eleve} {programme.prenom_eleve}
 										</TableCell>
 										<TableCell>
@@ -398,12 +414,14 @@ export default function Programmes() {
 				onClose={handleCloseModal}
 				maxWidth="sm"
 				fullWidth
-				PaperProps={{
-					sx: {
-						backgroundColor: "#0f1b27",
-						borderRadius: "16px",
-						border: "1px solid rgba(34,197,94,0.15)",
-						overflow: "hidden",
+				slotProps={{
+					paper: {
+						sx: {
+							backgroundColor: "#0f1b27",
+							borderRadius: "16px",
+							border: "1px solid rgba(34,197,94,0.15)",
+							overflow: "hidden",
+						},
 					},
 				}}
 			>
@@ -477,13 +495,15 @@ export default function Programmes() {
 						}}
 					>
 						<Typography variant="body2" sx={{ color: "#7a8fa6" }}>
-							Durée : {selectedProgramme?.duree} semaines · Du{" "}
-							{new Date(selectedProgramme?.date_debut).toLocaleDateString(
+							Durée : {selectedProgramme?.duree_programme} semaines · Du{" "}
+							{new Date(selectedProgramme?.DATE_DEBUT).toLocaleDateString(
 								"fr-FR",
 							)}{" "}
 							au {(() => {
-								const fin = new Date(selectedProgramme?.date_debut);
-								fin.setDate(fin.getDate() + selectedProgramme?.duree * 7);
+								const fin = new Date(selectedProgramme?.DATE_DEBUT);
+								fin.setDate(
+									fin.getDate() + selectedProgramme?.duree_programme * 7,
+								);
 								return fin.toLocaleDateString("fr-FR");
 							})()}
 						</Typography>
