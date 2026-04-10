@@ -388,6 +388,7 @@ export default function ExercicesPage() {
 					position: "relative",
 					zIndex: 2,
 					flex: 1,
+					minHeight: 0,
 					overflowY: "auto",
 					"&::-webkit-scrollbar": { width: "4px" },
 					"&::-webkit-scrollbar-track": { background: "transparent" },

@@ -140,7 +140,7 @@ export default function FormExercice({ onSuccess }: Props) {
 		description: "",
 		muscles: [],
 		type: "",
-		gif_url: null,
+		gif_url: null, // ← ajoute ça
 	});
 
 	const toggle = (m: Muscle) =>
@@ -382,6 +382,8 @@ export default function FormExercice({ onSuccess }: Props) {
 								key={g.id}
 								onClick={() => setForm({ ...form, gif_url: g.gif_url })}
 								sx={{
+									position: "relative",
+									paddingTop: "100%",
 									borderRadius: "6px",
 									overflow: "hidden",
 									cursor: "pointer",
@@ -397,14 +399,20 @@ export default function FormExercice({ onSuccess }: Props) {
 									src={`http://localhost:3310${g.gif_url}`}
 									alt={g.nom}
 									style={{
+										position: "absolute",
+										top: 0,
+										left: 0,
 										width: "100%",
-										aspectRatio: "1/1",
+										height: "100%",
 										objectFit: "cover",
-										display: "block",
 									}}
 								/>
 								<Typography
 									sx={{
+										position: "absolute",
+										bottom: 0,
+										left: 0,
+										right: 0,
 										fontSize: "0.65rem",
 										color: "#7a8fa6",
 										fontFamily: "'Barlow',sans-serif",
