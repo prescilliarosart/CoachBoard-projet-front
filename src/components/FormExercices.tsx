@@ -11,7 +11,7 @@ import {
 	TextField,
 	Typography,
 } from "@mui/material";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 
 type TypeExercice = "Cardio" | "Muscu" | "Mobilité" | "HIIT" | "Stretching";
@@ -34,6 +34,14 @@ const MUSCLES = [
 ] as const;
 type Muscle = (typeof MUSCLES)[number];
 
+interface GifData {
+	id: number;
+	nom: string;
+	categorie: string;
+	gif_url: string;
+	muscles: string[];
+}
+
 interface FormData {
 	nom: string;
 	description: string;
@@ -41,6 +49,7 @@ interface FormData {
 	type: TypeExercice | "";
 	video: File | null;
 	image: File | null;
+	gif_url: string | null;
 }
 
 interface Props {
@@ -245,6 +254,8 @@ function UploadZone({
 export default function FormExercice({ onSuccess }: Props) {
 	const { token, user } = useAuth();
 	const [loading, setLoading] = useState(false);
+	const [gifs, setGifs] = useState<GifData[]>([]);
+	const [gifSearch, setGifSearch] = useState("");
 
 	const [form, setForm] = useState<FormData>({
 		nom: "",
@@ -253,6 +264,7 @@ export default function FormExercice({ onSuccess }: Props) {
 		type: "",
 		video: null,
 		image: null,
+		gif_url: null, // ← ajoute ça
 	});
 
 	const toggle = (m: Muscle) =>
@@ -262,6 +274,13 @@ export default function FormExercice({ onSuccess }: Props) {
 				? f.muscles.filter((x) => x !== m)
 				: [...f.muscles, m],
 		}));
+
+	useEffect(() => {
+		fetch("http://localhost:3310/api/gifs")
+			.then((r) => r.json())
+			.then(setGifs)
+			.catch(console.error);
+	}, []);
 
 	const handleSave = async () => {
 		if (!form.nom || !form.type) {
@@ -287,6 +306,7 @@ export default function FormExercice({ onSuccess }: Props) {
 					groupe_musculaire: form.muscles.join(", "),
 					type: form.type,
 					id_coach: idCoach,
+					image_url: form.gif_url,
 				}),
 			});
 
