@@ -1,5 +1,3 @@
-import AddIcon from "@mui/icons-material/Add";
-import CloseIcon from "@mui/icons-material/Close";
 import SaveIcon from "@mui/icons-material/Save";
 import {
 	Box,
@@ -11,7 +9,7 @@ import {
 	TextField,
 	Typography,
 } from "@mui/material";
-import { useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 
 type TypeExercice = "Cardio" | "Muscu" | "Mobilité" | "HIIT" | "Stretching";
@@ -34,13 +32,20 @@ const MUSCLES = [
 ] as const;
 type Muscle = (typeof MUSCLES)[number];
 
+interface GifData {
+	id: number;
+	nom: string;
+	categorie: string;
+	gif_url: string;
+	muscles: string[];
+}
+
 interface FormData {
 	nom: string;
 	description: string;
 	muscles: Muscle[];
 	type: TypeExercice | "";
-	video: File | null;
-	image: File | null;
+	gif_url: string | null;
 }
 
 interface Props {
@@ -124,135 +129,18 @@ const SX_BTN = {
 	},
 };
 
-function UploadZone({
-	label,
-	accept,
-	file,
-	onFile,
-}: {
-	label: string;
-	accept: string;
-	file: File | null;
-	onFile: (f: File | null) => void;
-}) {
-	const ref = useRef<HTMLInputElement>(null);
-	const preview = file ? URL.createObjectURL(file) : null;
-	const isVideo = accept.includes("video");
-
-	return (
-		<Box>
-			<Typography sx={SX_LB}>{label}</Typography>
-			<Box
-				onClick={() => !file && ref.current?.click()}
-				sx={{
-					width: "100%",
-					aspectRatio: "16/9",
-					background: "#111e2c",
-					border: "1px solid rgba(34,197,94,0.18)",
-					borderRadius: "8px",
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "center",
-					cursor: file ? "default" : "pointer",
-					position: "relative",
-					overflow: "hidden",
-					transition: "border-color 0.2s",
-					"&:hover": !file
-						? { borderColor: "#22c55e", background: "rgba(34,197,94,0.04)" }
-						: {},
-				}}
-			>
-				{preview ? (
-					<>
-						{isVideo ? (
-							<video
-								src={preview}
-								style={{ width: "100%", height: "100%", objectFit: "cover" }}
-								controls
-							>
-								<track kind="captions" />
-							</video>
-						) : (
-							<img
-								src={preview}
-								alt="preview"
-								style={{ width: "100%", height: "100%", objectFit: "cover" }}
-							/>
-						)}
-						<Box
-							onClick={(e) => {
-								e.stopPropagation();
-								onFile(null);
-							}}
-							sx={{
-								position: "absolute",
-								top: 8,
-								right: 8,
-								width: 24,
-								height: 24,
-								borderRadius: "50%",
-								background: "rgba(0,0,0,0.7)",
-								display: "flex",
-								alignItems: "center",
-								justifyContent: "center",
-								cursor: "pointer",
-								"&:hover": { background: "rgba(200,50,50,0.8)" },
-							}}
-						>
-							<CloseIcon sx={{ fontSize: 14, color: "#fff" }} />
-						</Box>
-					</>
-				) : (
-					<Box
-						sx={{
-							display: "flex",
-							flexDirection: "column",
-							alignItems: "center",
-							gap: "6px",
-						}}
-					>
-						<Box
-							sx={{
-								width: 32,
-								height: 32,
-								borderRadius: "50%",
-								background: "rgba(34,197,94,0.1)",
-								border: "1px solid rgba(34,197,94,0.25)",
-								display: "flex",
-								alignItems: "center",
-								justifyContent: "center",
-							}}
-						>
-							<AddIcon sx={{ fontSize: 18, color: "#22c55e" }} />
-						</Box>
-						<Typography sx={{ fontSize: "0.75rem", color: "#3a5060" }}>
-							{isVideo ? "Vidéo" : "Image"}
-						</Typography>
-					</Box>
-				)}
-			</Box>
-			<input
-				ref={ref}
-				type="file"
-				accept={accept}
-				style={{ display: "none" }}
-				onChange={(e) => onFile(e.target.files?.[0] ?? null)}
-			/>
-		</Box>
-	);
-}
-
 export default function FormExercice({ onSuccess }: Props) {
 	const { token, user } = useAuth();
 	const [loading, setLoading] = useState(false);
+	const [gifs, setGifs] = useState<GifData[]>([]);
+	const [gifSearch, setGifSearch] = useState("");
 
 	const [form, setForm] = useState<FormData>({
 		nom: "",
 		description: "",
 		muscles: [],
 		type: "",
-		video: null,
-		image: null,
+		gif_url: null, // ← ajoute ça
 	});
 
 	const toggle = (m: Muscle) =>
@@ -262,6 +150,13 @@ export default function FormExercice({ onSuccess }: Props) {
 				? f.muscles.filter((x) => x !== m)
 				: [...f.muscles, m],
 		}));
+
+	useEffect(() => {
+		fetch("http://localhost:3310/api/gifs")
+			.then((r) => r.json())
+			.then(setGifs)
+			.catch(console.error);
+	}, []);
 
 	const handleSave = async () => {
 		if (!form.nom || !form.type) {
@@ -287,6 +182,7 @@ export default function FormExercice({ onSuccess }: Props) {
 					groupe_musculaire: form.muscles.join(", "),
 					type: form.type,
 					id_coach: idCoach,
+					image_url: form.gif_url,
 				}),
 			});
 
@@ -427,19 +323,109 @@ export default function FormExercice({ onSuccess }: Props) {
 				</Box>
 			</Box>
 
-			<Box sx={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-				<UploadZone
-					label="Ajouter une vidéo"
-					accept="video/*"
-					file={form.video}
-					onFile={(f) => setForm({ ...form, video: f })}
+			<Box sx={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+				<Typography sx={SX_LB}>Choisir un GIF</Typography>
+
+				<TextField
+					placeholder="Rechercher un GIF..."
+					value={gifSearch}
+					onChange={(e) => setGifSearch(e.target.value)}
+					size="small"
+					sx={SX_IN}
 				/>
-				<UploadZone
-					label="Ajouter une photo"
-					accept="image/*"
-					file={form.image}
-					onFile={(f) => setForm({ ...form, image: f })}
-				/>
+
+				{form.gif_url && (
+					<Box sx={{ textAlign: "center" }}>
+						<Typography
+							sx={{
+								color: "#22c55e",
+								fontSize: "0.75rem",
+								fontFamily: "'Barlow',sans-serif",
+								mb: 1,
+							}}
+						>
+							GIF sélectionné ✓
+						</Typography>
+						<img
+							src={`http://localhost:3310${form.gif_url}`}
+							alt="gif sélectionné"
+							style={{
+								width: "100%",
+								maxHeight: "180px",
+								objectFit: "contain",
+								borderRadius: "8px",
+							}}
+						/>
+					</Box>
+				)}
+
+				<Box
+					sx={{
+						display: "grid",
+						gridTemplateColumns: "repeat(2, 1fr)",
+						gap: "8px",
+						maxHeight: "340px",
+						overflowY: "auto",
+						"&::-webkit-scrollbar": { width: "4px" },
+						"&::-webkit-scrollbar-thumb": {
+							background: "rgba(34,197,94,0.3)",
+							borderRadius: "2px",
+						},
+					}}
+				>
+					{gifs
+						.filter((g) =>
+							g.nom.toLowerCase().includes(gifSearch.toLowerCase()),
+						)
+						.map((g) => (
+							<Box
+								key={g.id}
+								onClick={() => setForm({ ...form, gif_url: g.gif_url })}
+								sx={{
+									position: "relative",
+									paddingTop: "100%",
+									borderRadius: "6px",
+									overflow: "hidden",
+									cursor: "pointer",
+									border:
+										form.gif_url === g.gif_url
+											? "2px solid #22c55e"
+											: "2px solid transparent",
+									transition: "border 0.18s",
+									"&:hover": { border: "2px solid rgba(34,197,94,0.5)" },
+								}}
+							>
+								<img
+									src={`http://localhost:3310${g.gif_url}`}
+									alt={g.nom}
+									style={{
+										position: "absolute",
+										top: 0,
+										left: 0,
+										width: "100%",
+										height: "100%",
+										objectFit: "cover",
+									}}
+								/>
+								<Typography
+									sx={{
+										position: "absolute",
+										bottom: 0,
+										left: 0,
+										right: 0,
+										fontSize: "0.65rem",
+										color: "#7a8fa6",
+										fontFamily: "'Barlow',sans-serif",
+										p: "4px 6px",
+										background: "#0f1b27",
+										textAlign: "center",
+									}}
+								>
+									{g.nom}
+								</Typography>
+							</Box>
+						))}
+				</Box>
 			</Box>
 		</Box>
 	);

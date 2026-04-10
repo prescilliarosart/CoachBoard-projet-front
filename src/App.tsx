@@ -10,6 +10,7 @@ import Login from "./pages/Login";
 import MonSuivi from "./pages/MonSuivi";
 import MonProgramme from "./pages/ProgrammeEleve";
 import Programmes from "./pages/Programmes";
+import SeanceEnCours from "./pages/SeanceEnCours";
 import Seances from "./pages/Seances";
 import SuiviCoach from "./pages/SuiviCoach";
 
@@ -53,7 +54,7 @@ function App() {
 			</Route>
 			<Route element={<ProtectedEleve />}>
 				<Route path="/mon-programme" element={<MonProgramme />} />
-
+				<Route path="/seance-en-cours" element={<SeanceEnCours />} />
 				<Route path="/mon-suivi" element={<MonSuivi />} />
 				<Route path="/dashboard-eleves" element={<DashboardEleves />} />
 			</Route>

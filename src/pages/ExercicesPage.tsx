@@ -42,6 +42,7 @@ interface GifData {
 	nom: string;
 	categorie: string;
 	gif_url: string;
+	muscles: string[];
 }
 
 const SX_SEL = {
@@ -245,13 +246,26 @@ export default function ExercicesPage() {
 
 	const getGifForExercice = (ex: Exercice): string | null => {
 		if (ex.image_url) return ex.image_url;
-		const nomLower = ex.nom.toLowerCase();
-		const match = gifs.find(
+
+		const nomLower = ex.nom.toLowerCase().trim();
+
+		// 1. Match par nom
+		const byNom = gifs.find(
 			(g) =>
 				g.nom.toLowerCase().includes(nomLower) ||
 				nomLower.includes(g.nom.toLowerCase()),
 		);
-		return match ? match.gif_url : null;
+		if (byNom) return byNom.gif_url;
+
+		// 2. Match par muscles
+		if (ex.muscles.length > 0) {
+			const byMuscle = gifs.find((g) =>
+				g.muscles?.some((m) => ex.muscles.includes(m)),
+			);
+			if (byMuscle) return byMuscle.gif_url;
+		}
+
+		return null;
 	};
 
 	const handleDelete = async (id: number) => {
@@ -374,6 +388,7 @@ export default function ExercicesPage() {
 					position: "relative",
 					zIndex: 2,
 					flex: 1,
+					minHeight: 0,
 					overflowY: "auto",
 					"&::-webkit-scrollbar": { width: "4px" },
 					"&::-webkit-scrollbar-track": { background: "transparent" },

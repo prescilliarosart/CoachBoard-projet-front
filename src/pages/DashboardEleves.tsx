@@ -95,10 +95,11 @@ export default function DashboarEleves() {
 					Démarrer une séance
 				</Button>
 			</Box>
-			<Typography>
-				<h2 style={{ color: "#fff", margin: "40px 0 24px", padding: "0 36px" }}>
-					Historique de mes séances
-				</h2>
+			<Typography
+				variant="h6"
+				sx={{ color: "#fff", margin: "40px 0 24px", padding: "0 36px" }}
+			>
+				Historique de mes séances
 			</Typography>
 			<Box
 				sx={{
