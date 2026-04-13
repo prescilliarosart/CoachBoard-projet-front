@@ -152,7 +152,7 @@ export default function FormExercice({ onSuccess }: Props) {
 		}));
 
 	useEffect(() => {
-		fetch("http://localhost:3310/api/gifs")
+		fetch("/api/gifs")
 			.then((r) => r.json())
 			.then(setGifs)
 			.catch(console.error);
@@ -170,7 +170,7 @@ export default function FormExercice({ onSuccess }: Props) {
 				(user as { ID_COACH?: number; id?: number })?.ID_COACH ||
 				(user as { ID_COACH?: number; id?: number })?.id ||
 				1;
-			const response = await fetch("http://localhost:3310/api/exercices", {
+			const response = await fetch("/api/exercices", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -347,7 +347,7 @@ export default function FormExercice({ onSuccess }: Props) {
 							GIF sélectionné ✓
 						</Typography>
 						<img
-							src={`http://localhost:3310${form.gif_url}`}
+							src={`${import.meta.env.VITE_API_URL}${form.gif_url}`}
 							alt="gif sélectionné"
 							style={{
 								width: "100%",
@@ -396,7 +396,7 @@ export default function FormExercice({ onSuccess }: Props) {
 								}}
 							>
 								<img
-									src={`http://localhost:3310${g.gif_url}`}
+									src={`${import.meta.env.VITE_API_URL}${g.gif_url}`}
 									alt={g.nom}
 									style={{
 										position: "absolute",

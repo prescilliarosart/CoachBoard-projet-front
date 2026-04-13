@@ -19,6 +19,7 @@ type Exercice = {
 	REPOS: number;
 	ORDRE: number;
 	GROUPE_MUSCULAIRE: string;
+	DESCRIPTION: string | null;
 };
 
 type GifData = {
@@ -107,9 +108,12 @@ export default function SeanceEnCours() {
 		const headers = { Authorization: `Bearer ${token}` };
 
 		fetch(`/api/eleves-programmes/eleve/${user.id}`, { headers })
-			.then((r) => r.json())
+			.then((r) => {
+				if (!r.ok) throw new Error("Erreur chargement programmes");
+				return r.json();
+			})
 			.then(async (progs) => {
-				const actif = progs[progs.length - 1];
+				const actif = progs.filter((p: any) => p.statut === "En cours").at(-1);
 				if (!actif) {
 					setErreur("Aucun programme actif pour le moment.");
 					setLoading(false);
@@ -120,12 +124,14 @@ export default function SeanceEnCours() {
 				const seances = await fetch(
 					`/api/seances/programme/${actif.id_programme}`,
 					{ headers },
-				).then((r) => r.json());
+				).then((r) => {
+					if (!r.ok) throw new Error("Erreur chargement séances");
+					return r.json();
+				});
 
 				const seanceDuJour = seances.find(
 					(s: any) => s.JOUR?.toLowerCase() === aujourdhui.toLowerCase(),
 				);
-
 				if (!seanceDuJour) {
 					setErreur(`Aucune séance prévue aujourd'hui (${aujourdhui}).`);
 					setLoading(false);
@@ -138,7 +144,10 @@ export default function SeanceEnCours() {
 				const exos = await fetch(
 					`/api/seances_exercices/seance/${seanceDuJour.ID_SEANCE}`,
 					{ headers },
-				).then((r) => r.json());
+				).then((r) => {
+					if (!r.ok) throw new Error("Erreur chargement exercices");
+					return r.json();
+				});
 
 				setExercices(exos);
 				setLoading(false);
@@ -149,32 +158,49 @@ export default function SeanceEnCours() {
 			});
 
 		fetch("/api/gifs")
-			.then((r) => r.json())
+			.then((r) => {
+				if (!r.ok) throw new Error();
+				return r.json();
+			})
 			.then(setGifs)
 			.catch(console.error);
 	}, [user, token]);
 
 	// Countdown timer
 	useEffect(() => {
-		if (!restTimer) return;
+		if (restTimer === null) return;
+		if (restTimer === 0) {
+			handleSkipRest();
+			return;
+		}
 		const t = setTimeout(() => setRestTimer((r) => (r ?? 1) - 1), 1000);
 		return () => clearTimeout(t);
 	}, [restTimer]);
 
-	const handleNext = () => {
-		const repos = exercices[current].REPOS;
-		if (repos > 0 && restTimer === null) {
-			setRestTimer(repos);
-			return;
-		}
+	const handleSkipRest = () => {
 		setRestTimer(null);
-		if (current + 1 >= exercices.length) {
+		const isLast = current + 1 >= exercices.length;
+		if (isLast) {
 			setDone(true);
 		} else {
 			setCurrent((c) => c + 1);
 		}
 	};
 
+	const handleNext = () => {
+		const repos = exercices[current].REPOS;
+		const isLast = current + 1 >= exercices.length;
+
+		if (repos > 0 && !isLast) {
+			setRestTimer(repos);
+			return;
+		}
+		if (isLast) {
+			setDone(true);
+		} else {
+			setCurrent((c) => c + 1);
+		}
+	};
 	const handleSubmit = async () => {
 		if (!ressenti || !idSeance || !idEleveProgramme) return;
 		try {
@@ -198,6 +224,8 @@ export default function SeanceEnCours() {
 							id_seances_exercices: ex.ID_SEANCES_EXERCICES,
 							id_eleve_programme: idEleveProgramme,
 						}),
+					}).then((r) => {
+						if (!r.ok) throw new Error("Erreur enregistrement suivi");
 					}),
 				),
 			);
@@ -507,7 +535,7 @@ export default function SeanceEnCours() {
 				>
 					{gifUrl ? (
 						<img
-							src={`http://localhost:3310${gifUrl}`}
+							src={`${import.meta.env.VITE_API_URL}${gifUrl}`}
 							alt={ex.NOM_EXERCICE}
 							style={{ width: "100%", height: "100%", objectFit: "contain" }}
 						/>
@@ -560,7 +588,27 @@ export default function SeanceEnCours() {
 						</Box>
 					))}
 				</Box>
-
+				{ex.DESCRIPTION && (
+					<Box
+						sx={{
+							p: 2,
+							background: "#0f1b27",
+							border: "1px solid rgba(34,197,94,0.13)",
+							borderRadius: "8px",
+						}}
+					>
+						<Typography
+							sx={{
+								color: "#7a8fa6",
+								fontFamily: "'Barlow',sans-serif",
+								fontSize: "0.85rem",
+								lineHeight: 1.6,
+							}}
+						>
+							{ex.DESCRIPTION}
+						</Typography>
+					</Box>
+				)}
 				{/* Timer repos */}
 				{restTimer !== null && restTimer > 0 && (
 					<Box
@@ -594,7 +642,7 @@ export default function SeanceEnCours() {
 							{restTimer}s
 						</Typography>
 						<Button
-							onClick={() => setRestTimer(0)}
+							onClick={handleSkipRest}
 							sx={{
 								color: "#7a8fa6",
 								fontFamily: "'Barlow',sans-serif",
@@ -609,7 +657,7 @@ export default function SeanceEnCours() {
 				)}
 
 				{/* Bouton principal */}
-				{(!restTimer || restTimer === 0) && (
+				{restTimer === null && (
 					<Button
 						onClick={handleNext}
 						sx={{
