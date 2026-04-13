@@ -168,7 +168,11 @@ export default function SeanceEnCours() {
 
 	// Countdown timer
 	useEffect(() => {
-		if (!restTimer) return;
+		if (restTimer === null) return;
+		if (restTimer === 0) {
+			handleSkipRest();
+			return;
+		}
 		const t = setTimeout(() => setRestTimer((r) => (r ?? 1) - 1), 1000);
 		return () => clearTimeout(t);
 	}, [restTimer]);
