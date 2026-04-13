@@ -19,6 +19,7 @@ type Exercice = {
 	REPOS: number;
 	ORDRE: number;
 	GROUPE_MUSCULAIRE: string;
+	DESCRIPTION: string | null;
 };
 
 type GifData = {
@@ -562,7 +563,27 @@ export default function SeanceEnCours() {
 						</Box>
 					))}
 				</Box>
-
+				{ex.DESCRIPTION && (
+					<Box
+						sx={{
+							p: 2,
+							background: "#0f1b27",
+							border: "1px solid rgba(34,197,94,0.13)",
+							borderRadius: "8px",
+						}}
+					>
+						<Typography
+							sx={{
+								color: "#7a8fa6",
+								fontFamily: "'Barlow',sans-serif",
+								fontSize: "0.85rem",
+								lineHeight: 1.6,
+							}}
+						>
+							{ex.DESCRIPTION}
+						</Typography>
+					</Box>
+				)}
 				{/* Timer repos */}
 				{restTimer !== null && restTimer > 0 && (
 					<Box
