@@ -523,7 +523,7 @@ export default function SeanceEnCours() {
 				>
 					{gifUrl ? (
 						<img
-							src={`http://localhost:3310${gifUrl}`}
+							src={`${import.meta.env.VITE_API_URL}${gifUrl}`}
 							alt={ex.NOM_EXERCICE}
 							style={{ width: "100%", height: "100%", objectFit: "contain" }}
 						/>
@@ -598,7 +598,7 @@ export default function SeanceEnCours() {
 					</Box>
 				)}
 				{/* Timer repos */}
-				{(restTimer === null || restTimer === 0) && (
+				{restTimer !== null && restTimer > 0 && (
 					<Box
 						sx={{
 							textAlign: "center",
