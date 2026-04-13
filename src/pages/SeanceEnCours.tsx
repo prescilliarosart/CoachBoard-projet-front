@@ -173,15 +173,9 @@ export default function SeanceEnCours() {
 		return () => clearTimeout(t);
 	}, [restTimer]);
 
-	const handleNext = () => {
-		const repos = exercices[current].REPOS;
-		const isLast = current + 1 >= exercices.length;
-
-		if (repos > 0 && restTimer === null && !isLast) {
-			setRestTimer(repos);
-			return;
-		}
+	const handleSkipRest = () => {
 		setRestTimer(null);
+		const isLast = current + 1 >= exercices.length;
 		if (isLast) {
 			setDone(true);
 		} else {
@@ -189,6 +183,20 @@ export default function SeanceEnCours() {
 		}
 	};
 
+	const handleNext = () => {
+		const repos = exercices[current].REPOS;
+		const isLast = current + 1 >= exercices.length;
+
+		if (repos > 0 && !isLast) {
+			setRestTimer(repos);
+			return;
+		}
+		if (isLast) {
+			setDone(true);
+		} else {
+			setCurrent((c) => c + 1);
+		}
+	};
 	const handleSubmit = async () => {
 		if (!ressenti || !idSeance || !idEleveProgramme) return;
 		try {
