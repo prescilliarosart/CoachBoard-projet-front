@@ -114,27 +114,9 @@ export default function Programmes() {
 		setIsOpen(false);
 	};
 
-	const handleDelete = async (
-		idProgramme: number,
-		idEleveProgramme: number,
-	) => {
+	const handleDelete = async (idProgramme: number) => {
 		try {
 			const response = await fetch(
-				`http://localhost:3310/api/eleves-programmes/${idEleveProgramme}`,
-				{
-					method: "DELETE",
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
-				},
-			);
-
-			if (!response.ok)
-				throw new Error(
-					"Erreur lors de la suppression de l'association élève-programme",
-				);
-
-			const response2 = await fetch(
 				`http://localhost:3310/api/programmes/${idProgramme}`,
 				{
 					method: "DELETE",
@@ -144,7 +126,7 @@ export default function Programmes() {
 				},
 			);
 
-			if (!response2.ok)
+			if (!response.ok)
 				throw new Error("Erreur lors de la suppression du programme");
 
 			setProgrammes((prev) =>
@@ -394,12 +376,7 @@ export default function Programmes() {
 										</TableCell>
 										<TableCell>
 											<DeleteIcon
-												onClick={() =>
-													handleDelete(
-														programme.ID_PROGRAMME,
-														programme.ID_ELEVE_PROGRAMME,
-													)
-												}
+												onClick={() => handleDelete(programme.ID_PROGRAMME)}
 												sx={{
 													color: "#7a8fa6",
 													cursor: "pointer",
