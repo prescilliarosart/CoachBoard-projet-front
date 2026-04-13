@@ -163,12 +163,14 @@ export default function SeanceEnCours() {
 
 	const handleNext = () => {
 		const repos = exercices[current].REPOS;
-		if (repos > 0 && restTimer === null) {
+		const isLast = current + 1 >= exercices.length;
+
+		if (repos > 0 && restTimer === null && !isLast) {
 			setRestTimer(repos);
 			return;
 		}
 		setRestTimer(null);
-		if (current + 1 >= exercices.length) {
+		if (isLast) {
 			setDone(true);
 		} else {
 			setCurrent((c) => c + 1);
