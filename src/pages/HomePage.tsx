@@ -103,8 +103,6 @@ export default function HomePage() {
 			<nav className={`home__nav${scrolled ? " home__nav--scrolled" : ""}`}>
 				<div className="home__nav-left">
 					<span className="home__nav-logo">Julien Marchal · Coach Sportif</span>
-					<span className="home__nav-link">Programmes</span>
-					<span className="home__nav-link">Progression</span>
 				</div>
 				<button
 					type="button"

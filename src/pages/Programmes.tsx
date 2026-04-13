@@ -41,6 +41,12 @@ export default function Programmes() {
 	const [seances, setSeances] = useState<any[]>([]);
 	const [exercices, setExercices] = useState<any[]>([]);
 
+	const formatDuree = (jours: number) => {
+		if (jours < 7) return `${jours} jour${jours > 1 ? "s" : ""}`;
+		const semaines = Math.floor(jours / 7);
+		return `${semaines} semaine${semaines > 1 ? "s" : ""}`;
+	};
+
 	useEffect(() => {
 		console.log("Token :", token);
 		fetch("http://localhost:3310/api/programmes", {
@@ -108,27 +114,9 @@ export default function Programmes() {
 		setIsOpen(false);
 	};
 
-	const handleDelete = async (
-		idProgramme: number,
-		idEleveProgramme: number,
-	) => {
+	const handleDelete = async (idProgramme: number) => {
 		try {
 			const response = await fetch(
-				`http://localhost:3310/api/eleves-programmes/${idEleveProgramme}`,
-				{
-					method: "DELETE",
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
-				},
-			);
-
-			if (!response.ok)
-				throw new Error(
-					"Erreur lors de la suppression de l'association élève-programme",
-				);
-
-			const response2 = await fetch(
 				`http://localhost:3310/api/programmes/${idProgramme}`,
 				{
 					method: "DELETE",
@@ -138,10 +126,12 @@ export default function Programmes() {
 				},
 			);
 
-			if (!response2.ok)
+			if (!response.ok)
 				throw new Error("Erreur lors de la suppression du programme");
 
-			setProgrammes(programmes.filter((p) => p.ID_PROGRAMME !== idProgramme));
+			setProgrammes((prev) =>
+				prev.filter((p) => p.ID_PROGRAMME !== idProgramme),
+			);
 		} catch (error) {
 			console.error("Erreur lors de la suppression du programme :", error);
 		}
@@ -350,34 +340,43 @@ export default function Programmes() {
 								return (
 									<TableRow
 										key={programme.ID_PROGRAMME}
-										onClick={() => handleOpenModal(programme)}
 										sx={{ cursor: "pointer" }}
 									>
-										<TableCell sx={{ color: "#fff" }}>
+										<TableCell
+											sx={{ color: "#fff" }}
+											onClick={() => handleOpenModal(programme)}
+										>
 											{new Date(programme.DATE_DEBUT).toLocaleDateString(
 												"fr-FR",
 											)}
 										</TableCell>
-										<TableCell sx={{ color: "#fff" }}>
+										<TableCell
+											sx={{ color: "#fff" }}
+											onClick={() => handleOpenModal(programme)}
+										>
 											{dateFin.toLocaleDateString("fr-FR")}
 										</TableCell>
-										<TableCell sx={{ color: "#fff" }}>
+										<TableCell
+											sx={{ color: "#fff" }}
+											onClick={() => handleOpenModal(programme)}
+										>
 											{programme.nom_programme}
 										</TableCell>
-										<TableCell sx={{ color: "#fff" }}>
+										<TableCell
+											sx={{ color: "#fff" }}
+											onClick={() => handleOpenModal(programme)}
+										>
 											{programme.STATUT}
 										</TableCell>
-										<TableCell sx={{ color: "#fff" }}>
+										<TableCell
+											sx={{ color: "#fff" }}
+											onClick={() => handleOpenModal(programme)}
+										>
 											{programme.nom_eleve} {programme.prenom_eleve}
 										</TableCell>
 										<TableCell>
 											<DeleteIcon
-												onClick={() =>
-													handleDelete(
-														programme.ID_PROGRAMME,
-														programme.ID_ELEVE_PROGRAMME,
-													)
-												}
+												onClick={() => handleDelete(programme.ID_PROGRAMME)}
 												sx={{
 													color: "#7a8fa6",
 													cursor: "pointer",
@@ -398,12 +397,14 @@ export default function Programmes() {
 				onClose={handleCloseModal}
 				maxWidth="sm"
 				fullWidth
-				PaperProps={{
-					sx: {
-						backgroundColor: "#0f1b27",
-						borderRadius: "16px",
-						border: "1px solid rgba(34,197,94,0.15)",
-						overflow: "hidden",
+				slotProps={{
+					paper: {
+						sx: {
+							backgroundColor: "#0f1b27",
+							borderRadius: "16px",
+							border: "1px solid rgba(34,197,94,0.15)",
+							overflow: "hidden",
+						},
 					},
 				}}
 			>
@@ -477,13 +478,13 @@ export default function Programmes() {
 						}}
 					>
 						<Typography variant="body2" sx={{ color: "#7a8fa6" }}>
-							Durée : {selectedProgramme?.duree} semaines · Du{" "}
-							{new Date(selectedProgramme?.date_debut).toLocaleDateString(
+							Durée : {formatDuree(selectedProgramme?.duree_programme)} · Du{" "}
+							{new Date(selectedProgramme?.DATE_DEBUT).toLocaleDateString(
 								"fr-FR",
 							)}{" "}
 							au {(() => {
-								const fin = new Date(selectedProgramme?.date_debut);
-								fin.setDate(fin.getDate() + selectedProgramme?.duree * 7);
+								const fin = new Date(selectedProgramme?.DATE_DEBUT);
+								fin.setDate(fin.getDate() + selectedProgramme?.duree_programme);
 								return fin.toLocaleDateString("fr-FR");
 							})()}
 						</Typography>

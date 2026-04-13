@@ -45,6 +45,12 @@ export default function MonProgramme() {
 	const { user, token } = useAuth();
 	const [programmes, setProgrammes] = useState<EleveProgramme[]>([]);
 
+	const formatDuree = (jours: number) => {
+		if (jours < 7) return `${jours} jour${jours > 1 ? "s" : ""}`;
+		const semaines = Math.floor(jours / 7);
+		return `${semaines} semaine${semaines > 1 ? "s" : ""}`;
+	};
+
 	useEffect(() => {
 		if (!user) return;
 
@@ -130,11 +136,11 @@ export default function MonProgramme() {
 								{p.objectif}
 							</Typography>
 							<Typography variant="body2" sx={{ color: "#7a8fa6", mb: 3 }}>
-								Durée : {p.duree} semaines · Du{" "}
+								Durée : {formatDuree(p.duree)} · Du{" "}
 								{new Date(p.date_debut).toLocaleDateString("fr-FR")} au{" "}
 								{(() => {
 									const fin = new Date(p.date_debut);
-									fin.setDate(fin.getDate() + p.duree * 7);
+									fin.setDate(fin.getDate() + p.duree);
 									return fin.toLocaleDateString("fr-FR");
 								})()}
 							</Typography>
