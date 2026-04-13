@@ -41,6 +41,12 @@ export default function Programmes() {
 	const [seances, setSeances] = useState<any[]>([]);
 	const [exercices, setExercices] = useState<any[]>([]);
 
+	const formatDuree = (jours: number) => {
+		if (jours < 7) return `${jours} jour${jours > 1 ? "s" : ""}`;
+		const semaines = Math.floor(jours / 7);
+		return `${semaines} semaine${semaines > 1 ? "s" : ""}`;
+	};
+
 	useEffect(() => {
 		console.log("Token :", token);
 		fetch("http://localhost:3310/api/programmes", {
@@ -495,15 +501,13 @@ export default function Programmes() {
 						}}
 					>
 						<Typography variant="body2" sx={{ color: "#7a8fa6" }}>
-							Durée : {selectedProgramme?.duree_programme} semaines · Du{" "}
+							Durée : {formatDuree(selectedProgramme?.duree_programme)} · Du{" "}
 							{new Date(selectedProgramme?.DATE_DEBUT).toLocaleDateString(
 								"fr-FR",
 							)}{" "}
 							au {(() => {
 								const fin = new Date(selectedProgramme?.DATE_DEBUT);
-								fin.setDate(
-									fin.getDate() + selectedProgramme?.duree_programme * 7,
-								);
+								fin.setDate(fin.getDate() + selectedProgramme?.duree_programme);
 								return fin.toLocaleDateString("fr-FR");
 							})()}
 						</Typography>
