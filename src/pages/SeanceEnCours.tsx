@@ -108,7 +108,10 @@ export default function SeanceEnCours() {
 		const headers = { Authorization: `Bearer ${token}` };
 
 		fetch(`/api/eleves-programmes/eleve/${user.id}`, { headers })
-			.then((r) => r.json())
+			.then((r) => {
+				if (!r.ok) throw new Error("Erreur chargement programmes");
+				return r.json();
+			})
 			.then(async (progs) => {
 				const actif = progs[progs.length - 1];
 				if (!actif) {
@@ -121,12 +124,14 @@ export default function SeanceEnCours() {
 				const seances = await fetch(
 					`/api/seances/programme/${actif.id_programme}`,
 					{ headers },
-				).then((r) => r.json());
+				).then((r) => {
+					if (!r.ok) throw new Error("Erreur chargement séances");
+					return r.json();
+				});
 
 				const seanceDuJour = seances.find(
 					(s: any) => s.JOUR?.toLowerCase() === aujourdhui.toLowerCase(),
 				);
-
 				if (!seanceDuJour) {
 					setErreur(`Aucune séance prévue aujourd'hui (${aujourdhui}).`);
 					setLoading(false);
@@ -139,7 +144,10 @@ export default function SeanceEnCours() {
 				const exos = await fetch(
 					`/api/seances_exercices/seance/${seanceDuJour.ID_SEANCE}`,
 					{ headers },
-				).then((r) => r.json());
+				).then((r) => {
+					if (!r.ok) throw new Error("Erreur chargement exercices");
+					return r.json();
+				});
 
 				setExercices(exos);
 				setLoading(false);
@@ -150,7 +158,10 @@ export default function SeanceEnCours() {
 			});
 
 		fetch("/api/gifs")
-			.then((r) => r.json())
+			.then((r) => {
+				if (!r.ok) throw new Error();
+				return r.json();
+			})
 			.then(setGifs)
 			.catch(console.error);
 	}, [user, token]);
@@ -201,6 +212,8 @@ export default function SeanceEnCours() {
 							id_seances_exercices: ex.ID_SEANCES_EXERCICES,
 							id_eleve_programme: idEleveProgramme,
 						}),
+					}).then((r) => {
+						if (!r.ok) throw new Error("Erreur enregistrement suivi");
 					}),
 				),
 			);
