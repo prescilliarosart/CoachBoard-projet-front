@@ -598,7 +598,7 @@ export default function SeanceEnCours() {
 					</Box>
 				)}
 				{/* Timer repos */}
-				{restTimer !== null && restTimer > 0 && (
+				{(restTimer === null || restTimer === 0) && (
 					<Box
 						sx={{
 							textAlign: "center",
