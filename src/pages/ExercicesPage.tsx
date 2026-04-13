@@ -118,7 +118,7 @@ function ExerciceCard({
 			>
 				{gifUrl ? (
 					<img
-						src={`http://localhost:3310${gifUrl}`}
+						src={`${import.meta.env.VITE_API_URL}${gifUrl}`}
 						alt={ex.nom}
 						style={{ width: "100%", height: "100%", objectFit: "contain" }}
 					/>
@@ -220,7 +220,7 @@ export default function ExercicesPage() {
 	const [typeFilter, setTypeFilter] = useState<TypeExercice | "">("");
 
 	const fetchExercices = () => {
-		fetch("http://localhost:3310/api/exercices", {
+		fetch("/api/exercices", {
 			headers: { Authorization: `Bearer ${token}` },
 		})
 			.then((res) => res.json())
@@ -238,7 +238,7 @@ export default function ExercicesPage() {
 	};
 
 	const fetchGifs = () => {
-		fetch("http://localhost:3310/api/gifs")
+		fetch("/api/gifs")
 			.then((res) => res.json())
 			.then((data) => setGifs(data))
 			.catch((err) => console.error("Erreur chargement GIFs :", err));
@@ -270,13 +270,10 @@ export default function ExercicesPage() {
 
 	const handleDelete = async (id: number) => {
 		try {
-			const response = await fetch(
-				`http://localhost:3310/api/exercices/${id}`,
-				{
-					method: "DELETE",
-					headers: { Authorization: `Bearer ${token}` },
-				},
-			);
+			const response = await fetch(`/api/exercices/${id}`, {
+				method: "DELETE",
+				headers: { Authorization: `Bearer ${token}` },
+			});
 			if (!response.ok) throw new Error("Erreur suppression");
 			fetchExercices();
 		} catch (err) {
