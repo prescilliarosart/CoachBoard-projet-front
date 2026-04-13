@@ -638,7 +638,7 @@ export default function SeanceEnCours() {
 							{restTimer}s
 						</Typography>
 						<Button
-							onClick={() => setRestTimer(0)}
+							onClick={handleSkipRest}
 							sx={{
 								color: "#7a8fa6",
 								fontFamily: "'Barlow',sans-serif",
@@ -653,7 +653,7 @@ export default function SeanceEnCours() {
 				)}
 
 				{/* Bouton principal */}
-				{(!restTimer || restTimer === 0) && (
+				{restTimer === null && (
 					<Button
 						onClick={handleNext}
 						sx={{
