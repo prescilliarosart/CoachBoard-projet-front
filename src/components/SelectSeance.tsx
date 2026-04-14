@@ -9,7 +9,7 @@ import {
 	Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useAuth } from "../context/AuthContext";
+import { apiFetch } from "../services/api";
 
 interface Seance {
 	ID_SEANCE: number;
@@ -56,18 +56,20 @@ const SX_BTN = {
 };
 
 export default function SelectSeance({ onSuccess }: Props) {
-	const { token } = useAuth();
 	const [seances, setSeances] = useState<Seance[]>([]);
 	const [selectedId, setSelectedId] = useState<number | "">("");
 
 	useEffect(() => {
-		fetch("http://localhost:3310/api/seances", {
-			headers: { Authorization: `Bearer ${token}` },
-		})
-			.then((res) => res.json())
-			.then(setSeances)
-			.catch((err) => console.error("Erreur chargement séances :", err));
-	}, [token]);
+		const fetchSeances = async () => {
+			try {
+				const data = await apiFetch<Seance[]>("/api/seances");
+				setSeances(data);
+			} catch (err) {
+				console.error("Erreur chargement séances :", err);
+			}
+		};
+		fetchSeances();
+	}, []);
 
 	const handleConfirm = () => {
 		if (!selectedId) {
