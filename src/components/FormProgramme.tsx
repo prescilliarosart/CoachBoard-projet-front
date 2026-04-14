@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { apiFetch } from "../services/api";
 
 interface FormData {
 	nomProgramme: string;
@@ -66,7 +67,7 @@ const SX_BTN = {
 };
 
 export default function FormProgramme({ onSuccess }: Props) {
-	const { token, user } = useAuth();
+	const { user } = useAuth();
 	const [eleves, setEleves] = useState<Eleve[]>([]);
 	const [loading, setLoading] = useState(false);
 
@@ -80,13 +81,16 @@ export default function FormProgramme({ onSuccess }: Props) {
 	});
 
 	useEffect(() => {
-		fetch("http://localhost:3310/api/eleves", {
-			headers: { Authorization: `Bearer ${token}` },
-		})
-			.then((res) => res.json())
-			.then(setEleves)
-			.catch((err) => console.error("Erreur chargement élèves :", err));
-	}, [token]);
+		const fetchEleves = async () => {
+			try {
+				const data = await apiFetch<Eleve[]>("/api/eleves");
+				setEleves(data);
+			} catch (err) {
+				console.error("Erreur chargement élèves :", err);
+			}
+		};
+		fetchEleves();
+	}, []);
 
 	const handleSave = async () => {
 		if (!form.nomProgramme || !form.objectif || !form.duree) {
@@ -98,12 +102,8 @@ export default function FormProgramme({ onSuccess }: Props) {
 		try {
 			const idCoach = (user as any)?.ID_COACH || (user as any)?.id || 1;
 
-			const response = await fetch("http://localhost:3310/api/programmes", {
+			const { id } = await apiFetch<{ id: number }>("/api/programmes", {
 				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: `Bearer ${token}`,
-				},
 				body: JSON.stringify({
 					nom: form.nomProgramme,
 					objectif: form.objectif,
@@ -112,35 +112,17 @@ export default function FormProgramme({ onSuccess }: Props) {
 				}),
 			});
 
-			if (!response.ok) {
-				const err = await response.json();
-				throw new Error(err.message || "Erreur création programme");
-			}
-
-			const { id } = await response.json();
-
 			if (form.eleveConcerne) {
-				const response2 = await fetch(
-					"http://localhost:3310/api/eleves-programmes",
-					{
-						method: "POST",
-						headers: {
-							"Content-Type": "application/json",
-							Authorization: `Bearer ${token}`,
-						},
-						body: JSON.stringify({
-							id_eleve: form.eleveConcerne,
-							id_programme: id,
-							date_debut: form.dateDebut,
-							statut: "En cours",
-							date_fin: null,
-						}),
-					},
-				);
-				if (!response2.ok) {
-					const err = await response2.json();
-					throw new Error(err.message || "Erreur association élève-programme");
-				}
+				await apiFetch("/api/eleves-programmes", {
+					method: "POST",
+					body: JSON.stringify({
+						id_eleve: form.eleveConcerne,
+						id_programme: id,
+						date_debut: form.dateDebut,
+						statut: "En cours",
+						date_fin: null,
+					}),
+				});
 			}
 
 			onSuccess(id);
