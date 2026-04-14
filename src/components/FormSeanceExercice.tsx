@@ -1,7 +1,7 @@
 import SaveIcon from "@mui/icons-material/Save";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import { useState } from "react";
-import { useAuth } from "../context/AuthContext";
+import { apiFetch } from "../services/api";
 
 interface Props {
 	seanceId: number;
@@ -45,7 +45,6 @@ export default function FormSeanceExercice({
 	modeExercice,
 	onSuccess,
 }: Props) {
-	const { token } = useAuth();
 	const [form, setForm] = useState({
 		series: 3,
 		reps: 10,
@@ -58,12 +57,8 @@ export default function FormSeanceExercice({
 	const handleSave = async () => {
 		setLoading(true);
 		try {
-			await fetch("http://localhost:3310/api/seances_exercices", {
+			await apiFetch("/api/seances_exercices", {
 				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: `Bearer ${token}`,
-				},
 				body: JSON.stringify({
 					id_seance: seanceId,
 					id_exercice: exerciceId,
