@@ -28,10 +28,9 @@ import { useEffect, useMemo, useState } from "react";
 import FormProgramme from "../components/FormProgramme";
 import Navbar from "../components/Navbar";
 import { ProgressionCanvas } from "../components/useProgressionCanvas";
-import { useAuth } from "../context/AuthContext";
+import { apiFetch } from "../services/api";
 
 export default function Programmes() {
-	const { token } = useAuth();
 	const [programmes, setProgrammes] = useState<any[]>([]);
 	const [showForm, setShowForm] = useState(false);
 	const [search, setSearch] = useState("");
@@ -48,60 +47,54 @@ export default function Programmes() {
 	};
 
 	useEffect(() => {
-		console.log("Token :", token);
-		fetch("http://localhost:3310/api/programmes", {
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-		})
-			.then((response) => {
-				console.log("Status :", response.status);
-				return response.json();
-			})
-			.then((data) => {
-				console.log("Data reçue :", data);
+		const fetchProgrammes = async () => {
+			try {
+				const data = await apiFetch<any[]>("/api/programmes");
 				setProgrammes(data);
-			})
-			.catch((error) => {
+			} catch (error) {
 				console.error("Erreur lors de la récupération des programmes :", error);
-			});
+			}
+		};
+		fetchProgrammes();
 	}, []);
 
 	useEffect(() => {
-		if (selectedProgramme) {
-			fetch(
-				`http://localhost:3310/api/seances/programme/${selectedProgramme.ID_PROGRAMME}`,
-				{
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
-				},
-			)
-				.then((res) => res.json())
-				.then((data) => setSeances(data));
-		}
+		const fetchSeances = async () => {
+			if (selectedProgramme) {
+				try {
+					const data = await apiFetch<any[]>(
+						`/api/seances/programme/${selectedProgramme.ID_PROGRAMME}`,
+					);
+					setSeances(data);
+				} catch (error) {
+					console.error("Erreur lors de la récupération des séances :", error);
+				}
+			}
+		};
+		fetchSeances();
 	}, [selectedProgramme]);
 
 	useEffect(() => {
-		if (seances.length > 0) {
-			Promise.all(
-				seances.map((seance) => {
-					console.log("ID_SEANCE :", seance.ID_SEANCE);
-					return fetch(
-						`http://localhost:3310/api/seances_exercices/seance/${seance.ID_SEANCE}`,
-						{
-							headers: {
-								Authorization: `Bearer ${token}`,
-							},
-						},
-					).then((res) => res.json());
-				}),
-			).then((results) => {
-				const allExercices = results.flat();
-				console.log("Exercices récupérés :", allExercices);
-				setExercices(allExercices);
-			});
-		}
+		const fetchExercices = async () => {
+			if (seances.length > 0) {
+				try {
+					const results = await Promise.all(
+						seances.map((seance) =>
+							apiFetch<any[]>(
+								`/api/seances_exercices/seance/${seance.ID_SEANCE}`,
+							),
+						),
+					);
+					setExercices(results.flat());
+				} catch (error) {
+					console.error(
+						"Erreur lors de la récupération des exercices :",
+						error,
+					);
+				}
+			}
+		};
+		fetchExercices();
 	}, [seances]);
 
 	const handleOpenModal = (programme: any) => {
@@ -116,19 +109,7 @@ export default function Programmes() {
 
 	const handleDelete = async (idProgramme: number) => {
 		try {
-			const response = await fetch(
-				`http://localhost:3310/api/programmes/${idProgramme}`,
-				{
-					method: "DELETE",
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
-				},
-			);
-
-			if (!response.ok)
-				throw new Error("Erreur lors de la suppression du programme");
-
+			await apiFetch(`/api/programmes/${idProgramme}`, { method: "DELETE" });
 			setProgrammes((prev) =>
 				prev.filter((p) => p.ID_PROGRAMME !== idProgramme),
 			);
