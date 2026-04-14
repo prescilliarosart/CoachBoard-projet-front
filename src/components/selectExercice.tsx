@@ -9,7 +9,7 @@ import {
 	Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useAuth } from "../context/AuthContext";
+import { apiFetch } from "../services/api";
 
 interface Exercice {
 	ID_EXERCICE: number;
@@ -56,18 +56,20 @@ const SX_BTN = {
 };
 
 export default function SelectExercice({ onSuccess }: Props) {
-	const { token } = useAuth();
 	const [exercices, setExercices] = useState<Exercice[]>([]);
 	const [selectedId, setSelectedId] = useState<number | "">("");
 
 	useEffect(() => {
-		fetch("http://localhost:3310/api/exercices", {
-			headers: { Authorization: `Bearer ${token}` },
-		})
-			.then((res) => res.json())
-			.then(setExercices)
-			.catch((err) => console.error("Erreur chargement exercices :", err));
-	}, [token]);
+		const fetchExercices = async () => {
+			try {
+				const data = await apiFetch<Exercice[]>("/api/exercices");
+				setExercices(data);
+			} catch (err) {
+				console.error("Erreur chargement exercices :", err);
+			}
+		};
+		fetchExercices();
+	}, []);
 
 	const handleConfirm = () => {
 		if (!selectedId) {
