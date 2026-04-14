@@ -10,7 +10,7 @@ import {
 	Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useAuth } from "../context/AuthContext";
+import { apiFetch } from "../services/api";
 
 interface FormData {
 	titre: string;
@@ -65,7 +65,6 @@ const SX_BTN = {
 };
 
 export default function FormSeance({ programmeId, onSuccess }: Props) {
-	const { token } = useAuth();
 	const [programmes, setProgrammes] = useState<Programme[]>([]);
 	const [loading, setLoading] = useState(false);
 
@@ -87,13 +86,16 @@ export default function FormSeance({ programmeId, onSuccess }: Props) {
 	// On charge les programmes seulement si pas de programmeId imposé
 	useEffect(() => {
 		if (programmeId) return;
-		fetch("http://localhost:3310/api/programmes", {
-			headers: { Authorization: `Bearer ${token}` },
-		})
-			.then((res) => res.json())
-			.then(setProgrammes)
-			.catch((err) => console.error("Erreur chargement programmes :", err));
-	}, [token, programmeId]);
+		const fetchProgrammes = async () => {
+			try {
+				const data = await apiFetch<Programme[]>("/api/programmes");
+				setProgrammes(data);
+			} catch (err) {
+				console.error("Erreur chargement programmes :", err);
+			}
+		};
+		fetchProgrammes();
+	}, [programmeId]);
 
 	const handleSave = async () => {
 		if (!form.titre || !form.jour || !form.ordre || !form.id_programme) {
@@ -103,12 +105,12 @@ export default function FormSeance({ programmeId, onSuccess }: Props) {
 
 		setLoading(true);
 		try {
-			const response = await fetch("http://localhost:3310/api/seances", {
+			const data = await apiFetch<{
+				id: number;
+				ID_SEANCE: number;
+				insertId: number;
+			}>("/api/seances", {
 				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: `Bearer ${token}`,
-				},
 				body: JSON.stringify({
 					titre: form.titre,
 					jour: form.jour,
@@ -117,12 +119,7 @@ export default function FormSeance({ programmeId, onSuccess }: Props) {
 				}),
 			});
 
-			if (!response.ok) throw new Error("Erreur création séance");
-
-			const data = await response.json();
-			// Le backend renvoie { id } ou l'objet créé selon l'implémentation
 			const seanceId: number = data.id ?? data.ID_SEANCE ?? data.insertId;
-
 			onSuccess(seanceId);
 		} catch (err) {
 			console.error("Erreur FormSeance :", err);
