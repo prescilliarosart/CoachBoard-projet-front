@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { ProgressionCanvas } from "../components/useProgressionCanvas";
 import { useAuth } from "../context/AuthContext";
+import { apiFetch } from "../services/api";
 
 function LoginPage() {
 	const { login } = useAuth();
@@ -26,18 +27,12 @@ function LoginPage() {
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		try {
-			const response = await fetch("http://localhost:3310/api/auth/signin", {
+			const { token } = await apiFetch<{ token: string }>("/api/auth/signin", {
 				method: "POST",
-				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(formData),
 			});
-			if (!response.ok) {
-				throw new Error("Identifiants incorrects");
-			}
 
-			const { token } = await response.json();
 			const loggedUser = login(token);
-
 			if (!loggedUser) return;
 
 			if (loggedUser.role === "coach") {

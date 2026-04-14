@@ -22,36 +22,29 @@ import { useEffect, useMemo, useState } from "react";
 import FormSeance from "../components/FormSeances";
 import Navbar from "../components/Navbar";
 import { ProgressionCanvas } from "../components/useProgressionCanvas";
-import { useAuth } from "../context/AuthContext";
+import { apiFetch } from "../services/api";
 
 export default function Seances() {
-	const { token } = useAuth();
 	const [seances, setSeances] = useState<any[]>([]);
 	const [showForm, setShowForm] = useState(false);
 	const [search, setSearch] = useState("");
 	const [jourFilter, setJourFilter] = useState("");
 
 	useEffect(() => {
-		fetch("http://localhost:3310/api/seances", {
-			headers: { Authorization: `Bearer ${token}` },
-		})
-			.then((res) => res.json())
-			.then((data) => {
-				console.log("Séances reçues :", data);
+		const fetchSeances = async () => {
+			try {
+				const data = await apiFetch<any[]>("/api/seances");
 				setSeances(data);
-			})
-			.catch((err) => console.error("Erreur chargement séances :", err));
+			} catch (err) {
+				console.error("Erreur chargement séances :", err);
+			}
+		};
+		fetchSeances();
 	}, []);
 
 	const handleDelete = async (id: number) => {
 		try {
-			const response = await fetch(`http://localhost:3310/api/seances/${id}`, {
-				method: "DELETE",
-				headers: { Authorization: `Bearer ${token}` },
-			});
-
-			if (!response.ok) throw new Error("Erreur lors de la suppression");
-
+			await apiFetch(`/api/seances/${id}`, { method: "DELETE" });
 			setSeances(seances.filter((s) => s.ID_SEANCE !== id));
 		} catch (err) {
 			console.error("Erreur suppression séance :", err);

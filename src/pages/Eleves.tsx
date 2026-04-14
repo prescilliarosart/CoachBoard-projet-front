@@ -3,27 +3,21 @@ import { useEffect, useState } from "react";
 import EleveCard from "../components/EleveCard";
 import Navbar from "../components/Navbar";
 import { ProgressionCanvas } from "../components/useProgressionCanvas";
-import { useAuth } from "../context/AuthContext";
+import { apiFetch } from "../services/api";
 
 export default function Eleves() {
-	const { token } = useAuth();
 	const [eleves, setEleves] = useState<any[]>([]);
 
 	useEffect(() => {
-		console.log("Token :", token);
-		fetch("http://localhost:3310/api/eleves", {
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-		})
-			.then((res) => res.json())
-			.then((data) => {
-				console.log("Data reçue:", data);
+		const fetchEleves = async () => {
+			try {
+				const data = await apiFetch<any[]>("/api/eleves");
 				setEleves(data);
-			})
-			.catch((err) =>
-				console.error("Erreur lors de la récupération des élèves :", err),
-			);
+			} catch (error) {
+				console.error("Erreur lors de la récupération des élèves :", error);
+			}
+		};
+		fetchEleves();
 	}, []);
 
 	return (
