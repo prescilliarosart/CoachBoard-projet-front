@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { ProgressionCanvas } from "../components/useProgressionCanvas";
-import { useAuth } from "../context/AuthContext";
+import { apiFetch } from "../services/api";
 
 type Eleve = {
 	ID_ELEVE: number;
@@ -30,20 +30,20 @@ type Eleve = {
 };
 
 function EleveDetails() {
-	const { token } = useAuth();
 	const { eleveId } = useParams();
 	const navigate = useNavigate();
 	const [eleve, setEleve] = useState<Eleve | null>(null);
 
 	useEffect(() => {
-		console.log("Token :", token);
-		fetch(`http://localhost:3310/api/eleves/${eleveId}`, {
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-		})
-			.then((res) => res.json())
-			.then((data) => setEleve(data));
+		const fetchEleve = async () => {
+			try {
+				const data = await apiFetch<Eleve>(`/api/eleves/${eleveId}`);
+				setEleve(data);
+			} catch (err) {
+				console.error("Erreur chargement élève :", err);
+			}
+		};
+		fetchEleve();
 	}, [eleveId]);
 
 	if (!eleve) {
