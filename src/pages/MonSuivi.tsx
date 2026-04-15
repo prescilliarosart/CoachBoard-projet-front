@@ -1,6 +1,7 @@
 import {
 	Box,
 	Button,
+	Chip,
 	FormControl,
 	InputLabel,
 	MenuItem,
@@ -259,7 +260,40 @@ function PhotoPlaceholder() {
 	);
 }
 
+function grouperParSeance(data: any[]) {
+	const map = new Map<string, any>();
+	for (const row of data) {
+		const key = `${row.DATE}_${row.titre_seance}`;
+		if (!map.has(key)) {
+			map.set(key, {
+				date: row.DATE,
+				titre_seance: row.titre_seance,
+				RESSENTI: row.RESSENTI,
+				POIDS_CORPOREL: row.POIDS_CORPOREL,
+				exercices: [],
+			});
+		}
+		map.get(key).exercices.push(row.nom_exercice);
+	}
+	return Array.from(map.values()).sort(
+		(a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+	);
+}
+
+function getRessentiColor(ressenti: string) {
+	switch (ressenti) {
+		case "Facile":
+			return "#6ffa60";
+		case "Moyen":
+			return "#fa7c15";
+		case "Difficile":
+			return "#fa151d";
+	}
+}
+
 function TableauPerformances({ data }: { data: any[] }) {
+	const seances = grouperParSeance(data);
+
 	return (
 		<Box>
 			<Typography
@@ -285,7 +319,13 @@ function TableauPerformances({ data }: { data: any[] }) {
 				<Table size="small">
 					<TableHead>
 						<TableRow>
-							{["Poids", "Exercices", "Répétition", "Effort 1/5"].map((col) => (
+							{[
+								"Date",
+								"Séance",
+								"Poids corporel",
+								"Ressenti",
+								"Exercices",
+							].map((col) => (
 								<TableCell
 									key={col}
 									sx={{
@@ -302,8 +342,11 @@ function TableauPerformances({ data }: { data: any[] }) {
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{performancesData.map((row) => (
-							<TableRow key={row.id} sx={{ "&:last-child td": { border: 0 } }}>
+						{seances.map((seance) => (
+							<TableRow
+								key={`${seance.DATE}_${seance.titre_seance}`}
+								sx={{ "&:last-child td": { border: 0 } }}
+							>
 								<TableCell
 									sx={{
 										color: GREEN,
@@ -312,7 +355,12 @@ function TableauPerformances({ data }: { data: any[] }) {
 										borderBottom: `1px solid ${BORDER}`,
 									}}
 								>
-									{row.poids}
+									{new Date(seance.date).toLocaleDateString("fr-FR", {
+										day: "2-digit",
+										month: "short",
+										year: "numeric",
+										timeZone: "UTC",
+									})}
 								</TableCell>
 								<TableCell
 									sx={{
@@ -321,7 +369,7 @@ function TableauPerformances({ data }: { data: any[] }) {
 										borderBottom: `1px solid ${BORDER}`,
 									}}
 								>
-									{row.exercice}
+									{seance.titre_seance}
 								</TableCell>
 								<TableCell
 									sx={{
@@ -330,7 +378,23 @@ function TableauPerformances({ data }: { data: any[] }) {
 										borderBottom: `1px solid ${BORDER}`,
 									}}
 								>
-									{row.repetition}
+									{seance.POIDS_CORPOREL ? `${seance.POIDS_CORPOREL} kg` : "—"}
+								</TableCell>
+								<TableCell
+									sx={{
+										borderBottom: `1px solid ${BORDER}`,
+									}}
+								>
+									<Chip
+										label={seance.RESSENTI ?? "-"}
+										size="small"
+										sx={{
+											bgcolor: `${getRessentiColor(seance.RESSENTI)}20`,
+											color: getRessentiColor(seance.RESSENTI),
+											fontWeight: 600,
+											fontFamily: "'Barlow Condensed', sans-serif",
+										}}
+									/>
 								</TableCell>
 								<TableCell
 									sx={{
@@ -339,7 +403,7 @@ function TableauPerformances({ data }: { data: any[] }) {
 										borderBottom: `1px solid ${BORDER}`,
 									}}
 								>
-									{row.effort}
+									{seance.exercices.join(", ")}
 								</TableCell>
 							</TableRow>
 						))}
@@ -486,7 +550,10 @@ export default function MonSuivi() {
 	useEffect(() => {
 		if (!user) return;
 		apiFetch<any[]>(`/api/suivi/eleve/${user.id}`)
-			.then((data) => setSuivi(data))
+			.then((data) => {
+				console.log("Données de suivi reçues :", data);
+				setSuivi(data);
+			})
 			.catch(console.error);
 	}, [user]);
 
