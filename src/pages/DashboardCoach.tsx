@@ -18,7 +18,7 @@ import Navbar from "../components/Navbar";
 import SelectSeance from "../components/SelectSeance";
 import SelectExercice from "../components/selectExercice";
 import { ProgressionCanvas } from "../components/useProgressionCanvas";
-import { useAuth } from "../context/AuthContext";
+import { apiFetch } from "../services/api";
 
 const STEPS = ["Programme", "Séance", "Exercice"];
 
@@ -51,7 +51,6 @@ export default function DashboardCoach() {
 		"select",
 	);
 	const [showParamsExercice, setShowParamsExercice] = useState(false);
-	const { token } = useAuth();
 
 	const [done, setDone] = useState(false);
 
@@ -62,23 +61,16 @@ export default function DashboardCoach() {
 
 	const handleSeanceSuccess = async (id: number) => {
 		if (programmeId) {
-			await fetch(`/api/seances/${id}`, {
+			await apiFetch(`/api/seances/${id}`, {
 				method: "PUT",
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: `Bearer ${token}`,
-				},
 				body: JSON.stringify({ id_programme: programmeId }),
 			});
 		}
-
 		if (modeSeance === "select") {
-			await fetch(`/api/seances_exercices/seance/${id}`, {
+			await apiFetch(`/api/seances_exercices/seance/${id}`, {
 				method: "DELETE",
-				headers: { Authorization: `Bearer ${token}` },
 			});
 		}
-
 		setSeanceId(id);
 		setActiveStep(2);
 	};

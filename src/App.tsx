@@ -1,5 +1,6 @@
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
+import { ToastProvider } from "./context/ToastContext";
 import DashboardCoach from "./pages/DashboardCoach";
 import DashboardEleves from "./pages/DashboardEleves";
 import EleveDetails from "./pages/EleveDetails";
@@ -40,25 +41,27 @@ function ProtectedEleve() {
 }
 function App() {
 	return (
-		<Routes>
-			<Route path="/" element={<HomePage />} />
-			<Route path="/login" element={<Login />} />
-			<Route element={<ProtectedCoach />}>
-				<Route path="/dashboard-coach" element={<DashboardCoach />} />
-				<Route path="/exercices" element={<ExercicesPage />} />
-				<Route path="/programmes" element={<Programmes />} />
-				<Route path="/seances" element={<Seances />} />
-				<Route path="/eleves" element={<Eleves />} />
-				<Route path="/eleves/:eleveId" element={<EleveDetails />} />
-				<Route path="/suivi" element={<SuiviCoach />} />
-			</Route>
-			<Route element={<ProtectedEleve />}>
-				<Route path="/mon-programme" element={<MonProgramme />} />
-				<Route path="/seance-en-cours" element={<SeanceEnCours />} />
-				<Route path="/mon-suivi" element={<MonSuivi />} />
-				<Route path="/dashboard-eleves" element={<DashboardEleves />} />
-			</Route>
-		</Routes>
+		<ToastProvider>
+			<Routes>
+				<Route path="/" element={<HomePage />} />
+				<Route path="/login" element={<Login />} />
+				<Route element={<ProtectedCoach />}>
+					<Route path="/dashboard-coach" element={<DashboardCoach />} />
+					<Route path="/exercices" element={<ExercicesPage />} />
+					<Route path="/programmes" element={<Programmes />} />
+					<Route path="/seances" element={<Seances />} />
+					<Route path="/eleves" element={<Eleves />} />
+					<Route path="/eleves/:eleveId" element={<EleveDetails />} />
+					<Route path="/suivi" element={<SuiviCoach />} />
+				</Route>
+				<Route element={<ProtectedEleve />}>
+					<Route path="/mon-programme" element={<MonProgramme />} />
+					<Route path="/seance-en-cours" element={<SeanceEnCours />} />
+					<Route path="/mon-suivi" element={<MonSuivi />} />
+					<Route path="/dashboard-eleves" element={<DashboardEleves />} />
+				</Route>
+			</Routes>
+		</ToastProvider>
 	);
 }
 

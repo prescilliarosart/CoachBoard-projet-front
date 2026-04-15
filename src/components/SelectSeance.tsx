@@ -9,6 +9,7 @@ import {
 	Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
+import { useToast } from "../context/ToastContext";
 import { apiFetch } from "../services/api";
 
 interface Seance {
@@ -58,6 +59,7 @@ const SX_BTN = {
 export default function SelectSeance({ onSuccess }: Props) {
 	const [seances, setSeances] = useState<Seance[]>([]);
 	const [selectedId, setSelectedId] = useState<number | "">("");
+	const { showToast } = useToast();
 
 	useEffect(() => {
 		const fetchSeances = async () => {
@@ -73,7 +75,7 @@ export default function SelectSeance({ onSuccess }: Props) {
 
 	const handleConfirm = () => {
 		if (!selectedId) {
-			alert("Veuillez sélectionner une séance.");
+			showToast("Veuillez sélectionner une séance.", "warning");
 			return;
 		}
 		onSuccess(selectedId);

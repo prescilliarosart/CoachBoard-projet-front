@@ -4,6 +4,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import {
 	Box,
 	Button,
+	CircularProgress,
 	FormControl,
 	InputAdornment,
 	InputLabel,
@@ -29,6 +30,7 @@ export default function Seances() {
 	const [showForm, setShowForm] = useState(false);
 	const [search, setSearch] = useState("");
 	const [jourFilter, setJourFilter] = useState("");
+	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
 		const fetchSeances = async () => {
@@ -37,6 +39,8 @@ export default function Seances() {
 				setSeances(data);
 			} catch (err) {
 				console.error("Erreur chargement séances :", err);
+			} finally {
+				setLoading(false);
 			}
 		};
 		fetchSeances();
@@ -251,27 +255,53 @@ export default function Seances() {
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{filteredSeances.map((seance) => (
-							<TableRow key={seance.ID_SEANCE}>
-								<TableCell sx={{ color: "#fff" }}>{seance.TITRE}</TableCell>
-								<TableCell sx={{ color: "#fff" }}>{seance.JOUR}</TableCell>
-								<TableCell sx={{ color: "#fff" }}>{seance.ORDRE}</TableCell>
-								<TableCell sx={{ color: "#fff" }}>
-									{seance.nom_programme}
-								</TableCell>
-								<TableCell sx={{ color: "#fff" }}>
-									<DeleteIcon
-										onClick={() => handleDelete(seance.ID_SEANCE)}
-										sx={{
-											color: "#7a8fa6",
-											cursor: "pointer",
-											fontSize: "24px",
-											"&:hover": { color: "#22c55e" },
-										}}
-									/>
+						{loading ? (
+							<TableRow>
+								<TableCell
+									colSpan={5}
+									sx={{ textAlign: "center", py: 6, border: "none" }}
+								>
+									<CircularProgress sx={{ color: "#22c55e" }} />
 								</TableCell>
 							</TableRow>
-						))}
+						) : filteredSeances.length === 0 ? (
+							<TableRow>
+								<TableCell
+									colSpan={5}
+									sx={{
+										textAlign: "center",
+										py: 6,
+										color: "#7a8fa6",
+										fontFamily: "'Barlow',sans-serif",
+										border: "none",
+									}}
+								>
+									Aucune séance pour l'instant.
+								</TableCell>
+							</TableRow>
+						) : (
+							filteredSeances.map((seance) => (
+								<TableRow key={seance.ID_SEANCE}>
+									<TableCell sx={{ color: "#fff" }}>{seance.TITRE}</TableCell>
+									<TableCell sx={{ color: "#fff" }}>{seance.JOUR}</TableCell>
+									<TableCell sx={{ color: "#fff" }}>{seance.ORDRE}</TableCell>
+									<TableCell sx={{ color: "#fff" }}>
+										{seance.nom_programme}
+									</TableCell>
+									<TableCell sx={{ color: "#fff" }}>
+										<DeleteIcon
+											onClick={() => handleDelete(seance.ID_SEANCE)}
+											sx={{
+												color: "#7a8fa6",
+												cursor: "pointer",
+												fontSize: "24px",
+												"&:hover": { color: "#22c55e" },
+											}}
+										/>
+									</TableCell>
+								</TableRow>
+							))
+						)}
 					</TableBody>
 				</Table>
 			</Box>
