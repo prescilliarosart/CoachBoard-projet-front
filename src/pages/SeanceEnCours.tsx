@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { useAuth } from "../context/AuthContext";
+import { apiFetch } from "../services/api";
 
 type Exercice = {
 	ID_SEANCES_EXERCICES: number;
@@ -70,7 +71,7 @@ function getGif(ex: Exercice, gifs: GifData[]): string | null {
 }
 
 export default function SeanceEnCours() {
-	const { token, user } = useAuth();
+	const { user } = useAuth();
 	const navigate = useNavigate();
 
 	const JOURS = [
@@ -206,12 +207,8 @@ export default function SeanceEnCours() {
 		try {
 			await Promise.all(
 				exercices.map((ex) =>
-					fetch("/api/suivi", {
+					apiFetch("/api/suivi", {
 						method: "POST",
-						headers: {
-							"Content-Type": "application/json",
-							Authorization: `Bearer ${token}`,
-						},
 						body: JSON.stringify({
 							charge_soulevee: ex.CHARGE,
 							reps_reelle: ex.REPS,
