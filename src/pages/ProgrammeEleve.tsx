@@ -57,37 +57,37 @@ export default function MonProgramme() {
 	useEffect(() => {
 		if (!user) return;
 
-		const headers = { Authorization: `Bearer ${token}` };
-
-		fetch(`/api/eleves-programmes/eleve/${user.id}`, { headers })
-			.then((res) => res.json())
-			.then(async (progs) => {
-				// Pour chaque programme, on charge les séances
+		const fetchData = async () => {
+			try {
+				const progs = await apiFetch<EleveProgramme[]>(
+					`/api/eleves-programmes/eleve/${user.id}`,
+				);
 				const progsAvecSeances = await Promise.all(
 					progs.map(async (p: EleveProgramme) => {
-						const seances = await fetch(
+						const seances = await apiFetch<Seance[]>(
 							`/api/seances/programme/${p.id_programme}`,
-							{ headers },
-						).then((r) => r.json());
-
-						// Pour chaque séance, on charge les exercices
+						);
 						const seancesAvecExercices = await Promise.all(
 							seances.map(async (s: Seance) => {
-								const exercices = await fetch(
+								const exercices = await apiFetch<Exercice[]>(
 									`/api/seances_exercices/seance/${s.ID_SEANCE}`,
-									{ headers },
-								).then((r) => r.json());
+								);
 								return { ...s, exercices };
 							}),
 						);
-
 						return { ...p, seances: seancesAvecExercices };
 					}),
 				);
 				setProgrammes(progsAvecSeances);
-			})
-			.catch(console.error);
-	}, [user, token]);
+			} catch (err) {
+				console.error(err);
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		fetchData();
+	}, [user]);
 
 	return (
 		<>
