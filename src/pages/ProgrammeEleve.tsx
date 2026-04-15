@@ -97,7 +97,11 @@ export default function MonProgramme() {
 					Mes Programmes
 				</Typography>
 
-				{programmes.length === 0 ? (
+				{loading ? (
+					<Box sx={{ textAlign: "center", py: "60px" }}>
+						<CircularProgress sx={{ color: "#22c55e" }} />
+					</Box>
+				) : programmes.length === 0 ? (
 					<Typography sx={{ color: "#7a8fa6" }}>
 						Aucun programme attribué pour le moment.
 					</Typography>
