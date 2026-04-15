@@ -1,9 +1,11 @@
+import { CircularProgress } from "@mui/material";
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
 import Typography from "@mui/material/Typography";
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import { useAuth } from "../context/AuthContext";
+import { apiFetch } from "../services/api";
 
 type Exercice = {
 	ID_SEANCES_EXERCICES: number;
@@ -42,8 +44,9 @@ const elevLinks = [
 ];
 
 export default function MonProgramme() {
-	const { user, token } = useAuth();
+	const { user } = useAuth();
 	const [programmes, setProgrammes] = useState<EleveProgramme[]>([]);
+	const [loading, setLoading] = useState(true);
 
 	const formatDuree = (jours: number) => {
 		if (jours < 7) return `${jours} jour${jours > 1 ? "s" : ""}`;
@@ -54,37 +57,37 @@ export default function MonProgramme() {
 	useEffect(() => {
 		if (!user) return;
 
-		const headers = { Authorization: `Bearer ${token}` };
-
-		fetch(`/api/eleves-programmes/eleve/${user.id}`, { headers })
-			.then((res) => res.json())
-			.then(async (progs) => {
-				// Pour chaque programme, on charge les séances
+		const fetchData = async () => {
+			try {
+				const progs = await apiFetch<EleveProgramme[]>(
+					`/api/eleves-programmes/eleve/${user.id}`,
+				);
 				const progsAvecSeances = await Promise.all(
 					progs.map(async (p: EleveProgramme) => {
-						const seances = await fetch(
+						const seances = await apiFetch<Seance[]>(
 							`/api/seances/programme/${p.id_programme}`,
-							{ headers },
-						).then((r) => r.json());
-
-						// Pour chaque séance, on charge les exercices
+						);
 						const seancesAvecExercices = await Promise.all(
 							seances.map(async (s: Seance) => {
-								const exercices = await fetch(
+								const exercices = await apiFetch<Exercice[]>(
 									`/api/seances_exercices/seance/${s.ID_SEANCE}`,
-									{ headers },
-								).then((r) => r.json());
+								);
 								return { ...s, exercices };
 							}),
 						);
-
 						return { ...p, seances: seancesAvecExercices };
 					}),
 				);
 				setProgrammes(progsAvecSeances);
-			})
-			.catch(console.error);
-	}, [user, token]);
+			} catch (err) {
+				console.error(err);
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		fetchData();
+	}, [user]);
 
 	return (
 		<>
@@ -94,7 +97,11 @@ export default function MonProgramme() {
 					Mes Programmes
 				</Typography>
 
-				{programmes.length === 0 ? (
+				{loading ? (
+					<Box sx={{ textAlign: "center", py: "60px" }}>
+						<CircularProgress sx={{ color: "#22c55e" }} />
+					</Box>
+				) : programmes.length === 0 ? (
 					<Typography sx={{ color: "#7a8fa6" }}>
 						Aucun programme attribué pour le moment.
 					</Typography>

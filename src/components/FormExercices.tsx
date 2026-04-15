@@ -11,6 +11,8 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useToast } from "../context/ToastContext";
+import { apiFetch } from "../services/api";
 
 type TypeExercice = "Cardio" | "Muscu" | "Mobilité" | "HIIT" | "Stretching";
 const TYPES: TypeExercice[] = [
@@ -134,6 +136,7 @@ export default function FormExercice({ onSuccess }: Props) {
 	const [loading, setLoading] = useState(false);
 	const [gifs, setGifs] = useState<GifData[]>([]);
 	const [gifSearch, setGifSearch] = useState("");
+	const { showToast } = useToast();
 
 	const [form, setForm] = useState<FormData>({
 		nom: "",
@@ -152,15 +155,12 @@ export default function FormExercice({ onSuccess }: Props) {
 		}));
 
 	useEffect(() => {
-		fetch("/api/gifs")
-			.then((r) => r.json())
-			.then(setGifs)
-			.catch(console.error);
+		apiFetch<GifData[]>("/api/gifs").then(setGifs).catch(console.error);
 	}, []);
 
 	const handleSave = async () => {
 		if (!form.nom || !form.type) {
-			alert("Veuillez remplir le nom et le type.");
+			showToast("Veuillez remplir le nom et le type.", "warning");
 			return;
 		}
 
@@ -191,7 +191,7 @@ export default function FormExercice({ onSuccess }: Props) {
 			onSuccess(data.id);
 		} catch (err) {
 			console.error("Erreur FormExercice :", err);
-			alert("Impossible de créer l'exercice.");
+			showToast("Impossible de créer l'exercice.", "error");
 		} finally {
 			setLoading(false);
 		}

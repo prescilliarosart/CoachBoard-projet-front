@@ -1,11 +1,6 @@
 import { Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { ProgressionCanvas } from "../components/useProgressionCanvas";
@@ -94,39 +89,6 @@ export default function DashboarEleves() {
 				>
 					Démarrer une séance
 				</Button>
-			</Box>
-			<Typography
-				variant="h6"
-				sx={{ color: "#fff", margin: "40px 0 24px", padding: "0 36px" }}
-			>
-				Historique de mes séances
-			</Typography>
-			<Box
-				sx={{
-					background: "#1E293B",
-					borderRadius: "12px",
-					padding: "24px",
-					margin: "40px 36px",
-				}}
-			>
-				<Table>
-					<TableHead>
-						<TableRow>
-							<TableCell sx={{ color: "#fff" }}>Date</TableCell>
-							<TableCell sx={{ color: "#fff" }}>Programme</TableCell>
-							<TableCell sx={{ color: "#fff" }}>Séance</TableCell>
-							<TableCell sx={{ color: "#fff" }}>Statut</TableCell>
-						</TableRow>
-					</TableHead>
-					<TableBody>
-						<TableRow>
-							<TableCell sx={{ color: "#fff" }}>2023-10-01</TableCell>
-							<TableCell sx={{ color: "#fff" }}>Programme 1</TableCell>
-							<TableCell sx={{ color: "#fff" }}>50%</TableCell>
-							<TableCell sx={{ color: "#fff" }}>✅</TableCell>
-						</TableRow>
-					</TableBody>
-				</Table>
 			</Box>
 		</div>
 	);

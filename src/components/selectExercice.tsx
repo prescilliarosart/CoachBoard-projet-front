@@ -9,6 +9,7 @@ import {
 	Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
+import { useToast } from "../context/ToastContext";
 import { apiFetch } from "../services/api";
 
 interface Exercice {
@@ -58,6 +59,7 @@ const SX_BTN = {
 export default function SelectExercice({ onSuccess }: Props) {
 	const [exercices, setExercices] = useState<Exercice[]>([]);
 	const [selectedId, setSelectedId] = useState<number | "">("");
+	const { showToast } = useToast();
 
 	useEffect(() => {
 		const fetchExercices = async () => {
@@ -73,7 +75,7 @@ export default function SelectExercice({ onSuccess }: Props) {
 
 	const handleConfirm = () => {
 		if (!selectedId) {
-			alert("Veuillez sélectionner un exercice.");
+			showToast("Veuillez sélectionner un exercice.", "warning");
 			return;
 		}
 		onSuccess(selectedId);

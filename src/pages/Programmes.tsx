@@ -5,6 +5,7 @@ import {
 	Box,
 	Button,
 	Chip,
+	CircularProgress,
 	Dialog,
 	DialogActions,
 	DialogContent,
@@ -39,6 +40,7 @@ export default function Programmes() {
 	const [selectedProgramme, setSelectedProgramme] = useState<any>(null);
 	const [seances, setSeances] = useState<any[]>([]);
 	const [exercices, setExercices] = useState<any[]>([]);
+	const [loading, setLoading] = useState(true);
 
 	const formatDuree = (jours: number) => {
 		if (jours < 7) return `${jours} jour${jours > 1 ? "s" : ""}`;
@@ -53,6 +55,8 @@ export default function Programmes() {
 				setProgrammes(data);
 			} catch (error) {
 				console.error("Erreur lors de la récupération des programmes :", error);
+			} finally {
+				setLoading(false);
 			}
 		};
 		fetchProgrammes();
@@ -315,60 +319,88 @@ export default function Programmes() {
 							</TableRow>
 						</TableHead>
 						<TableBody>
-							{filteredProgrammes.map((programme) => {
-								const dateFin = new Date(programme.DATE_DEBUT);
-								dateFin.setDate(dateFin.getDate() + programme.duree_programme);
-								return (
-									<TableRow
-										key={programme.ID_PROGRAMME}
-										sx={{ cursor: "pointer" }}
+							{loading ? (
+								<TableRow>
+									<TableCell
+										colSpan={6}
+										sx={{ textAlign: "center", py: 6, border: "none" }}
 									>
-										<TableCell
-											sx={{ color: "#fff" }}
-											onClick={() => handleOpenModal(programme)}
+										<CircularProgress sx={{ color: "#22c55e" }} />
+									</TableCell>
+								</TableRow>
+							) : filteredProgrammes.length === 0 ? (
+								<TableRow>
+									<TableCell
+										colSpan={6}
+										sx={{
+											textAlign: "center",
+											py: 6,
+											color: "#7a8fa6",
+											fontFamily: "'Barlow',sans-serif",
+											border: "none",
+										}}
+									>
+										Aucun programme pour l'instant.
+									</TableCell>
+								</TableRow>
+							) : (
+								filteredProgrammes.map((programme) => {
+									const dateFin = new Date(programme.DATE_DEBUT);
+									dateFin.setDate(
+										dateFin.getDate() + programme.duree_programme,
+									);
+									return (
+										<TableRow
+											key={programme.ID_PROGRAMME}
+											sx={{ cursor: "pointer" }}
 										>
-											{new Date(programme.DATE_DEBUT).toLocaleDateString(
-												"fr-FR",
-											)}
-										</TableCell>
-										<TableCell
-											sx={{ color: "#fff" }}
-											onClick={() => handleOpenModal(programme)}
-										>
-											{dateFin.toLocaleDateString("fr-FR")}
-										</TableCell>
-										<TableCell
-											sx={{ color: "#fff" }}
-											onClick={() => handleOpenModal(programme)}
-										>
-											{programme.nom_programme}
-										</TableCell>
-										<TableCell
-											sx={{ color: "#fff" }}
-											onClick={() => handleOpenModal(programme)}
-										>
-											{programme.STATUT}
-										</TableCell>
-										<TableCell
-											sx={{ color: "#fff" }}
-											onClick={() => handleOpenModal(programme)}
-										>
-											{programme.nom_eleve} {programme.prenom_eleve}
-										</TableCell>
-										<TableCell>
-											<DeleteIcon
-												onClick={() => handleDelete(programme.ID_PROGRAMME)}
-												sx={{
-													color: "#7a8fa6",
-													cursor: "pointer",
-													fontSize: "24px",
-													"&:hover": { color: "#22c55e" },
-												}}
-											/>
-										</TableCell>
-									</TableRow>
-								);
-							})}
+											<TableCell
+												sx={{ color: "#fff" }}
+												onClick={() => handleOpenModal(programme)}
+											>
+												{new Date(programme.DATE_DEBUT).toLocaleDateString(
+													"fr-FR",
+												)}
+											</TableCell>
+											<TableCell
+												sx={{ color: "#fff" }}
+												onClick={() => handleOpenModal(programme)}
+											>
+												{dateFin.toLocaleDateString("fr-FR")}
+											</TableCell>
+											<TableCell
+												sx={{ color: "#fff" }}
+												onClick={() => handleOpenModal(programme)}
+											>
+												{programme.nom_programme}
+											</TableCell>
+											<TableCell
+												sx={{ color: "#fff" }}
+												onClick={() => handleOpenModal(programme)}
+											>
+												{programme.STATUT}
+											</TableCell>
+											<TableCell
+												sx={{ color: "#fff" }}
+												onClick={() => handleOpenModal(programme)}
+											>
+												{programme.nom_eleve} {programme.prenom_eleve}
+											</TableCell>
+											<TableCell>
+												<DeleteIcon
+													onClick={() => handleDelete(programme.ID_PROGRAMME)}
+													sx={{
+														color: "#7a8fa6",
+														cursor: "pointer",
+														fontSize: "24px",
+														"&:hover": { color: "#22c55e" },
+													}}
+												/>
+											</TableCell>
+										</TableRow>
+									);
+								})
+							)}
 						</TableBody>
 					</Table>
 				</Box>

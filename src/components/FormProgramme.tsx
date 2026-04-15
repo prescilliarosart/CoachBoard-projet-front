@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useToast } from "../context/ToastContext";
 import { apiFetch } from "../services/api";
 
 interface FormData {
@@ -70,6 +71,7 @@ export default function FormProgramme({ onSuccess }: Props) {
 	const { user } = useAuth();
 	const [eleves, setEleves] = useState<Eleve[]>([]);
 	const [loading, setLoading] = useState(false);
+	const { showToast } = useToast();
 
 	const [form, setForm] = useState<FormData>({
 		nomProgramme: "",
@@ -94,7 +96,7 @@ export default function FormProgramme({ onSuccess }: Props) {
 
 	const handleSave = async () => {
 		if (!form.nomProgramme || !form.objectif || !form.duree) {
-			alert("Veuillez remplir le nom, l'objectif et la durée.");
+			showToast("Veuillez remplir le nom, l'objectif et la durée.", "warning");
 			return;
 		}
 
@@ -128,7 +130,7 @@ export default function FormProgramme({ onSuccess }: Props) {
 			onSuccess(id);
 		} catch (err) {
 			console.error("Erreur FormProgramme :", err);
-			alert("Impossible de créer le programme.");
+			showToast("Impossible de créer le programme.", "error");
 		} finally {
 			setLoading(false);
 		}

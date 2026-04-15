@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { useAuth } from "../context/AuthContext";
+import { apiFetch } from "../services/api";
 
 type Exercice = {
 	ID_SEANCES_EXERCICES: number;
@@ -70,7 +71,7 @@ function getGif(ex: Exercice, gifs: GifData[]): string | null {
 }
 
 export default function SeanceEnCours() {
-	const { token, user } = useAuth();
+	const { user } = useAuth();
 	const navigate = useNavigate();
 
 	const JOURS = [
@@ -105,14 +106,11 @@ export default function SeanceEnCours() {
 
 	useEffect(() => {
 		if (!user) return;
-		const headers = { Authorization: `Bearer ${token}` };
-
-		fetch(`/api/eleves-programmes/eleve/${user.id}`, { headers })
-			.then((r) => {
-				if (!r.ok) throw new Error("Erreur chargement programmes");
-				return r.json();
-			})
-			.then(async (progs) => {
+		const fetchData = async () => {
+			try {
+				const progs = await apiFetch<any[]>(
+					`/api/eleves-programmes/eleve/${user.id}`,
+				);
 				const actif = progs.filter((p: any) => p.statut === "En cours").at(-1);
 				if (!actif) {
 					setErreur("Aucun programme actif pour le moment.");
@@ -121,14 +119,9 @@ export default function SeanceEnCours() {
 				}
 				setIdEleveProgramme(actif.id_eleve_programme);
 
-				const seances = await fetch(
+				const seances = await apiFetch<any[]>(
 					`/api/seances/programme/${actif.id_programme}`,
-					{ headers },
-				).then((r) => {
-					if (!r.ok) throw new Error("Erreur chargement séances");
-					return r.json();
-				});
-
+				);
 				const seanceDuJour = seances.find(
 					(s: any) => s.JOUR?.toLowerCase() === aujourdhui.toLowerCase(),
 				);
@@ -141,31 +134,20 @@ export default function SeanceEnCours() {
 				setTitreSeance(seanceDuJour.TITRE);
 				setIdSeance(seanceDuJour.ID_SEANCE);
 
-				const exos = await fetch(
+				const exos = await apiFetch<Exercice[]>(
 					`/api/seances_exercices/seance/${seanceDuJour.ID_SEANCE}`,
-					{ headers },
-				).then((r) => {
-					if (!r.ok) throw new Error("Erreur chargement exercices");
-					return r.json();
-				});
-
+				);
 				setExercices(exos);
-				setLoading(false);
-			})
-			.catch(() => {
+			} catch {
 				setErreur("Erreur lors du chargement de la séance.");
+			} finally {
 				setLoading(false);
-			});
+			}
+		};
 
-		fetch("/api/gifs")
-			.then((r) => {
-				if (!r.ok) throw new Error();
-				return r.json();
-			})
-			.then(setGifs)
-			.catch(console.error);
-	}, [user, token]);
-
+		fetchData();
+		apiFetch<GifData[]>("/api/gifs").then(setGifs).catch(console.error);
+	}, [user]);
 	// Countdown timer
 	useEffect(() => {
 		if (restTimer === null) return;
@@ -206,12 +188,8 @@ export default function SeanceEnCours() {
 		try {
 			await Promise.all(
 				exercices.map((ex) =>
-					fetch("/api/suivi", {
+					apiFetch("/api/suivi", {
 						method: "POST",
-						headers: {
-							"Content-Type": "application/json",
-							Authorization: `Bearer ${token}`,
-						},
 						body: JSON.stringify({
 							charge_soulevee: ex.CHARGE,
 							reps_reelle: ex.REPS,
@@ -224,8 +202,6 @@ export default function SeanceEnCours() {
 							id_seances_exercices: ex.ID_SEANCES_EXERCICES,
 							id_eleve_programme: idEleveProgramme,
 						}),
-					}).then((r) => {
-						if (!r.ok) throw new Error("Erreur enregistrement suivi");
 					}),
 				),
 			);

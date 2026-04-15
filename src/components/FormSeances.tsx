@@ -10,6 +10,7 @@ import {
 	Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
+import { useToast } from "../context/ToastContext";
 import { apiFetch } from "../services/api";
 
 interface FormData {
@@ -67,6 +68,7 @@ const SX_BTN = {
 export default function FormSeance({ programmeId, onSuccess }: Props) {
 	const [programmes, setProgrammes] = useState<Programme[]>([]);
 	const [loading, setLoading] = useState(false);
+	const { showToast } = useToast();
 
 	const [form, setForm] = useState<FormData>({
 		titre: "",
@@ -99,7 +101,7 @@ export default function FormSeance({ programmeId, onSuccess }: Props) {
 
 	const handleSave = async () => {
 		if (!form.titre || !form.jour || !form.ordre || !form.id_programme) {
-			alert("Veuillez remplir tous les champs.");
+			showToast("Veuillez remplir tous les champs.", "warning");
 			return;
 		}
 
@@ -123,7 +125,7 @@ export default function FormSeance({ programmeId, onSuccess }: Props) {
 			onSuccess(seanceId);
 		} catch (err) {
 			console.error("Erreur FormSeance :", err);
-			alert("Impossible de créer la séance.");
+			showToast("Impossible de créer la séance.", "error");
 		} finally {
 			setLoading(false);
 		}
