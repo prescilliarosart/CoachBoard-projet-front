@@ -5,6 +5,7 @@ import {
 	Box,
 	Button,
 	Chip,
+	CircularProgress,
 	FormControl,
 	InputAdornment,
 	InputLabel,
@@ -18,7 +19,7 @@ import { useEffect, useMemo, useState } from "react";
 import FormExercice from "../components/FormExercices";
 import Navbar from "../components/Navbar";
 import { useProgressionCanvas } from "../components/useProgressionCanvas";
-import { useAuth } from "../context/AuthContext";
+import { apiFetch } from "../services/api";
 
 type TypeExercice = "Cardio" | "Muscu" | "Mobilité" | "HIIT" | "Stretching";
 const TYPES: TypeExercice[] = [
@@ -212,36 +213,39 @@ function ExerciceCard({
 
 export default function ExercicesPage() {
 	useProgressionCanvas();
-	const { token } = useAuth();
+
 	const [exercices, setExercices] = useState<Exercice[]>([]);
 	const [gifs, setGifs] = useState<GifData[]>([]);
 	const [showForm, setShowForm] = useState(false);
 	const [search, setSearch] = useState("");
 	const [typeFilter, setTypeFilter] = useState<TypeExercice | "">("");
+	const [loading, setLoading] = useState(true);
 
-	const fetchExercices = () => {
-		fetch("/api/exercices", {
-			headers: { Authorization: `Bearer ${token}` },
-		})
-			.then((res) => res.json())
-			.then((data) => {
-				const mapped = data.map((ex: any) => ({
-					id: ex.ID_EXERCICE,
-					nom: ex.NOM,
-					type: ex.TYPE as TypeExercice,
-					muscles: ex.GROUPE_MUSCULAIRE ? ex.GROUPE_MUSCULAIRE.split(", ") : [],
-					image_url: ex.IMAGE_URL ?? null,
-				}));
-				setExercices(mapped);
-			})
-			.catch((err) => console.error("Erreur chargement exercices :", err));
+	const fetchExercices = async () => {
+		try {
+			const data = await apiFetch<any[]>("/api/exercices");
+			const mapped = data.map((ex: any) => ({
+				id: ex.ID_EXERCICE,
+				nom: ex.NOM,
+				type: ex.TYPE as TypeExercice,
+				muscles: ex.GROUPE_MUSCULAIRE ? ex.GROUPE_MUSCULAIRE.split(", ") : [],
+				image_url: ex.IMAGE_URL ?? null,
+			}));
+			setExercices(mapped);
+		} catch (err) {
+			console.error("Erreur chargement exercices :", err);
+		} finally {
+			setLoading(false);
+		}
 	};
 
-	const fetchGifs = () => {
-		fetch("/api/gifs")
-			.then((res) => res.json())
-			.then((data) => setGifs(data))
-			.catch((err) => console.error("Erreur chargement GIFs :", err));
+	const fetchGifs = async () => {
+		try {
+			const data = await apiFetch<GifData[]>("/api/gifs");
+			setGifs(data);
+		} catch (err) {
+			console.error("Erreur chargement GIFs :", err);
+		}
 	};
 
 	const getGifForExercice = (ex: Exercice): string | null => {
@@ -270,11 +274,7 @@ export default function ExercicesPage() {
 
 	const handleDelete = async (id: number) => {
 		try {
-			const response = await fetch(`/api/exercices/${id}`, {
-				method: "DELETE",
-				headers: { Authorization: `Bearer ${token}` },
-			});
-			if (!response.ok) throw new Error("Erreur suppression");
+			await apiFetch(`/api/exercices/${id}`, { method: "DELETE" });
 			fetchExercices();
 		} catch (err) {
 			console.error("Erreur suppression exercice :", err);
@@ -465,7 +465,11 @@ export default function ExercicesPage() {
 							</FormControl>
 						</Box>
 
-						{filtered.length === 0 ? (
+						{loading ? (
+							<Box sx={{ textAlign: "center", py: "60px" }}>
+								<CircularProgress sx={{ color: "#22c55e" }} />
+							</Box>
+						) : filtered.length === 0 ? (
 							<Box sx={{ textAlign: "center", py: "60px" }}>
 								<Typography
 									sx={{ color: "#7a8fa6", fontFamily: "'Barlow',sans-serif" }}
@@ -479,12 +483,6 @@ export default function ExercicesPage() {
 									display: "grid",
 									gridTemplateColumns: "repeat(4, 1fr)",
 									gap: "16px",
-									"@media (max-width: 1100px)": {
-										gridTemplateColumns: "repeat(3, 1fr)",
-									},
-									"@media (max-width: 750px)": {
-										gridTemplateColumns: "repeat(2, 1fr)",
-									},
 								}}
 							>
 								{filtered.map((ex) => (
