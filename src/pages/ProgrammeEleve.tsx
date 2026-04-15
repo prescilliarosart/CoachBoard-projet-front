@@ -1,9 +1,11 @@
+import { CircularProgress } from "@mui/material";
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
 import Typography from "@mui/material/Typography";
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import { useAuth } from "../context/AuthContext";
+import { apiFetch } from "../services/api";
 
 type Exercice = {
 	ID_SEANCES_EXERCICES: number;
@@ -42,8 +44,9 @@ const elevLinks = [
 ];
 
 export default function MonProgramme() {
-	const { user, token } = useAuth();
+	const { user } = useAuth();
 	const [programmes, setProgrammes] = useState<EleveProgramme[]>([]);
+	const [loading, setLoading] = useState(true);
 
 	const formatDuree = (jours: number) => {
 		if (jours < 7) return `${jours} jour${jours > 1 ? "s" : ""}`;
