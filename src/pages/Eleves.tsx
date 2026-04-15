@@ -1,4 +1,10 @@
-import { Box, Container, Toolbar, Typography } from "@mui/material";
+import {
+	Box,
+	CircularProgress,
+	Container,
+	Toolbar,
+	Typography,
+} from "@mui/material";
 import { useEffect, useState } from "react";
 import EleveCard from "../components/EleveCard";
 import Navbar from "../components/Navbar";
@@ -7,6 +13,7 @@ import { apiFetch } from "../services/api";
 
 export default function Eleves() {
 	const [eleves, setEleves] = useState<any[]>([]);
+	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
 		const fetchEleves = async () => {
@@ -15,6 +22,8 @@ export default function Eleves() {
 				setEleves(data);
 			} catch (error) {
 				console.error("Erreur lors de la récupération des élèves :", error);
+			} finally {
+				setLoading(false);
 			}
 		};
 		fetchEleves();
@@ -71,9 +80,32 @@ export default function Eleves() {
 						gap: 3,
 					}}
 				>
-					{eleves.map((e) => (
-						<EleveCard key={e.ID_ELEVE} eleve={e} />
-					))}
+					{loading ? (
+						<Box
+							sx={{
+								gridColumn: "1/-1",
+								display: "flex",
+								justifyContent: "center",
+								py: 8,
+							}}
+						>
+							<CircularProgress sx={{ color: "#22c55e" }} />
+						</Box>
+					) : eleves.length === 0 ? (
+						<Box sx={{ gridColumn: "1/-1", textAlign: "center", py: 8 }}>
+							<Typography
+								sx={{
+									color: "#7a8fa6",
+									fontFamily: "'Barlow',sans-serif",
+									fontSize: "1rem",
+								}}
+							>
+								Aucun élève pour l'instant.
+							</Typography>
+						</Box>
+					) : (
+						eleves.map((e) => <EleveCard key={e.ID_ELEVE} eleve={e} />)
+					)}
 				</Box>
 			</Container>
 		</div>
