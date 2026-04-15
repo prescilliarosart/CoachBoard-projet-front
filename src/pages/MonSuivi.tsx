@@ -16,7 +16,7 @@ import {
 	Toolbar,
 	Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
 	Bar,
 	BarChart,
@@ -28,6 +28,8 @@ import {
 	YAxis,
 } from "recharts";
 import Navbar from "../components/Navbar";
+import { useAuth } from "../context/AuthContext";
+import { apiFetch } from "../services/api";
 
 const GREEN = "#22c55e";
 const BG = "#0b1520";
@@ -257,7 +259,7 @@ function PhotoPlaceholder() {
 	);
 }
 
-function TableauPerformances() {
+function TableauPerformances({ data }: { data: any[] }) {
 	return (
 		<Box>
 			<Typography
@@ -478,6 +480,16 @@ function CalculIMC() {
 }
 
 export default function MonSuivi() {
+	const { user } = useAuth();
+	const [suivi, setSuivi] = useState<any[]>([]);
+
+	useEffect(() => {
+		if (!user) return;
+		apiFetch<any[]>(`/api/suivi/eleve/${user.id}`)
+			.then((data) => setSuivi(data))
+			.catch(console.error);
+	}, [user]);
+
 	return (
 		<Box
 			sx={{
@@ -520,7 +532,7 @@ export default function MonSuivi() {
 						alignItems: "start",
 					}}
 				>
-					<TableauPerformances />
+					<TableauPerformances data={suivi} />
 					<CalculIMC />
 				</Box>
 			</Box>
