@@ -14,6 +14,7 @@ type NavbarProps = {
 export default function Navbar({ links }: NavbarProps) {
 	const navigate = useNavigate();
 	const { logout, token, user } = useAuth();
+	console.log("USER :", user);
 	const location = useLocation();
 	return (
 		<AppBar
@@ -44,7 +45,9 @@ export default function Navbar({ links }: NavbarProps) {
 							fontFamily: "'Barlow Condensed', sans-serif",
 						}}
 					>
-						Julien Marchal · Coach Sportif
+						{(user as any)?.role === "coach"
+							? `${(user as any)?.prenom} ${(user as any)?.nom} · Coach Sportif`
+							: `${(user as any)?.prenom} ${(user as any)?.nom} · Élève`}
 					</Typography>
 				</Link>
 				{links.map((link) => (

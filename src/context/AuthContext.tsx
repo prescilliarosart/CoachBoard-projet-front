@@ -5,6 +5,8 @@ export type User = {
 	id: number;
 	email: string;
 	role: "coach" | "eleve";
+	prenom: string;
+	nom: string;
 };
 
 type AuthContextType = {
