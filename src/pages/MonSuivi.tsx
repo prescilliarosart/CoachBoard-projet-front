@@ -24,6 +24,7 @@ import {
 	XAxis,
 	YAxis,
 } from "recharts";
+import CalendrierProgres from "../components/CalendrierProgres";
 import Navbar from "../components/Navbar";
 import { useAuth } from "../context/AuthContext";
 import { apiFetch } from "../services/api";
@@ -563,7 +564,7 @@ export default function MonSuivi() {
 							}}
 						>
 							<CourbeProgression suiviData={suivi} />
-							<PhotoPlaceholder />
+							<CalendrierProgres suivi={suivi} />
 						</Box>
 						<Box
 							sx={{
