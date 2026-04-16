@@ -504,15 +504,24 @@ function CalculIMC() {
 export default function MonSuivi() {
 	const { user } = useAuth();
 	const [suivi, setSuivi] = useState<any[]>([]);
+	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
-		if (!user) return;
-		apiFetch<any[]>(`/api/suivi/eleve/${user.id}`)
-			.then((data) => {
-				console.log("Données de suivi reçues :", data);
+		const fetchData = async () => {
+			if (!user?.id) return;
+
+			setLoading(true);
+			try {
+				const data = await apiFetch<any[]>(`/api/suivi/eleve/${user.id}`);
 				setSuivi(data);
-			})
-			.catch(console.error);
+			} catch (err) {
+				console.error("Erreur lors de la récupération :", err);
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		fetchData();
 	}, [user]);
 
 	return (
@@ -538,28 +547,37 @@ export default function MonSuivi() {
 				>
 					Mon suivi 🏅
 				</Typography>
-				<Box
-					sx={{
-						display: "grid",
-						gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
-						gap: 3,
-						mb: 3,
-					}}
-				>
-					<CourbeProgression suiviData={suivi} />
-					<PhotoPlaceholder />
-				</Box>
-				<Box
-					sx={{
-						display: "grid",
-						gridTemplateColumns: { xs: "1fr", md: "1fr auto" },
-						gap: 3,
-						alignItems: "start",
-					}}
-				>
-					<TableauPerformances data={suivi} />
-					<CalculIMC />
-				</Box>
+
+				{loading ? (
+					<Typography sx={{ color: GREEN, textAlign: "center", mt: 5 }}>
+						Chargement de vos performances...
+					</Typography>
+				) : (
+					<>
+						<Box
+							sx={{
+								display: "grid",
+								gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+								gap: 3,
+								mb: 3,
+							}}
+						>
+							<CourbeProgression suiviData={suivi} />
+							<PhotoPlaceholder />
+						</Box>
+						<Box
+							sx={{
+								display: "grid",
+								gridTemplateColumns: { xs: "1fr", md: "1fr auto" },
+								gap: 3,
+								alignItems: "start",
+							}}
+						>
+							<TableauPerformances data={suivi} />
+							<CalculIMC />
+						</Box>
+					</>
+				)}
 			</Box>
 		</Box>
 	);
