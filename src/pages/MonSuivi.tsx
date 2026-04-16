@@ -2,11 +2,7 @@ import {
 	Box,
 	Button,
 	Chip,
-	FormControl,
-	InputLabel,
-	MenuItem,
 	Paper,
-	Select,
 	Table,
 	TableBody,
 	TableCell,
@@ -42,60 +38,56 @@ const navLinks = [
 	{ label: "Suivi", path: "/mon-suivi" },
 ];
 
-const exercicesDisponibles = ["Squat", "Développé couché", "Soulevé de terre"];
+function CourbeProgression({ suiviData = [] }: { suiviData?: any[] }) {
+	const dataMap = new Map();
+	suiviData.forEach((item) => {
+		if (item.POIDS_CORPOREL && item.POIDS_CORPOREL > 0) {
+			dataMap.set(item.DATE, parseFloat(item.POIDS_CORPOREL));
+		}
+	});
 
-const progressionData: Record<string, { semaine: string; poids: number }[]> = {
-	Squat: [
-		{ semaine: "S1", poids: 75 },
-		{ semaine: "S2", poids: 78 },
-		{ semaine: "S3", poids: 80 },
-		{ semaine: "S4", poids: 83 },
-		{ semaine: "S5", poids: 90 },
-		{ semaine: "S6", poids: 87 },
-		{ semaine: "S7", poids: 95 },
-	],
-	"Développé couché": [
-		{ semaine: "S1", poids: 60 },
-		{ semaine: "S2", poids: 62 },
-		{ semaine: "S3", poids: 65 },
-		{ semaine: "S4", poids: 65 },
-		{ semaine: "S5", poids: 67 },
-		{ semaine: "S6", poids: 70 },
-		{ semaine: "S7", poids: 72 },
-	],
-	"Soulevé de terre": [
-		{ semaine: "S1", poids: 100 },
-		{ semaine: "S2", poids: 105 },
-		{ semaine: "S3", poids: 107 },
-		{ semaine: "S4", poids: 110 },
-		{ semaine: "S5", poids: 115 },
-		{ semaine: "S6", poids: 112 },
-		{ semaine: "S7", poids: 120 },
-	],
-};
+	const chartData = Array.from(dataMap.entries())
+		.map(([date, poids]) => ({
+			affichageDate: new Date(date).toLocaleDateString("fr-FR", {
+				month: "short",
+				day: "2-digit",
+				timeZone: "Europe/Paris",
+			}),
+			poids: poids,
+			rawDate: new Date(date).getTime(),
+		}))
+		.sort((a, b) => a.rawDate - b.rawDate);
 
-const performancesData = [
-	{ id: 1, poids: "95 KG", exercice: "Squat", repetition: 5, effort: "4/5" },
-	{
-		id: 2,
-		poids: "72 KG",
-		exercice: "Développé couché",
-		repetition: 8,
-		effort: "3/5",
-	},
-	{
-		id: 3,
-		poids: "120 KG",
-		exercice: "Soulevé de terre",
-		repetition: 3,
-		effort: "5/5",
-	},
-];
+	const maxPoids =
+		chartData.length > 0 ? Math.max(...chartData.map((d) => d.poids)) : 0;
 
-function CourbeProgression() {
-	const [exercice, setExercice] = useState("Squat");
-	const data = progressionData[exercice];
-	const maxPoids = Math.max(...data.map((d) => d.poids));
+	if (chartData.length === 0) {
+		return (
+			<Paper
+				sx={{
+					background: CARD_BG,
+					border: `1px solid ${BORDER}`,
+					borderRadius: 2,
+					p: 2,
+					height: 268,
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "center",
+				}}
+			>
+				<Typography
+					sx={{
+						color: "#7a8fa6",
+						fontFamily: "'Barlow Condensed', sans-serif",
+					}}
+				>
+					Aucune donnée de poids enregistrée
+				</Typography>
+			</Paper>
+		);
+	}
+
+	console.log(chartData);
 
 	return (
 		<Paper
@@ -109,78 +101,41 @@ function CourbeProgression() {
 			<Typography
 				sx={{
 					color: "#7a8fa6",
-					fontSize: "0.78rem",
+					fontSize: "1rem",
 					fontFamily: "'Barlow Condensed', sans-serif",
 					letterSpacing: "0.08em",
 					mb: 1,
 				}}
 			>
-				Courbe de progression
+				Évolution du poids corporel
 			</Typography>
-			<FormControl size="small" sx={{ mb: 2, minWidth: 160 }}>
-				<InputLabel
-					sx={{
-						color: GREEN,
-						fontFamily: "'Barlow Condensed', sans-serif",
-						fontSize: "0.85rem",
-					}}
-				>
-					Exercices
-				</InputLabel>
-				<Select
-					value={exercice}
-					label="Exercices"
-					onChange={(e) => setExercice(e.target.value)}
-					sx={{
-						color: GREEN,
-						fontFamily: "'Barlow Condensed', sans-serif",
-						fontSize: "0.85rem",
-						"& .MuiOutlinedInput-notchedOutline": { borderColor: GREEN },
-						"&:hover .MuiOutlinedInput-notchedOutline": { borderColor: GREEN },
-						"& .MuiSvgIcon-root": { color: GREEN },
-					}}
-				>
-					{exercicesDisponibles.map((ex) => (
-						<MenuItem
-							key={ex}
-							value={ex}
-							sx={{
-								fontFamily: "'Barlow Condensed', sans-serif",
-								fontSize: "0.85rem",
-							}}
-						>
-							{ex}
-						</MenuItem>
-					))}
-				</Select>
-			</FormControl>
-			<ResponsiveContainer width="100%" height={220}>
+
+			<ResponsiveContainer width="100%" height={300}>
 				<BarChart
-					data={data}
-					margin={{ top: 20, right: 10, left: -20, bottom: 0 }}
+					data={chartData}
+					margin={{ top: 20, right: 20, left: -15, bottom: 5 }}
 				>
 					<CartesianGrid
 						strokeDasharray="3 3"
 						stroke="rgba(255,255,255,0.05)"
+						vertical={false}
 					/>
 					<XAxis
-						dataKey="semaine"
+						dataKey="affichageDate"
+						padding={{ left: 0, right: 0 }}
 						tick={{
 							fill: "#7a8fa6",
-							fontSize: 11,
+							fontSize: 14,
 							fontFamily: "'Barlow Condensed', sans-serif",
 						}}
-						axisLine={false}
+						axisLine={{ stroke: BORDER }}
 						tickLine={false}
 					/>
 					<YAxis
-						tick={{
-							fill: "#7a8fa6",
-							fontSize: 11,
-							fontFamily: "'Barlow Condensed', sans-serif",
-						}}
+						tick={{ fill: "#7a8fa6", fontSize: 14 }}
 						axisLine={false}
 						tickLine={false}
+						domain={["dataMin - 5", "dataMax + 5"]}
 					/>
 					<Tooltip
 						contentStyle={{
@@ -190,12 +145,15 @@ function CourbeProgression() {
 							fontFamily: "'Barlow Condensed', sans-serif",
 							color: "#fff",
 						}}
-						formatter={(value) => [`${String(value)} KG`, "Poids"]}
+						itemStyle={{ color: "#fff" }}
+						labelStyle={{ color: "#7a8fa6" }}
+						cursor={{ fill: "rgba(255,255,255,0.05)" }}
+						formatter={(value) => [`${value} KG`, "Poids"]}
 					/>
-					<Bar dataKey="poids" radius={[3, 3, 0, 0]}>
-						{data.map((entry) => (
+					<Bar dataKey="poids" radius={[3, 3, 0, 0]} barSize={30}>
+						{chartData.map((entry, index) => (
 							<Cell
-								key={entry.semaine}
+								key={`cell-${index}`}
 								fill={entry.poids === maxPoids ? GREEN : "rgba(34,197,94,0.45)"}
 							/>
 						))}
@@ -301,7 +259,7 @@ function TableauPerformances({ data }: { data: any[] }) {
 					color: "#fff",
 					fontFamily: "'Barlow Condensed', sans-serif",
 					fontWeight: 600,
-					fontSize: "1rem",
+					fontSize: "1.2rem",
 					mb: 2,
 					letterSpacing: "0.04em",
 				}}
@@ -316,7 +274,7 @@ function TableauPerformances({ data }: { data: any[] }) {
 					borderRadius: 2,
 				}}
 			>
-				<Table size="small">
+				<Table size="medium">
 					<TableHead>
 						<TableRow>
 							{[
@@ -331,7 +289,7 @@ function TableauPerformances({ data }: { data: any[] }) {
 									sx={{
 										color: "#7a8fa6",
 										fontFamily: "'Barlow Condensed', sans-serif",
-										fontSize: "0.82rem",
+										fontSize: "1rem",
 										borderBottom: `1px solid ${BORDER}`,
 										letterSpacing: "0.05em",
 									}}
@@ -359,7 +317,7 @@ function TableauPerformances({ data }: { data: any[] }) {
 										day: "2-digit",
 										month: "short",
 										year: "numeric",
-										timeZone: "UTC",
+										timeZone: "Europe/Paris",
 									})}
 								</TableCell>
 								<TableCell
@@ -567,7 +525,7 @@ export default function MonSuivi() {
 		>
 			<Navbar links={navLinks} profilLabel="Mon profil - élève" />
 			<Toolbar />
-			<Box sx={{ px: { xs: 2, md: 4 }, py: 3, maxWidth: 1200, mx: "auto" }}>
+			<Box sx={{ px: { xs: 2, md: 4 }, py: 3, maxWidth: 1600, mx: "auto" }}>
 				<Typography
 					variant="h5"
 					sx={{
@@ -588,7 +546,7 @@ export default function MonSuivi() {
 						mb: 3,
 					}}
 				>
-					<CourbeProgression />
+					<CourbeProgression suiviData={suivi} />
 					<PhotoPlaceholder />
 				</Box>
 				<Box
