@@ -5,7 +5,7 @@ import { Box, IconButton, Paper, Typography } from "@mui/material";
 import React, { useState } from "react";
 
 const GREEN = "#22c55e";
-const CARD_BG = "#111827";
+const CARD_BG = "#0f1e2e";
 const BORDER = "rgba(255, 255, 255, 0.12)";
 
 interface CalendrierProgresProps {
@@ -46,6 +46,38 @@ const CalendrierProgres = ({ suivi }: CalendrierProgresProps) => {
 		),
 	];
 
+	const calculerSerieConsecutive = (): number => {
+		let compteur = 0;
+		const aujourdhui = new Date();
+		const dateCourante = new Date(aujourdhui);
+
+		while (true) {
+			const jourSemaine =
+				dateCourante.getDay() === 0 ? 6 : dateCourante.getDay() - 1;
+			const debutSemaine = new Date(dateCourante);
+			debutSemaine.setDate(dateCourante.getDate() - jourSemaine);
+			debutSemaine.setHours(0, 0, 0, 0);
+
+			const finSemaine = new Date(debutSemaine);
+			finSemaine.setDate(debutSemaine.getDate() + 6);
+			finSemaine.setHours(23, 59, 59, 999);
+
+			const aActivite = suivi.some((s) => {
+				const d = new Date(s.DATE);
+				return d >= debutSemaine && d <= finSemaine;
+			});
+
+			if (!aActivite) break;
+
+			compteur++;
+			dateCourante.setDate(dateCourante.getDate() - 7);
+		}
+
+		return compteur;
+	};
+
+	const nbSemainesConsecutives = calculerSerieConsecutive();
+
 	return (
 		<Paper
 			sx={{
@@ -73,7 +105,6 @@ const CalendrierProgres = ({ suivi }: CalendrierProgresProps) => {
 							textTransform: "uppercase",
 						}}
 					>
-						{/* 3. Titre dynamique */}
 						{moisAffiche.toLocaleDateString("fr-FR", {
 							month: "long",
 							year: "numeric",
@@ -108,7 +139,8 @@ const CalendrierProgres = ({ suivi }: CalendrierProgresProps) => {
 							Série
 						</Typography>
 						<Typography sx={{ fontWeight: 700, fontSize: "0.9rem" }}>
-							2 Semaines
+							{nbSemainesConsecutives} Semaine
+							{nbSemainesConsecutives > 1 ? "s" : ""}
 						</Typography>
 					</Box>
 					<Box textAlign="right">
@@ -159,8 +191,8 @@ const CalendrierProgres = ({ suivi }: CalendrierProgresProps) => {
 
 				{tableauJours.map((jour, index) => {
 					const estActif = joursActifsUniques.includes(jour);
-					const totalIndex = index + premierJourIndex + 1;
-					const estHuitiemeColonne = totalIndex % 7 === 0;
+					const positionSemaine = (premierJourIndex + index) % 7;
+					const estDimanche = positionSemaine === 6;
 
 					// Regarde les 7 derniers jours qui précèdent
 					const finSemaine = jour;
@@ -177,6 +209,7 @@ const CalendrierProgres = ({ suivi }: CalendrierProgresProps) => {
 								sx={{
 									height: 38,
 									width: 38,
+									margin: "auto",
 									display: "flex",
 									alignItems: "center",
 									justifyContent: "center",
@@ -195,7 +228,7 @@ const CalendrierProgres = ({ suivi }: CalendrierProgresProps) => {
 								{estActif ? "👟" : jour}
 							</Box>
 
-							{estHuitiemeColonne && (
+							{estDimanche && (
 								<Box
 									sx={{
 										display: "flex",
@@ -218,6 +251,7 @@ const CalendrierProgres = ({ suivi }: CalendrierProgresProps) => {
 											borderRadius: "100px",
 											zIndex: 0,
 											display: "flex",
+											flexDirection: "column",
 											alignItems: "center",
 											justifyContent: "center",
 											transition:
@@ -228,7 +262,7 @@ const CalendrierProgres = ({ suivi }: CalendrierProgresProps) => {
 										sx={{
 											zIndex: 1,
 											color: semaineValidee ? "#ff9800" : "#333",
-											fontSize: "1.1rem",
+											fontSize: "2rem",
 											animation: semaineValidee ? "pulse 2s infinite" : "none",
 											"@keyframes pulse": {
 												"0%": { transform: "scale(1)" },
@@ -237,11 +271,54 @@ const CalendrierProgres = ({ suivi }: CalendrierProgresProps) => {
 											},
 										}}
 									/>
+
+									{semaineValidee && (
+										<Typography
+											sx={{
+												position: "absolute",
+												zIndex: 1,
+												bottom: "5px",
+												fontSize: "0.7rem",
+												fontWeight: 900,
+												color: "#000000",
+												lineHeight: 1,
+											}}
+										>
+											{nbSemainesConsecutives}
+										</Typography>
+									)}
 								</Box>
 							)}
 						</React.Fragment>
 					);
 				})}
+
+				{Array.from({
+					length: (7 - ((premierJourIndex + nbJours) % 7)) % 7,
+				}).map((_, i) => (
+					<Box key={`fill-${i}`} />
+				))}
+				{(premierJourIndex + nbJours) % 7 !== 0 && (
+					<Box
+						sx={{
+							display: "flex",
+							justifyContent: "center",
+							alignItems: "center",
+							position: "relative",
+						}}
+					>
+						<Box
+							sx={{
+								position: "absolute",
+								width: 22,
+								height: "90%",
+								bgcolor: "rgba(255,255,255,0.05)",
+								borderRadius: "100px",
+							}}
+						/>
+						<LocalFireDepartmentIcon sx={{ color: "#333", fontSize: "2rem" }} />
+					</Box>
+				)}
 			</Box>
 		</Paper>
 	);
