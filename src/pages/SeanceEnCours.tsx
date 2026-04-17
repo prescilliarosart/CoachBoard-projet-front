@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { useAuth } from "../context/AuthContext";
 import { apiFetch } from "../services/api";
+import type { EleveProgrammeActif, SeanceJour } from "../types";
 
 type Exercice = {
 	ID_SEANCES_EXERCICES: number;
@@ -108,10 +109,10 @@ export default function SeanceEnCours() {
 		if (!user) return;
 		const fetchData = async () => {
 			try {
-				const progs = await apiFetch<any[]>(
+				const progs = await apiFetch<EleveProgrammeActif[]>(
 					`/api/eleves-programmes/eleve/${user.id}`,
 				);
-				const actif = progs.filter((p: any) => p.statut === "En cours").at(-1);
+				const actif = progs.filter((p) => p.statut === "En cours").at(-1);
 				if (!actif) {
 					setErreur("Aucun programme actif pour le moment.");
 					setLoading(false);
@@ -119,11 +120,11 @@ export default function SeanceEnCours() {
 				}
 				setIdEleveProgramme(actif.id_eleve_programme);
 
-				const seances = await apiFetch<any[]>(
+				const seances = await apiFetch<SeanceJour[]>(
 					`/api/seances/programme/${actif.id_programme}`,
 				);
 				const seanceDuJour = seances.find(
-					(s: any) => s.JOUR?.toLowerCase() === aujourdhui.toLowerCase(),
+					(s) => s.JOUR?.toLowerCase() === aujourdhui.toLowerCase(),
 				);
 				if (!seanceDuJour) {
 					setErreur(`Aucune séance prévue aujourd'hui (${aujourdhui}).`);

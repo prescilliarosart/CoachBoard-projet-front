@@ -91,3 +91,15 @@ export interface Suivi {
 export interface SeanceAvecProgramme extends Seance {
 	nom_programme: string;
 }
+
+export interface EleveProgrammeActif {
+	id_eleve_programme: number;
+	id_programme: number;
+	statut: string | null;
+}
+
+export interface SeanceJour {
+	ID_SEANCE: number;
+	TITRE: string;
+	JOUR: string | null;
+}
