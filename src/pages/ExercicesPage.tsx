@@ -413,12 +413,14 @@ export default function ExercicesPage() {
 								value={search}
 								onChange={(e) => setSearch(e.target.value)}
 								size="small"
-								InputProps={{
-									startAdornment: (
-										<InputAdornment position="start">
-											<SearchIcon sx={{ color: "#7a8fa6", fontSize: 18 }} />
-										</InputAdornment>
-									),
+								slotProps={{
+									input: {
+										startAdornment: (
+											<InputAdornment position="start">
+												<SearchIcon sx={{ color: "#7a8fa6", fontSize: 18 }} />
+											</InputAdornment>
+										),
+									},
 								}}
 								sx={{
 									"& .MuiOutlinedInput-root": {
