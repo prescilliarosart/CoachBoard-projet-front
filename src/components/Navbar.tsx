@@ -5,6 +5,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import type { User } from "../types";
 
 type NavbarProps = {
 	links: { label: string; path: string }[];
@@ -16,6 +17,8 @@ export default function Navbar({ links }: NavbarProps) {
 	const { logout, token, user } = useAuth();
 	console.log("USER :", user);
 	const location = useLocation();
+	const typedUser = user as User;
+
 	return (
 		<AppBar
 			sx={{
@@ -27,7 +30,7 @@ export default function Navbar({ links }: NavbarProps) {
 			<Toolbar sx={{ alignItems: "center" }}>
 				<Link
 					to={
-						(user as any)?.role === "coach"
+						typedUser?.role === "coach"
 							? "/dashboard-coach"
 							: "/dashboard-eleves"
 					}
@@ -45,9 +48,9 @@ export default function Navbar({ links }: NavbarProps) {
 							fontFamily: "'Barlow Condensed', sans-serif",
 						}}
 					>
-						{(user as any)?.role === "coach"
-							? `${(user as any)?.prenom} ${(user as any)?.nom} · Coach Sportif`
-							: `${(user as any)?.prenom} ${(user as any)?.nom} · Élève`}
+						{typedUser?.role === "coach"
+							? `${typedUser?.prenom} ${typedUser?.nom} · Coach Sportif`
+							: `${typedUser?.prenom} ${typedUser?.nom} · Élève`}
 					</Typography>
 				</Link>
 				{links.map((link) => (
