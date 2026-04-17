@@ -1,11 +1,8 @@
 import {
 	Box,
 	Button,
-	FormControl,
-	InputLabel,
-	MenuItem,
+	Chip,
 	Paper,
-	Select,
 	Table,
 	TableBody,
 	TableCell,
@@ -16,7 +13,7 @@ import {
 	Toolbar,
 	Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
 	Bar,
 	BarChart,
@@ -27,7 +24,11 @@ import {
 	XAxis,
 	YAxis,
 } from "recharts";
+import CalendrierProgres from "../components/CalendrierProgres";
 import Navbar from "../components/Navbar";
+import { useAuth } from "../context/AuthContext";
+import { apiFetch } from "../services/api";
+import type { Suivi, SuiviAvecDetails } from "../types";
 
 const GREEN = "#22c55e";
 const BG = "#0b1520";
@@ -39,60 +40,64 @@ const navLinks = [
 	{ label: "Suivi", path: "/mon-suivi" },
 ];
 
-const exercicesDisponibles = ["Squat", "Développé couché", "Soulevé de terre"];
+interface SeanceGroupee {
+	date: string;
+	titre_seance: string;
+	RESSENTI: string | null;
+	POIDS_CORPOREL: number | null;
+	exercices: string[];
+}
 
-const progressionData: Record<string, { semaine: string; poids: number }[]> = {
-	Squat: [
-		{ semaine: "S1", poids: 75 },
-		{ semaine: "S2", poids: 78 },
-		{ semaine: "S3", poids: 80 },
-		{ semaine: "S4", poids: 83 },
-		{ semaine: "S5", poids: 90 },
-		{ semaine: "S6", poids: 87 },
-		{ semaine: "S7", poids: 95 },
-	],
-	"Développé couché": [
-		{ semaine: "S1", poids: 60 },
-		{ semaine: "S2", poids: 62 },
-		{ semaine: "S3", poids: 65 },
-		{ semaine: "S4", poids: 65 },
-		{ semaine: "S5", poids: 67 },
-		{ semaine: "S6", poids: 70 },
-		{ semaine: "S7", poids: 72 },
-	],
-	"Soulevé de terre": [
-		{ semaine: "S1", poids: 100 },
-		{ semaine: "S2", poids: 105 },
-		{ semaine: "S3", poids: 107 },
-		{ semaine: "S4", poids: 110 },
-		{ semaine: "S5", poids: 115 },
-		{ semaine: "S6", poids: 112 },
-		{ semaine: "S7", poids: 120 },
-	],
-};
+function CourbeProgression({ suiviData = [] }: { suiviData?: Suivi[] }) {
+	const dataMap = new Map();
+	suiviData.forEach((item) => {
+		if (item.POIDS_CORPOREL && item.POIDS_CORPOREL > 0) {
+			dataMap.set(item.DATE, item.POIDS_CORPOREL);
+		}
+	});
 
-const performancesData = [
-	{ id: 1, poids: "95 KG", exercice: "Squat", repetition: 5, effort: "4/5" },
-	{
-		id: 2,
-		poids: "72 KG",
-		exercice: "Développé couché",
-		repetition: 8,
-		effort: "3/5",
-	},
-	{
-		id: 3,
-		poids: "120 KG",
-		exercice: "Soulevé de terre",
-		repetition: 3,
-		effort: "5/5",
-	},
-];
+	const chartData = Array.from(dataMap.entries())
+		.map(([date, poids]) => ({
+			affichageDate: new Date(date).toLocaleDateString("fr-FR", {
+				month: "short",
+				day: "2-digit",
+				timeZone: "Europe/Paris",
+			}),
+			poids: poids,
+			rawDate: new Date(date).getTime(),
+		}))
+		.sort((a, b) => a.rawDate - b.rawDate);
 
-function CourbeProgression() {
-	const [exercice, setExercice] = useState("Squat");
-	const data = progressionData[exercice];
-	const maxPoids = Math.max(...data.map((d) => d.poids));
+	const maxPoids =
+		chartData.length > 0 ? Math.max(...chartData.map((d) => d.poids)) : 0;
+
+	if (chartData.length === 0) {
+		return (
+			<Paper
+				sx={{
+					background: CARD_BG,
+					border: `1px solid ${BORDER}`,
+					borderRadius: 2,
+					p: 2,
+					height: 268,
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "center",
+				}}
+			>
+				<Typography
+					sx={{
+						color: "#7a8fa6",
+						fontFamily: "'Barlow Condensed', sans-serif",
+					}}
+				>
+					Aucune donnée de poids enregistrée
+				</Typography>
+			</Paper>
+		);
+	}
+
+	console.log(chartData);
 
 	return (
 		<Paper
@@ -106,78 +111,41 @@ function CourbeProgression() {
 			<Typography
 				sx={{
 					color: "#7a8fa6",
-					fontSize: "0.78rem",
+					fontSize: "1rem",
 					fontFamily: "'Barlow Condensed', sans-serif",
 					letterSpacing: "0.08em",
 					mb: 1,
 				}}
 			>
-				Courbe de progression
+				Évolution du poids corporel
 			</Typography>
-			<FormControl size="small" sx={{ mb: 2, minWidth: 160 }}>
-				<InputLabel
-					sx={{
-						color: GREEN,
-						fontFamily: "'Barlow Condensed', sans-serif",
-						fontSize: "0.85rem",
-					}}
-				>
-					Exercices
-				</InputLabel>
-				<Select
-					value={exercice}
-					label="Exercices"
-					onChange={(e) => setExercice(e.target.value)}
-					sx={{
-						color: GREEN,
-						fontFamily: "'Barlow Condensed', sans-serif",
-						fontSize: "0.85rem",
-						"& .MuiOutlinedInput-notchedOutline": { borderColor: GREEN },
-						"&:hover .MuiOutlinedInput-notchedOutline": { borderColor: GREEN },
-						"& .MuiSvgIcon-root": { color: GREEN },
-					}}
-				>
-					{exercicesDisponibles.map((ex) => (
-						<MenuItem
-							key={ex}
-							value={ex}
-							sx={{
-								fontFamily: "'Barlow Condensed', sans-serif",
-								fontSize: "0.85rem",
-							}}
-						>
-							{ex}
-						</MenuItem>
-					))}
-				</Select>
-			</FormControl>
-			<ResponsiveContainer width="100%" height={220}>
+
+			<ResponsiveContainer width="100%" height={300}>
 				<BarChart
-					data={data}
-					margin={{ top: 20, right: 10, left: -20, bottom: 0 }}
+					data={chartData}
+					margin={{ top: 20, right: 20, left: -15, bottom: 5 }}
 				>
 					<CartesianGrid
 						strokeDasharray="3 3"
 						stroke="rgba(255,255,255,0.05)"
+						vertical={false}
 					/>
 					<XAxis
-						dataKey="semaine"
+						dataKey="affichageDate"
+						padding={{ left: 0, right: 0 }}
 						tick={{
 							fill: "#7a8fa6",
-							fontSize: 11,
+							fontSize: 14,
 							fontFamily: "'Barlow Condensed', sans-serif",
 						}}
-						axisLine={false}
+						axisLine={{ stroke: BORDER }}
 						tickLine={false}
 					/>
 					<YAxis
-						tick={{
-							fill: "#7a8fa6",
-							fontSize: 11,
-							fontFamily: "'Barlow Condensed', sans-serif",
-						}}
+						tick={{ fill: "#7a8fa6", fontSize: 14 }}
 						axisLine={false}
 						tickLine={false}
+						domain={["dataMin - 5", "dataMax + 5"]}
 					/>
 					<Tooltip
 						contentStyle={{
@@ -187,12 +155,15 @@ function CourbeProgression() {
 							fontFamily: "'Barlow Condensed', sans-serif",
 							color: "#fff",
 						}}
-						formatter={(value) => [`${String(value)} KG`, "Poids"]}
+						itemStyle={{ color: "#fff" }}
+						labelStyle={{ color: "#7a8fa6" }}
+						cursor={{ fill: "rgba(255,255,255,0.05)" }}
+						formatter={(value) => [`${value} KG`, "Poids"]}
 					/>
-					<Bar dataKey="poids" radius={[3, 3, 0, 0]}>
-						{data.map((entry) => (
+					<Bar dataKey="poids" radius={[3, 3, 0, 0]} barSize={30}>
+						{chartData.map((entry, index) => (
 							<Cell
-								key={entry.semaine}
+								key={`cell-${index}`}
 								fill={entry.poids === maxPoids ? GREEN : "rgba(34,197,94,0.45)"}
 							/>
 						))}
@@ -203,75 +174,42 @@ function CourbeProgression() {
 	);
 }
 
-function PhotoPlaceholder() {
-	return (
-		<Paper
-			sx={{
-				background: CARD_BG,
-				border: `1px solid ${BORDER}`,
-				borderRadius: 2,
-				display: "flex",
-				alignItems: "center",
-				justifyContent: "center",
-				minHeight: 280,
-				position: "relative",
-				overflow: "hidden",
-			}}
-		>
-			<Box
-				component="svg"
-				viewBox="0 0 100 100"
-				preserveAspectRatio="none"
-				sx={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
-			>
-				<line
-					x1="0"
-					y1="0"
-					x2="100"
-					y2="100"
-					stroke="rgba(34,197,94,0.15)"
-					strokeWidth="0.5"
-					vectorEffect="non-scaling-stroke"
-				/>
-				<line
-					x1="100"
-					y1="0"
-					x2="0"
-					y2="100"
-					stroke="rgba(34,197,94,0.15)"
-					strokeWidth="0.5"
-					vectorEffect="non-scaling-stroke"
-				/>
-			</Box>
-			<Typography
-				sx={{
-					color: "#7a8fa6",
-					fontFamily: "'Barlow Condensed', sans-serif",
-					fontSize: "0.9rem",
-					zIndex: 1,
-				}}
-			>
-				Texte ou photo à voir
-			</Typography>
-		</Paper>
+function grouperParSeance(data: SuiviAvecDetails[]): SeanceGroupee[] {
+	const map = new Map<string, SeanceGroupee>();
+	for (const row of data) {
+		const key = `${row.DATE}_${row.titre_seance}`;
+		if (!map.has(key)) {
+			map.set(key, {
+				date: row.DATE,
+				titre_seance: row.titre_seance,
+				RESSENTI: row.RESSENTI,
+				POIDS_CORPOREL: row.POIDS_CORPOREL,
+				exercices: [],
+			});
+		}
+		map.get(key)?.exercices.push(row.nom_exercice);
+	}
+	return Array.from(map.values()).sort(
+		(a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
 	);
 }
 
-function TableauPerformances() {
+function getRessentiColor(ressenti: string) {
+	switch (ressenti) {
+		case "Facile":
+			return "#6ffa60";
+		case "Moyen":
+			return "#fa7c15";
+		case "Difficile":
+			return "#fa151d";
+	}
+}
+
+function TableauPerformances({ data }: { data: SuiviAvecDetails[] }) {
+	const seances = grouperParSeance(data);
+
 	return (
 		<Box>
-			<Typography
-				sx={{
-					color: "#fff",
-					fontFamily: "'Barlow Condensed', sans-serif",
-					fontWeight: 600,
-					fontSize: "1rem",
-					mb: 2,
-					letterSpacing: "0.04em",
-				}}
-			>
-				Suivi des performances
-			</Typography>
 			<TableContainer
 				component={Paper}
 				sx={{
@@ -280,16 +218,22 @@ function TableauPerformances() {
 					borderRadius: 2,
 				}}
 			>
-				<Table size="small">
+				<Table size="medium">
 					<TableHead>
 						<TableRow>
-							{["Poids", "Exercices", "Répétition", "Effort 1/5"].map((col) => (
+							{[
+								"Date",
+								"Séance",
+								"Poids corporel",
+								"Ressenti",
+								"Exercices",
+							].map((col) => (
 								<TableCell
 									key={col}
 									sx={{
 										color: "#7a8fa6",
 										fontFamily: "'Barlow Condensed', sans-serif",
-										fontSize: "0.82rem",
+										fontSize: "1rem",
 										borderBottom: `1px solid ${BORDER}`,
 										letterSpacing: "0.05em",
 									}}
@@ -300,8 +244,11 @@ function TableauPerformances() {
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{performancesData.map((row) => (
-							<TableRow key={row.id} sx={{ "&:last-child td": { border: 0 } }}>
+						{seances.map((seance) => (
+							<TableRow
+								key={`${seance.date}_${seance.titre_seance}`}
+								sx={{ "&:last-child td": { border: 0 } }}
+							>
 								<TableCell
 									sx={{
 										color: GREEN,
@@ -310,7 +257,12 @@ function TableauPerformances() {
 										borderBottom: `1px solid ${BORDER}`,
 									}}
 								>
-									{row.poids}
+									{new Date(seance.date).toLocaleDateString("fr-FR", {
+										day: "2-digit",
+										month: "short",
+										year: "numeric",
+										timeZone: "Europe/Paris",
+									})}
 								</TableCell>
 								<TableCell
 									sx={{
@@ -319,7 +271,7 @@ function TableauPerformances() {
 										borderBottom: `1px solid ${BORDER}`,
 									}}
 								>
-									{row.exercice}
+									{seance.titre_seance}
 								</TableCell>
 								<TableCell
 									sx={{
@@ -328,7 +280,23 @@ function TableauPerformances() {
 										borderBottom: `1px solid ${BORDER}`,
 									}}
 								>
-									{row.repetition}
+									{seance.POIDS_CORPOREL ? `${seance.POIDS_CORPOREL} kg` : "—"}
+								</TableCell>
+								<TableCell
+									sx={{
+										borderBottom: `1px solid ${BORDER}`,
+									}}
+								>
+									<Chip
+										label={seance.RESSENTI ?? "-"}
+										size="small"
+										sx={{
+											bgcolor: `${getRessentiColor(seance.RESSENTI ?? "-")}20`,
+											color: getRessentiColor(seance.RESSENTI ?? "-"),
+											fontWeight: 600,
+											fontFamily: "'Barlow Condensed', sans-serif",
+										}}
+									/>
 								</TableCell>
 								<TableCell
 									sx={{
@@ -337,7 +305,7 @@ function TableauPerformances() {
 										borderBottom: `1px solid ${BORDER}`,
 									}}
 								>
-									{row.effort}
+									{seance.exercices.join(", ")}
 								</TableCell>
 							</TableRow>
 						))}
@@ -374,7 +342,7 @@ function CalculIMC() {
 				border: `1px solid ${BORDER}`,
 				borderRadius: 2,
 				p: 2,
-				minWidth: 220,
+				width: 220,
 			}}
 		>
 			<Typography
@@ -478,6 +446,30 @@ function CalculIMC() {
 }
 
 export default function MonSuivi() {
+	const { user } = useAuth();
+	const [suivi, setSuivi] = useState<SuiviAvecDetails[]>([]);
+	const [loading, setLoading] = useState(true);
+
+	useEffect(() => {
+		const fetchData = async () => {
+			if (!user?.id) return;
+
+			setLoading(true);
+			try {
+				const data = await apiFetch<SuiviAvecDetails[]>(
+					`/api/suivi/eleve/${user.id}`,
+				);
+				setSuivi(data);
+			} catch (err) {
+				console.error("Erreur lors de la récupération :", err);
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		fetchData();
+	}, [user]);
+
 	return (
 		<Box
 			sx={{
@@ -488,7 +480,7 @@ export default function MonSuivi() {
 		>
 			<Navbar links={navLinks} profilLabel="Mon profil - élève" />
 			<Toolbar />
-			<Box sx={{ px: { xs: 2, md: 4 }, py: 3, maxWidth: 1200, mx: "auto" }}>
+			<Box sx={{ px: { xs: 2, md: 4 }, py: 3, maxWidth: 1600, mx: "auto" }}>
 				<Typography
 					variant="h5"
 					sx={{
@@ -501,28 +493,51 @@ export default function MonSuivi() {
 				>
 					Mon suivi 🏅
 				</Typography>
-				<Box
-					sx={{
-						display: "grid",
-						gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
-						gap: 3,
-						mb: 3,
-					}}
-				>
-					<CourbeProgression />
-					<PhotoPlaceholder />
-				</Box>
-				<Box
-					sx={{
-						display: "grid",
-						gridTemplateColumns: { xs: "1fr", md: "1fr auto" },
-						gap: 3,
-						alignItems: "start",
-					}}
-				>
-					<TableauPerformances />
-					<CalculIMC />
-				</Box>
+
+				{loading ? (
+					<Typography sx={{ color: GREEN, textAlign: "center", mt: 5 }}>
+						Chargement de vos performances...
+					</Typography>
+				) : (
+					<>
+						<Box
+							sx={{
+								display: "grid",
+								gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+								gap: 3,
+								mb: 3,
+							}}
+						>
+							<CourbeProgression suiviData={suivi} />
+							<CalendrierProgres suivi={suivi} />
+						</Box>
+						<Box>
+							<Typography
+								sx={{
+									color: "#fff",
+									fontFamily: "'Barlow Condensed', sans-serif",
+									fontWeight: 600,
+									fontSize: "1.2rem",
+									mb: 2,
+									letterSpacing: "0.04em",
+								}}
+							>
+								Suivi des performances
+							</Typography>
+							<Box
+								sx={{
+									display: "grid",
+									gridTemplateColumns: { xs: "1fr", md: "1fr auto" },
+									gap: 3,
+									alignItems: "start",
+								}}
+							>
+								<TableauPerformances data={suivi} />
+								<CalculIMC />
+							</Box>
+						</Box>
+					</>
+				)}
 			</Box>
 		</Box>
 	);

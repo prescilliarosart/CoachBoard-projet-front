@@ -88,6 +88,11 @@ export interface Suivi {
 	ID_ELEVE_PROGRAMME: number;
 }
 
+export interface SuiviAvecDetails extends Suivi {
+	titre_seance: string;
+	nom_exercice: string;
+}
+
 export interface SeanceAvecProgramme extends Seance {
 	nom_programme: string;
 }
