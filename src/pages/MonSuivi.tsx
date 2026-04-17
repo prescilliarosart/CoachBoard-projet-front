@@ -28,6 +28,7 @@ import CalendrierProgres from "../components/CalendrierProgres";
 import Navbar from "../components/Navbar";
 import { useAuth } from "../context/AuthContext";
 import { apiFetch } from "../services/api";
+import type { Suivi, SuiviAvecDetails } from "../types";
 
 const GREEN = "#22c55e";
 const BG = "#0b1520";
@@ -39,11 +40,19 @@ const navLinks = [
 	{ label: "Suivi", path: "/mon-suivi" },
 ];
 
-function CourbeProgression({ suiviData = [] }: { suiviData?: any[] }) {
+interface SeanceGroupee {
+	date: string;
+	titre_seance: string;
+	RESSENTI: string | null;
+	POIDS_CORPOREL: number | null;
+	exercices: string[];
+}
+
+function CourbeProgression({ suiviData = [] }: { suiviData?: Suivi[] }) {
 	const dataMap = new Map();
 	suiviData.forEach((item) => {
 		if (item.POIDS_CORPOREL && item.POIDS_CORPOREL > 0) {
-			dataMap.set(item.DATE, parseFloat(item.POIDS_CORPOREL));
+			dataMap.set(item.DATE, item.POIDS_CORPOREL);
 		}
 	});
 
@@ -165,62 +174,8 @@ function CourbeProgression({ suiviData = [] }: { suiviData?: any[] }) {
 	);
 }
 
-function PhotoPlaceholder() {
-	return (
-		<Paper
-			sx={{
-				background: CARD_BG,
-				border: `1px solid ${BORDER}`,
-				borderRadius: 2,
-				display: "flex",
-				alignItems: "center",
-				justifyContent: "center",
-				minHeight: 280,
-				position: "relative",
-				overflow: "hidden",
-			}}
-		>
-			<Box
-				component="svg"
-				viewBox="0 0 100 100"
-				preserveAspectRatio="none"
-				sx={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
-			>
-				<line
-					x1="0"
-					y1="0"
-					x2="100"
-					y2="100"
-					stroke="rgba(34,197,94,0.15)"
-					strokeWidth="0.5"
-					vectorEffect="non-scaling-stroke"
-				/>
-				<line
-					x1="100"
-					y1="0"
-					x2="0"
-					y2="100"
-					stroke="rgba(34,197,94,0.15)"
-					strokeWidth="0.5"
-					vectorEffect="non-scaling-stroke"
-				/>
-			</Box>
-			<Typography
-				sx={{
-					color: "#7a8fa6",
-					fontFamily: "'Barlow Condensed', sans-serif",
-					fontSize: "0.9rem",
-					zIndex: 1,
-				}}
-			>
-				Texte ou photo à voir
-			</Typography>
-		</Paper>
-	);
-}
-
-function grouperParSeance(data: any[]) {
-	const map = new Map<string, any>();
+function grouperParSeance(data: SuiviAvecDetails[]): SeanceGroupee[] {
+	const map = new Map<string, SeanceGroupee>();
 	for (const row of data) {
 		const key = `${row.DATE}_${row.titre_seance}`;
 		if (!map.has(key)) {
@@ -232,7 +187,7 @@ function grouperParSeance(data: any[]) {
 				exercices: [],
 			});
 		}
-		map.get(key).exercices.push(row.nom_exercice);
+		map.get(key)?.exercices.push(row.nom_exercice);
 	}
 	return Array.from(map.values()).sort(
 		(a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
@@ -250,23 +205,11 @@ function getRessentiColor(ressenti: string) {
 	}
 }
 
-function TableauPerformances({ data }: { data: any[] }) {
+function TableauPerformances({ data }: { data: SuiviAvecDetails[] }) {
 	const seances = grouperParSeance(data);
 
 	return (
 		<Box>
-			<Typography
-				sx={{
-					color: "#fff",
-					fontFamily: "'Barlow Condensed', sans-serif",
-					fontWeight: 600,
-					fontSize: "1.2rem",
-					mb: 2,
-					letterSpacing: "0.04em",
-				}}
-			>
-				Suivi des performances
-			</Typography>
 			<TableContainer
 				component={Paper}
 				sx={{
@@ -303,7 +246,7 @@ function TableauPerformances({ data }: { data: any[] }) {
 					<TableBody>
 						{seances.map((seance) => (
 							<TableRow
-								key={`${seance.DATE}_${seance.titre_seance}`}
+								key={`${seance.date}_${seance.titre_seance}`}
 								sx={{ "&:last-child td": { border: 0 } }}
 							>
 								<TableCell
@@ -348,8 +291,8 @@ function TableauPerformances({ data }: { data: any[] }) {
 										label={seance.RESSENTI ?? "-"}
 										size="small"
 										sx={{
-											bgcolor: `${getRessentiColor(seance.RESSENTI)}20`,
-											color: getRessentiColor(seance.RESSENTI),
+											bgcolor: `${getRessentiColor(seance.RESSENTI ?? "-")}20`,
+											color: getRessentiColor(seance.RESSENTI ?? "-"),
 											fontWeight: 600,
 											fontFamily: "'Barlow Condensed', sans-serif",
 										}}
@@ -399,7 +342,7 @@ function CalculIMC() {
 				border: `1px solid ${BORDER}`,
 				borderRadius: 2,
 				p: 2,
-				minWidth: 220,
+				width: 220,
 			}}
 		>
 			<Typography
@@ -504,7 +447,7 @@ function CalculIMC() {
 
 export default function MonSuivi() {
 	const { user } = useAuth();
-	const [suivi, setSuivi] = useState<any[]>([]);
+	const [suivi, setSuivi] = useState<SuiviAvecDetails[]>([]);
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
@@ -513,7 +456,9 @@ export default function MonSuivi() {
 
 			setLoading(true);
 			try {
-				const data = await apiFetch<any[]>(`/api/suivi/eleve/${user.id}`);
+				const data = await apiFetch<SuiviAvecDetails[]>(
+					`/api/suivi/eleve/${user.id}`,
+				);
 				setSuivi(data);
 			} catch (err) {
 				console.error("Erreur lors de la récupération :", err);
@@ -566,16 +511,30 @@ export default function MonSuivi() {
 							<CourbeProgression suiviData={suivi} />
 							<CalendrierProgres suivi={suivi} />
 						</Box>
-						<Box
-							sx={{
-								display: "grid",
-								gridTemplateColumns: { xs: "1fr", md: "1fr auto" },
-								gap: 3,
-								alignItems: "start",
-							}}
-						>
-							<TableauPerformances data={suivi} />
-							<CalculIMC />
+						<Box>
+							<Typography
+								sx={{
+									color: "#fff",
+									fontFamily: "'Barlow Condensed', sans-serif",
+									fontWeight: 600,
+									fontSize: "1.2rem",
+									mb: 2,
+									letterSpacing: "0.04em",
+								}}
+							>
+								Suivi des performances
+							</Typography>
+							<Box
+								sx={{
+									display: "grid",
+									gridTemplateColumns: { xs: "1fr", md: "1fr auto" },
+									gap: 3,
+									alignItems: "start",
+								}}
+							>
+								<TableauPerformances data={suivi} />
+								<CalculIMC />
+							</Box>
 						</Box>
 					</>
 				)}

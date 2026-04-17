@@ -3,12 +3,13 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import LocalFireDepartmentIcon from "@mui/icons-material/LocalFireDepartment";
 import { Box, IconButton, Paper, Typography } from "@mui/material";
 import React, { useState } from "react";
+import type { Suivi } from "../types";
 
 const CARD_BG = "#0f1e2e";
 const BORDER = "rgba(255, 255, 255, 0.12)";
 
 interface CalendrierProgresProps {
-	suivi: any[];
+	suivi: Suivi[];
 }
 
 const CalendrierProgres = ({ suivi }: CalendrierProgresProps) => {
