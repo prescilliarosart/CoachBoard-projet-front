@@ -112,3 +112,20 @@ export interface ExerciceRaw {
 	IMAGE_URL: string | null;
 	ID_COACH: number;
 }
+
+export interface ProgrammeAvecEleve {
+	ID_PROGRAMME: number;
+	ID_ELEVE_PROGRAMME: number;
+	nom_programme: string;
+	duree_programme: number | null;
+	DATE_DEBUT: string | null;
+	DATE_FIN: string | null;
+	STATUT: string | null;
+	nom_eleve: string;
+	prenom_eleve: string;
+}
+
+export interface SeanceExerciceDetail extends SeanceExercice {
+	NOM_EXERCICE: string;
+	ID_SEANCE: number;
+}
