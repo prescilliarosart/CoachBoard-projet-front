@@ -14,22 +14,30 @@ const heroWords = ["ENTRAÎNE-TOI", "MIEUX.", "PROGRESSE", "PLUS", "VITE."];
 
 const features = [
 	{
-		id: 1,
-		icon: "🎯",
-		title: "Atteignez vos objectifs",
-		desc: "Fixez des objectifs clairs et suivez votre progression vers chaque palier.",
-	},
-	{
 		id: 2,
 		icon: "📈",
 		title: "Suivez votre progression",
 		desc: "Visualisez vos performances séance après séance grâce à des graphiques clairs.",
+		imageKey: "progression",
+		extra:
+			"Analyse tes résultats semaine après semaine et identifie tes points forts.",
+	},
+	{
+		id: 1,
+		icon: "🎯",
+		title: "Atteignez vos objectifs",
+		desc: "Fixez des objectifs clairs et suivez votre progression vers chaque palier.",
+		imageKey: "objectifs",
+		extra: null,
 	},
 	{
 		id: 3,
 		icon: "📋",
 		title: "Enregistrez vos programmes",
 		desc: "Créez et sauvegardez vos programmes d'entraînement sur mesure, accessibles partout.",
+		imageKey: "exercices",
+		extra:
+			"Retrouve tous tes exercices en un clin d'œil, depuis n'importe quel appareil.",
 	},
 ];
 
@@ -57,11 +65,24 @@ const steps = [
 	},
 ];
 
+interface AppImage {
+	id: number;
+	nom: string;
+	url: string;
+}
+
 export default function HomePage() {
 	const navigate = useNavigate();
 	const [scrolled, setScrolled] = useState(false);
 	const [titleVisible, setTitleVisible] = useState(false);
+	const [appImages, setAppImages] = useState<AppImage[]>([]);
 	const titleRef = useRef<HTMLHeadingElement>(null);
+
+	useEffect(() => {
+		fetch("http://localhost:3310/api/gifs/app-images")
+			.then((res) => res.json())
+			.then((data) => setAppImages(data));
+	}, []);
 
 	useEffect(() => {
 		const onScroll = () => setScrolled(window.scrollY > 40);
@@ -169,20 +190,37 @@ export default function HomePage() {
 					Une app pensée et axée sur la performance
 				</p>
 				<div className="home__features-grid">
-					{features.map((f, i) => (
-						<div
-							className="home__feature-card reveal"
-							key={f.id}
-							style={{ transitionDelay: `${i * 0.1}s` }}
-						>
-							<div className="home__feature-icon">{f.icon}</div>
-							<h3 className="home__feature-title">{f.title}</h3>
-							<p className="home__feature-desc">{f.desc}</p>
-							<div className="home__feature-img">
-								<span>image de l'appli</span>
+					{features.map((f, i) => {
+						const img = appImages.find((a) => a.nom === f.imageKey);
+						return (
+							<div
+								className="home__feature-card reveal"
+								key={f.id}
+								style={{ transitionDelay: `${i * 0.1}s` }}
+							>
+								<div className="home__feature-icon">{f.icon}</div>
+								<h3 className="home__feature-title">{f.title}</h3>
+								<p className="home__feature-desc">{f.desc}</p>
+								{f.extra && <p className="home__feature-extra">{f.extra}</p>}
+								<div className="home__feature-img">
+									{img ? (
+										<img
+											src={`http://localhost:3310${img.url}`}
+											alt={f.title}
+											style={{
+												width: "100%",
+												height: "100%",
+												objectFit: "cover",
+												borderRadius: "8px",
+											}}
+										/>
+									) : (
+										<span>image de l'appli</span>
+									)}
+								</div>
 							</div>
-						</div>
-					))}
+						);
+					})}
 				</div>
 			</section>
 
