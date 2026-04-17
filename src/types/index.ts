@@ -103,3 +103,12 @@ export interface SeanceJour {
 	TITRE: string;
 	JOUR: string | null;
 }
+
+export interface ExerciceRaw {
+	ID_EXERCICE: number;
+	NOM: string;
+	TYPE: string | null;
+	GROUPE_MUSCULAIRE: string | null;
+	IMAGE_URL: string | null;
+	ID_COACH: number;
+}
