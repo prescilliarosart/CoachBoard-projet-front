@@ -30,16 +30,22 @@ import FormProgramme from "../components/FormProgramme";
 import Navbar from "../components/Navbar";
 import { ProgressionCanvas } from "../components/useProgressionCanvas";
 import { apiFetch } from "../services/api";
+import type {
+	ProgrammeAvecEleve,
+	Seance,
+	SeanceExerciceDetail,
+} from "../types";
 
 export default function Programmes() {
-	const [programmes, setProgrammes] = useState<any[]>([]);
+	const [programmes, setProgrammes] = useState<ProgrammeAvecEleve[]>([]);
 	const [showForm, setShowForm] = useState(false);
 	const [search, setSearch] = useState("");
 	const [statutFilter, setStatutFilter] = useState("");
 	const [isOpen, setIsOpen] = useState(false);
-	const [selectedProgramme, setSelectedProgramme] = useState<any>(null);
-	const [seances, setSeances] = useState<any[]>([]);
-	const [exercices, setExercices] = useState<any[]>([]);
+	const [selectedProgramme, setSelectedProgramme] =
+		useState<ProgrammeAvecEleve | null>(null);
+	const [seances, setSeances] = useState<Seance[]>([]);
+	const [exercices, setExercices] = useState<SeanceExerciceDetail[]>([]);
 	const [loading, setLoading] = useState(true);
 
 	const formatDuree = (jours: number) => {
@@ -51,7 +57,7 @@ export default function Programmes() {
 	useEffect(() => {
 		const fetchProgrammes = async () => {
 			try {
-				const data = await apiFetch<any[]>("/api/programmes");
+				const data = await apiFetch<ProgrammeAvecEleve[]>("/api/programmes");
 				setProgrammes(data);
 			} catch (error) {
 				console.error("Erreur lors de la récupération des programmes :", error);
@@ -66,7 +72,7 @@ export default function Programmes() {
 		const fetchSeances = async () => {
 			if (selectedProgramme) {
 				try {
-					const data = await apiFetch<any[]>(
+					const data = await apiFetch<Seance[]>(
 						`/api/seances/programme/${selectedProgramme.ID_PROGRAMME}`,
 					);
 					setSeances(data);
@@ -84,7 +90,7 @@ export default function Programmes() {
 				try {
 					const results = await Promise.all(
 						seances.map((seance) =>
-							apiFetch<any[]>(
+							apiFetch<SeanceExerciceDetail[]>(
 								`/api/seances_exercices/seance/${seance.ID_SEANCE}`,
 							),
 						),
@@ -101,7 +107,7 @@ export default function Programmes() {
 		fetchExercices();
 	}, [seances]);
 
-	const handleOpenModal = (programme: any) => {
+	const handleOpenModal = (programme: ProgrammeAvecEleve) => {
 		setSelectedProgramme(programme);
 		setIsOpen(true);
 	};
@@ -345,9 +351,9 @@ export default function Programmes() {
 								</TableRow>
 							) : (
 								filteredProgrammes.map((programme) => {
-									const dateFin = new Date(programme.DATE_DEBUT);
+									const dateFin = new Date(programme.DATE_DEBUT ?? "");
 									dateFin.setDate(
-										dateFin.getDate() + programme.duree_programme,
+										dateFin.getDate() + (programme.duree_programme ?? 0),
 									);
 									return (
 										<TableRow
@@ -358,9 +364,9 @@ export default function Programmes() {
 												sx={{ color: "#fff" }}
 												onClick={() => handleOpenModal(programme)}
 											>
-												{new Date(programme.DATE_DEBUT).toLocaleDateString(
-													"fr-FR",
-												)}
+												{new Date(
+													programme.DATE_DEBUT ?? "",
+												).toLocaleDateString("fr-FR")}
 											</TableCell>
 											<TableCell
 												sx={{ color: "#fff" }}
@@ -463,9 +469,9 @@ export default function Programmes() {
 							>
 								{selectedProgramme?.prenom_eleve} {selectedProgramme?.nom_eleve}
 							</Typography>
-							{selectedProgramme?.duree && (
+							{selectedProgramme?.duree_programme && (
 								<Chip
-									label={selectedProgramme.duree}
+									label={`${selectedProgramme.duree_programme} semaines`}
 									size="small"
 									sx={{
 										bgcolor: "rgba(34,197,94,0.1)",
@@ -491,13 +497,16 @@ export default function Programmes() {
 						}}
 					>
 						<Typography variant="body2" sx={{ color: "#7a8fa6" }}>
-							Durée : {formatDuree(selectedProgramme?.duree_programme)} · Du{" "}
-							{new Date(selectedProgramme?.DATE_DEBUT).toLocaleDateString(
+							Durée : {formatDuree(selectedProgramme?.duree_programme ?? 0)} ·
+							Du{" "}
+							{new Date(selectedProgramme?.DATE_DEBUT ?? "").toLocaleDateString(
 								"fr-FR",
 							)}{" "}
 							au {(() => {
-								const fin = new Date(selectedProgramme?.DATE_DEBUT);
-								fin.setDate(fin.getDate() + selectedProgramme?.duree_programme);
+								const fin = new Date(selectedProgramme?.DATE_DEBUT ?? "");
+								fin.setDate(
+									fin.getDate() + (selectedProgramme?.duree_programme ?? 0),
+								);
 								return fin.toLocaleDateString("fr-FR");
 							})()}
 						</Typography>

@@ -132,7 +132,7 @@ const SX_BTN = {
 };
 
 export default function FormExercice({ onSuccess }: Props) {
-	const { token, user } = useAuth();
+	const { user } = useAuth();
 	const [loading, setLoading] = useState(false);
 	const [gifs, setGifs] = useState<GifData[]>([]);
 	const [gifSearch, setGifSearch] = useState("");
@@ -170,12 +170,8 @@ export default function FormExercice({ onSuccess }: Props) {
 				(user as { ID_COACH?: number; id?: number })?.ID_COACH ||
 				(user as { ID_COACH?: number; id?: number })?.id ||
 				1;
-			const response = await fetch("/api/exercices", {
+			const data = await apiFetch<{ id: number }>("/api/exercices", {
 				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: `Bearer ${token}`,
-				},
 				body: JSON.stringify({
 					nom: form.nom,
 					description: form.description,
@@ -186,8 +182,6 @@ export default function FormExercice({ onSuccess }: Props) {
 				}),
 			});
 
-			if (!response.ok) throw new Error("Erreur création exercice");
-			const data = await response.json();
 			onSuccess(data.id);
 		} catch (err) {
 			console.error("Erreur FormExercice :", err);

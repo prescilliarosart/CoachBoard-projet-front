@@ -1,8 +1,9 @@
 import PersonIcon from "@mui/icons-material/Person";
 import { Avatar, Box, Button, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import type { Eleve } from "../types";
 
-export default function EleveCard({ eleve }: { eleve: any }) {
+export default function EleveCard({ eleve }: { eleve: Eleve }) {
 	const navigate = useNavigate();
 
 	return (
@@ -32,7 +33,7 @@ export default function EleveCard({ eleve }: { eleve: any }) {
 				}}
 			>
 				<Avatar
-					src={eleve.IMAGE_URL}
+					src={eleve.IMAGE_URL ?? undefined}
 					alt={`${eleve.PRENOM} ${eleve.NOM}`}
 					variant="square"
 					sx={{

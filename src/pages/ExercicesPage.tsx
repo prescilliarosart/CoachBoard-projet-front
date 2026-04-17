@@ -20,6 +20,7 @@ import FormExercice from "../components/FormExercices";
 import Navbar from "../components/Navbar";
 import { useProgressionCanvas } from "../components/useProgressionCanvas";
 import { apiFetch } from "../services/api";
+import type { ExerciceRaw } from "../types";
 
 type TypeExercice = "Cardio" | "Muscu" | "Mobilité" | "HIIT" | "Stretching";
 const TYPES: TypeExercice[] = [
@@ -223,13 +224,13 @@ export default function ExercicesPage() {
 
 	const fetchExercices = async () => {
 		try {
-			const data = await apiFetch<any[]>("/api/exercices");
-			const mapped = data.map((ex: any) => ({
+			const data = await apiFetch<ExerciceRaw[]>("/api/exercices");
+			const mapped = data.map((ex) => ({
 				id: ex.ID_EXERCICE,
 				nom: ex.NOM,
 				type: ex.TYPE as TypeExercice,
 				muscles: ex.GROUPE_MUSCULAIRE ? ex.GROUPE_MUSCULAIRE.split(", ") : [],
-				image_url: ex.IMAGE_URL ?? null,
+				image_url: ex.IMAGE_URL ?? undefined,
 			}));
 			setExercices(mapped);
 		} catch (err) {
@@ -412,12 +413,14 @@ export default function ExercicesPage() {
 								value={search}
 								onChange={(e) => setSearch(e.target.value)}
 								size="small"
-								InputProps={{
-									startAdornment: (
-										<InputAdornment position="start">
-											<SearchIcon sx={{ color: "#7a8fa6", fontSize: 18 }} />
-										</InputAdornment>
-									),
+								slotProps={{
+									input: {
+										startAdornment: (
+											<InputAdornment position="start">
+												<SearchIcon sx={{ color: "#7a8fa6", fontSize: 18 }} />
+											</InputAdornment>
+										),
+									},
 								}}
 								sx={{
 									"& .MuiOutlinedInput-root": {

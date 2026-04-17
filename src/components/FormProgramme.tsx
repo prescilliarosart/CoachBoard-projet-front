@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
 import { apiFetch } from "../services/api";
+import type { Eleve, User } from "../types";
 
 interface FormData {
 	nomProgramme: string;
@@ -21,12 +22,6 @@ interface FormData {
 	dateDebut: string;
 	notes: string;
 	eleveConcerne: number | "";
-}
-
-interface Eleve {
-	ID_ELEVE: number;
-	NOM: string;
-	PRENOM: string;
 }
 
 interface Props {
@@ -102,7 +97,7 @@ export default function FormProgramme({ onSuccess }: Props) {
 
 		setLoading(true);
 		try {
-			const idCoach = (user as any)?.ID_COACH || (user as any)?.id || 1;
+			const idCoach = (user as User)?.id ?? 1;
 
 			const { id } = await apiFetch<{ id: number }>("/api/programmes", {
 				method: "POST",
