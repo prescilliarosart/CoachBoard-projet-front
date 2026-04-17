@@ -4,7 +4,6 @@ import LocalFireDepartmentIcon from "@mui/icons-material/LocalFireDepartment";
 import { Box, IconButton, Paper, Typography } from "@mui/material";
 import React, { useState } from "react";
 
-const GREEN = "#22c55e";
 const CARD_BG = "#0f1e2e";
 const BORDER = "rgba(255, 255, 255, 0.12)";
 
@@ -46,25 +45,33 @@ const CalendrierProgres = ({ suivi }: CalendrierProgresProps) => {
 		),
 	];
 
+	const getDebutSemaineISO = (date: Date): Date => {
+		const d = new Date(date);
+		const jour = d.getDay();
+		const diff = jour === 0 ? 6 : jour - 1;
+		d.setDate(d.getDate() - diff);
+		d.setHours(0, 0, 0, 0);
+		return d;
+	};
+
+	const getFinSemaine = (debutSemaine: Date): Date => {
+		const d = new Date(debutSemaine);
+		d.setDate(d.getDate() + 6);
+		d.setHours(23, 59, 59, 999);
+		return d;
+	};
+
 	const calculerSerieConsecutive = (): number => {
 		let compteur = 0;
-		const aujourdhui = new Date();
-		const dateCourante = new Date(aujourdhui);
+		const dateCourante = new Date();
 
 		while (true) {
-			const jourSemaine =
-				dateCourante.getDay() === 0 ? 6 : dateCourante.getDay() - 1;
-			const debutSemaine = new Date(dateCourante);
-			debutSemaine.setDate(dateCourante.getDate() - jourSemaine);
-			debutSemaine.setHours(0, 0, 0, 0);
-
-			const finSemaine = new Date(debutSemaine);
-			finSemaine.setDate(debutSemaine.getDate() + 6);
-			finSemaine.setHours(23, 59, 59, 999);
+			const debut = getDebutSemaineISO(dateCourante);
+			const fin = getFinSemaine(debut);
 
 			const aActivite = suivi.some((s) => {
 				const d = new Date(s.DATE);
-				return d >= debutSemaine && d <= finSemaine;
+				return d >= debut && d <= fin;
 			});
 
 			if (!aActivite) break;
@@ -115,6 +122,7 @@ const CalendrierProgres = ({ suivi }: CalendrierProgresProps) => {
 							size="small"
 							onClick={moisPrecedent}
 							sx={{ color: "#fff" }}
+							aria-label="Mois précédent"
 						>
 							<ChevronLeftIcon />
 						</IconButton>
@@ -122,6 +130,7 @@ const CalendrierProgres = ({ suivi }: CalendrierProgresProps) => {
 							size="small"
 							onClick={moisSuivant}
 							sx={{ color: "#fff" }}
+							aria-label="Mois suivant"
 						>
 							<ChevronRightIcon />
 						</IconButton>
@@ -195,13 +204,14 @@ const CalendrierProgres = ({ suivi }: CalendrierProgresProps) => {
 					const estDimanche = positionSemaine === 6;
 
 					// Regarde les 7 derniers jours qui précèdent
-					const finSemaine = jour;
-					const debutSemaine = jour - 6 > 0 ? jour - 6 : 1;
+					const dateJour = new Date(annee, mois, jour);
+					const debutSem = getDebutSemaineISO(dateJour);
+					const finSem = getFinSemaine(debutSem);
 
-					// Verification si un jour de semaine est actif
-					const semaineValidee = joursActifsUniques.some(
-						(j) => j >= debutSemaine && j <= finSemaine,
-					);
+					const semaineValidee = suivi.some((s) => {
+						const d = new Date(s.DATE);
+						return d >= debutSem && d <= finSem;
+					});
 
 					return (
 						<React.Fragment key={jour}>
@@ -225,7 +235,13 @@ const CalendrierProgres = ({ suivi }: CalendrierProgresProps) => {
 									fontWeight: estActif ? 800 : 400,
 								}}
 							>
-								{estActif ? "👟" : jour}
+								{estActif ? (
+									<span role="img" aria-label="Activité enregistrée">
+										👟
+									</span>
+								) : (
+									jour
+								)}
 							</Box>
 
 							{estDimanche && (
@@ -255,7 +271,7 @@ const CalendrierProgres = ({ suivi }: CalendrierProgresProps) => {
 											alignItems: "center",
 											justifyContent: "center",
 											transition:
-												"all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275",
+												"all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
 										}}
 									/>
 									<LocalFireDepartmentIcon
@@ -272,21 +288,43 @@ const CalendrierProgres = ({ suivi }: CalendrierProgresProps) => {
 										}}
 									/>
 
-									{semaineValidee && (
-										<Typography
-											sx={{
-												position: "absolute",
-												zIndex: 1,
-												bottom: "5px",
-												fontSize: "0.7rem",
-												fontWeight: 900,
-												color: "#000000",
-												lineHeight: 1,
-											}}
-										>
-											{nbSemainesConsecutives}
-										</Typography>
-									)}
+									{semaineValidee &&
+										(() => {
+											const dateJourCourant = new Date(annee, mois, jour);
+											const debutSemaineDuJour =
+												getDebutSemaineISO(dateJourCourant);
+
+											let num = 0;
+											const curseur = new Date();
+											while (true) {
+												const d = getDebutSemaineISO(curseur);
+												const f = getFinSemaine(d);
+												const actif = suivi.some((s) => {
+													const sd = new Date(s.DATE);
+													return sd >= d && sd <= f;
+												});
+												if (!actif) break;
+												num++;
+												if (d.getTime() === debutSemaineDuJour.getTime()) break;
+												curseur.setDate(curseur.getDate() - 7);
+											}
+
+											return (
+												<Typography
+													sx={{
+														position: "absolute",
+														zIndex: 1,
+														bottom: "5px",
+														fontSize: "0.7rem",
+														fontWeight: 900,
+														color: "#000000",
+														lineHeight: 1,
+													}}
+												>
+													{num}
+												</Typography>
+											);
+										})()}
 								</Box>
 							)}
 						</React.Fragment>
