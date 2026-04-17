@@ -24,9 +24,10 @@ import FormSeance from "../components/FormSeances";
 import Navbar from "../components/Navbar";
 import { ProgressionCanvas } from "../components/useProgressionCanvas";
 import { apiFetch } from "../services/api";
+import type { SeanceAvecProgramme } from "../types";
 
 export default function Seances() {
-	const [seances, setSeances] = useState<any[]>([]);
+	const [seances, setSeances] = useState<SeanceAvecProgramme[]>([]);
 	const [showForm, setShowForm] = useState(false);
 	const [search, setSearch] = useState("");
 	const [jourFilter, setJourFilter] = useState("");
@@ -35,7 +36,7 @@ export default function Seances() {
 	useEffect(() => {
 		const fetchSeances = async () => {
 			try {
-				const data = await apiFetch<any[]>("/api/seances");
+				const data = await apiFetch<[]>("/api/seances");
 				setSeances(data);
 			} catch (err) {
 				console.error("Erreur chargement séances :", err);
@@ -60,7 +61,7 @@ export default function Seances() {
 				(s) =>
 					(s.TITRE.toLowerCase().includes(search.toLowerCase()) ||
 						s.nom_programme.toLowerCase().includes(search.toLowerCase()) ||
-						s.JOUR.toLowerCase().includes(search.toLowerCase())) &&
+						(s.JOUR ?? "").toLowerCase().includes(search.toLowerCase())) &&
 					(jourFilter === "" || s.JOUR === jourFilter),
 			),
 		[search, jourFilter, seances],

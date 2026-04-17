@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { ProgressionCanvas } from "../components/useProgressionCanvas";
 
-export default function DashboarEleves() {
+export default function DashboardEleves() {
 	const navigate = useNavigate();
 
 	return (

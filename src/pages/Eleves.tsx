@@ -10,15 +10,16 @@ import EleveCard from "../components/EleveCard";
 import Navbar from "../components/Navbar";
 import { ProgressionCanvas } from "../components/useProgressionCanvas";
 import { apiFetch } from "../services/api";
+import type { Eleve } from "../types";
 
 export default function Eleves() {
-	const [eleves, setEleves] = useState<any[]>([]);
+	const [eleves, setEleves] = useState<Eleve[]>([]);
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
 		const fetchEleves = async () => {
 			try {
-				const data = await apiFetch<any[]>("/api/eleves");
+				const data = await apiFetch<Eleve[]>("/api/eleves");
 				setEleves(data);
 			} catch (error) {
 				console.error("Erreur lors de la récupération des élèves :", error);
