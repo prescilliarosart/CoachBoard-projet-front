@@ -87,3 +87,7 @@ export interface Suivi {
 	ID_SEANCES_EXERCICES: number;
 	ID_ELEVE_PROGRAMME: number;
 }
+
+export interface SeanceAvecProgramme extends Seance {
+	nom_programme: string;
+}
