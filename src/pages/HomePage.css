@@ -405,16 +405,18 @@ body,
 }
 .home__feature-img {
 	width: 100%;
-	aspect-ratio: 16 / 10;
-	background: linear-gradient(135deg, #1a2a35 0%, #0b1520 100%);
-	border-radius: 8px;
-	border: 1px solid var(--border);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	color: #3a5060;
-	font-size: 0.82rem;
+	height: 180px;
+	border-radius: 10px;
+	overflow: hidden;
 	margin-top: auto;
+	border: 1px solid rgba(34, 197, 94, 0.15);
+}
+
+.home__feature-extra {
+	font-size: 0.82rem;
+	color: var(--green);
+	line-height: 1.5;
+	font-style: italic;
 }
 
 .home__steps {
