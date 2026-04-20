@@ -375,12 +375,17 @@ export default function DashboardCoach() {
 							Programme complet créé !
 						</Typography>
 						<Box sx={{ display: "flex", gap: 2 }}>
-							<Button onClick={handleReset} startIcon={<RestartAltIcon />}>
+							<Button
+								onClick={handleReset}
+								startIcon={<RestartAltIcon />}
+								sx={SX_TOGGLE_INACTIVE}
+							>
 								Créer un autre programme
 							</Button>
 							<Button
 								onClick={() => navigate("/programmes")}
 								variant="outlined"
+								sx={SX_TOGGLE_INACTIVE}
 							>
 								Voir mes programmes
 							</Button>
