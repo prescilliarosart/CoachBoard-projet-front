@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ProgressionCanvas } from "../components/useProgressionCanvas";
 import { StatItem } from "./StatItem";
 import "./HomePage.css";
+import { apiFetch } from "../services/api";
 
 const statsData = [
 	{ id: 1, target: 40, suffix: "+", label: "Élèves suivis" },
@@ -79,9 +80,9 @@ export default function HomePage() {
 	const titleRef = useRef<HTMLHeadingElement>(null);
 
 	useEffect(() => {
-		fetch("http://localhost:3310/api/gifs/app-images")
-			.then((res) => res.json())
-			.then((data) => setAppImages(data));
+		apiFetch<AppImage[]>("/api/gifs/app-images")
+			.then((data) => setAppImages(data))
+			.catch(console.error);
 	}, []);
 
 	useEffect(() => {
@@ -205,7 +206,7 @@ export default function HomePage() {
 								<div className="home__feature-img">
 									{img ? (
 										<img
-											src={`http://localhost:3310${img.url}`}
+											src={`${import.meta.env.VITE_API_URL}${img.url}`}
 											alt={f.title}
 											style={{
 												width: "100%",
