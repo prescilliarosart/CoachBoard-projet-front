@@ -14,23 +14,37 @@ import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
 import { apiFetch } from "../services/api";
 
-type TypeExercice = "Cardio" | "Muscu" | "Mobilité" | "HIIT" | "Stretching";
+type TypeExercice =
+	| "Musculation"
+	| "Cardio"
+	| "Mobilité"
+	| "HIIT"
+	| "Stretching";
+
 const TYPES: TypeExercice[] = [
+	"Musculation",
 	"Cardio",
-	"Muscu",
-	"Mobilité",
 	"HIIT",
+	"Mobilité",
 	"Stretching",
 ];
 const MUSCLES = [
-	"Épaule",
-	"Dos",
 	"Pectoraux",
-	"Triceps",
+	"Dos",
+	"Épaule",
+	"Trapèzes",
 	"Biceps",
+	"Triceps",
+	"Avant-bras",
+	"Nuque",
 	"Abdos",
+	"Obliques",
 	"Lombaires",
 	"Fessiers",
+	"Quadriceps",
+	"Ischio-jambiers",
+	"Adducteurs",
+	"Mollets",
 ] as const;
 type Muscle = (typeof MUSCLES)[number];
 
@@ -149,7 +163,7 @@ export default function FormExercice({ onSuccess, exercices = [] }: Props) {
 		description: "",
 		muscles: [],
 		type: "",
-		gif_url: null, // ← ajoute ça
+		gif_url: null,
 	});
 
 	const toggle = (m: Muscle) =>

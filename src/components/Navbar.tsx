@@ -15,7 +15,6 @@ type NavbarProps = {
 export default function Navbar({ links }: NavbarProps) {
 	const navigate = useNavigate();
 	const { logout, token, user } = useAuth();
-	console.log("USER :", user);
 	const location = useLocation();
 	const typedUser = user as User;
 
@@ -30,9 +29,11 @@ export default function Navbar({ links }: NavbarProps) {
 			<Toolbar sx={{ alignItems: "center" }}>
 				<Link
 					to={
-						typedUser?.role === "coach"
-							? "/dashboard-coach"
-							: "/dashboard-eleves"
+						!typedUser
+							? "/"
+							: typedUser.role === "coach"
+								? "/dashboard-coach"
+								: "/dashboard-eleves"
 					}
 					style={{ textDecoration: "none" }}
 				>
@@ -48,9 +49,11 @@ export default function Navbar({ links }: NavbarProps) {
 							fontFamily: "'Barlow Condensed', sans-serif",
 						}}
 					>
-						{typedUser?.role === "coach"
-							? `${typedUser?.prenom} ${typedUser?.nom} · Coach Sportif`
-							: `${typedUser?.prenom} ${typedUser?.nom} · Élève`}
+						{!typedUser
+							? "CoachBoard"
+							: typedUser.role === "coach"
+								? `${typedUser.prenom} ${typedUser.nom} · Coach Sportif`
+								: `${typedUser.prenom} ${typedUser.nom} · Élève`}
 					</Typography>
 				</Link>
 				{links.map((link) => (
