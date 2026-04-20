@@ -510,6 +510,147 @@ export default function SuiviCoach() {
 	}, [selectedEleve]);
 
 	return (
-		<Box>{loading ? <Typography>Chargement...</Typography> : <Box />}</Box>
+		<Box
+			sx={{
+				minHeight: "100vh",
+				background: BG,
+				fontFamily: "'Barlow Condensed', sans-serif",
+			}}
+		>
+			<Navbar links={navLinks} profilLabel="Profil" />
+			<Toolbar />
+			<Box sx={{ px: { xs: 2, md: 4 }, py: 3, maxWidth: 1600, mx: "auto" }}>
+				{/* Header avec sélecteur d'élève */}
+				<Box
+					sx={{
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "space-between",
+						mb: 3,
+						flexWrap: "wrap",
+						gap: 2,
+					}}
+				>
+					<Typography
+						variant="h5"
+						sx={{
+							color: "#fff",
+							fontFamily: "'Barlow Condensed', sans-serif",
+							fontWeight: 700,
+							letterSpacing: "0.04em",
+						}}
+					>
+						Suivi de mes élèves 🏅
+					</Typography>
+					<FormControl size="small" sx={{ minWidth: 220 }}>
+						<InputLabel
+							sx={{
+								color: "#7a8fa6",
+								fontSize: "0.82rem",
+								"&.Mui-focused": { color: GREEN },
+							}}
+						>
+							Élève
+						</InputLabel>
+						<Select
+							value={selectedEleve?.ID_ELEVE ?? ""}
+							label="Élève"
+							onChange={(e) => {
+								const found = eleves.find(
+									(el) => el.ID_ELEVE === Number(e.target.value),
+								);
+								if (found) setSelectedEleve(found);
+							}}
+							sx={{
+								background: "#111e2c",
+								color: "#e2e8f0",
+								fontFamily: "'Barlow Condensed', sans-serif",
+								fontSize: "0.88rem",
+								borderRadius: "6px",
+								"& .MuiOutlinedInput-notchedOutline": {
+									borderColor: "rgba(34,197,94,0.18)",
+								},
+								"&:hover .MuiOutlinedInput-notchedOutline": {
+									borderColor: "rgba(34,197,94,0.4)",
+								},
+								"&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+									borderColor: GREEN,
+								},
+								"& .MuiSvgIcon-root": { color: "#7a8fa6" },
+							}}
+							MenuProps={{
+								PaperProps: {
+									sx: {
+										background: "#0f1b27",
+										border: "1px solid rgba(34,197,94,0.18)",
+										"& .MuiMenuItem-root": {
+											fontFamily: "'Barlow Condensed', sans-serif",
+											fontSize: "0.88rem",
+											color: "#e2e8f0",
+											"&:hover": { background: "rgba(34,197,94,0.08)" },
+											"&.Mui-selected": {
+												background: "rgba(34,197,94,0.12)",
+												color: GREEN,
+											},
+										},
+									},
+								},
+							}}
+						>
+							{eleves.map((eleve) => (
+								<MenuItem key={eleve.ID_ELEVE} value={eleve.ID_ELEVE}>
+									{eleve.NOM} {eleve.PRENOM}
+								</MenuItem>
+							))}
+						</Select>
+					</FormControl>
+				</Box>
+
+				{loading ? (
+					<Typography sx={{ color: GREEN, textAlign: "center", mt: 5 }}>
+						Chargement des données...
+					</Typography>
+				) : (
+					<>
+						<Box
+							sx={{
+								display: "grid",
+								gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+								gap: 3,
+								mb: 3,
+							}}
+						>
+							<CourbeProgression suiviData={suivi} />
+							<CalendrierProgres suivi={suivi} />
+						</Box>
+						<Box>
+							<Typography
+								sx={{
+									color: "#fff",
+									fontFamily: "'Barlow Condensed', sans-serif",
+									fontWeight: 600,
+									fontSize: "1.2rem",
+									mb: 2,
+									letterSpacing: "0.04em",
+								}}
+							>
+								Suivi des performances
+							</Typography>
+							<Box
+								sx={{
+									display: "grid",
+									gridTemplateColumns: { xs: "1fr", md: "1fr auto" },
+									gap: 3,
+									alignItems: "start",
+								}}
+							>
+								<TableauPerformances data={suivi} />
+								<CalculIMC />
+							</Box>
+						</Box>
+					</>
+				)}
+			</Box>
+		</Box>
 	);
 }
