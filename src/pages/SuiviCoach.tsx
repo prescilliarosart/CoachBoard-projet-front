@@ -1,3 +1,4 @@
+import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import {
 	Box,
 	Button,
@@ -5,6 +6,7 @@ import {
 	FormControl,
 	InputLabel,
 	MenuItem,
+	Tooltip as MuiTooltip,
 	Paper,
 	Select,
 	Table,
@@ -33,8 +35,6 @@ import Navbar from "../components/Navbar";
 import { apiFetch } from "../services/api";
 import type { Eleve, Suivi, SuiviAvecDetails } from "../types";
 
-// ─── Constantes ───────────────────────────────────────────────────────────────
-
 const GREEN = "#22c55e";
 const BG = "#0b1520";
 const CARD_BG = "#0f1e2e";
@@ -46,17 +46,14 @@ const navLinks = [
 	{ label: "Exercices", path: "/exercices" },
 ];
 
-// ─── Types locaux ─────────────────────────────────────────────────────────────
-
 interface SeanceGroupee {
 	date: string;
 	titre_seance: string;
 	RESSENTI: string | null;
 	POIDS_CORPOREL: number | null;
 	exercices: string[];
+	commentaires: string[];
 }
-
-// ─── Fonctions utilitaires ────────────────────────────────────────────────────
 
 function grouperParSeance(data: SuiviAvecDetails[]): SeanceGroupee[] {
 	const map = new Map<string, SeanceGroupee>();
@@ -69,9 +66,16 @@ function grouperParSeance(data: SuiviAvecDetails[]): SeanceGroupee[] {
 				RESSENTI: row.RESSENTI,
 				POIDS_CORPOREL: row.POIDS_CORPOREL,
 				exercices: [],
+				commentaires: [],
 			});
 		}
-		map.get(key)?.exercices.push(row.nom_exercice);
+		const entry = map.get(key);
+		if (entry) {
+			entry.exercices.push(row.nom_exercice);
+			if (row.COMMENTAIRES) {
+				entry.commentaires.push(`${row.nom_exercice} : ${row.COMMENTAIRES}`);
+			}
+		}
 	}
 	return Array.from(map.values()).sort(
 		(a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
@@ -213,7 +217,6 @@ function CourbeProgression({ suiviData = [] }: { suiviData?: Suivi[] }) {
 		</Paper>
 	);
 }
-// ─── Placeholders temporaires ─────────────────────────────────────────────────
 
 function TableauPerformances({ data }: { data: SuiviAvecDetails[] }) {
 	const seances = grouperParSeance(data);
@@ -237,6 +240,7 @@ function TableauPerformances({ data }: { data: SuiviAvecDetails[] }) {
 								"Poids corporel",
 								"Ressenti",
 								"Exercices",
+								"",
 							].map((col) => (
 								<TableCell
 									key={col}
@@ -330,6 +334,43 @@ function TableauPerformances({ data }: { data: SuiviAvecDetails[] }) {
 										}}
 									>
 										{seance.exercices.join(", ")}
+									</TableCell>
+									<TableCell
+										sx={{ borderBottom: `1px solid ${BORDER}`, width: 40 }}
+									>
+										{seance.commentaires.length > 0 ? (
+											<MuiTooltip
+												title={seance.commentaires.join("\n")}
+												placement="left"
+												arrow
+												componentsProps={{
+													tooltip: {
+														sx: {
+															background: "#0f1b27",
+															border: `1px solid ${BORDER}`,
+															color: "#e2e8f0",
+															fontFamily: "'Barlow Condensed', sans-serif",
+															fontSize: "0.85rem",
+															maxWidth: 280,
+														},
+													},
+												}}
+											>
+												<Box component="span" sx={{ display: "inline-flex" }}>
+													<ChatBubbleOutlineIcon
+														sx={{
+															fontSize: 18,
+															color: GREEN,
+															cursor: "pointer",
+														}}
+													/>
+												</Box>
+											</MuiTooltip>
+										) : (
+											<ChatBubbleOutlineIcon
+												sx={{ fontSize: 18, color: "rgba(255,255,255,0.1)" }}
+											/>
+										)}
 									</TableCell>
 								</TableRow>
 							))
@@ -469,8 +510,6 @@ function CalculIMC() {
 		</Paper>
 	);
 }
-
-// ─── Page principale ──────────────────────────────────────────────────────────
 
 export default function SuiviCoach() {
 	const [eleves, setEleves] = useState<Eleve[]>([]);
