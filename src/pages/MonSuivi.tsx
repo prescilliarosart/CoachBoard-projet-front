@@ -97,8 +97,6 @@ function CourbeProgression({ suiviData = [] }: { suiviData?: Suivi[] }) {
 		);
 	}
 
-	console.log(chartData);
-
 	return (
 		<Paper
 			sx={{
