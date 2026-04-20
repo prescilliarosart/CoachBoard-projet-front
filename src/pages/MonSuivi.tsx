@@ -210,44 +210,39 @@ function TableauPerformances({ data }: { data: SuiviAvecDetails[] }) {
 
 	return (
 		<Box>
-			<TableContainer
-				component={Paper}
+			{/* MOBILE : cartes */}
+			<Box
 				sx={{
-					background: CARD_BG,
-					border: `1px solid ${BORDER}`,
-					borderRadius: 2,
+					display: { xs: "flex", md: "none" },
+					flexDirection: "column",
+					gap: 2,
 				}}
 			>
-				<Table size="medium">
-					<TableHead>
-						<TableRow>
-							{[
-								"Date",
-								"Séance",
-								"Poids corporel",
-								"Ressenti",
-								"Exercices",
-							].map((col) => (
-								<TableCell
-									key={col}
-									sx={{
-										color: "#7a8fa6",
-										fontFamily: "'Barlow Condensed', sans-serif",
-										fontSize: "1rem",
-										borderBottom: `1px solid ${BORDER}`,
-										letterSpacing: "0.05em",
-									}}
-								>
-									{col}
-								</TableCell>
-							))}
-						</TableRow>
-					</TableHead>
-					<TableBody>
-						{seances.map((seance) => (
-							<TableRow
-								key={`${seance.date}_${seance.titre_seance}`}
-								sx={{ "&:last-child td": { border: 0 } }}
+				{seances.map((seance) => (
+					<Paper
+						key={`${seance.date}_${seance.titre_seance}`}
+						sx={{
+							background: CARD_BG,
+							border: `1px solid ${BORDER}`,
+							borderRadius: 2,
+							p: 2,
+						}}
+					>
+						<Box
+							sx={{
+								display: "flex",
+								justifyContent: "space-between",
+								alignItems: "center",
+								mb: 1,
+							}}
+						>
+							<Typography
+								sx={{
+									color: GREEN,
+									fontFamily: "'Barlow Condensed', sans-serif",
+									fontWeight: 700,
+									fontSize: "0.95rem",
+								}}
 							>
 								<TableCell
 									sx={{
