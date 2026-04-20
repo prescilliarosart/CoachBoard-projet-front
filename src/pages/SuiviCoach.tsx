@@ -91,11 +91,129 @@ function getRessentiColor(ressenti: string): string {
 	}
 }
 
-// ─── Placeholders temporaires ─────────────────────────────────────────────────
+function CourbeProgression({ suiviData = [] }: { suiviData?: Suivi[] }) {
+	const dataMap = new Map<string, number>();
+	suiviData.forEach((item) => {
+		if (item.POIDS_CORPOREL && item.POIDS_CORPOREL > 0) {
+			dataMap.set(item.DATE, item.POIDS_CORPOREL);
+		}
+	});
 
-function CourbeProgression(_props: { suiviData?: Suivi[] }) {
-	return <Box />;
+	const chartData = Array.from(dataMap.entries())
+		.map(([date, poids]) => ({
+			affichageDate: new Date(date).toLocaleDateString("fr-FR", {
+				month: "short",
+				day: "2-digit",
+				timeZone: "Europe/Paris",
+			}),
+			poids,
+			rawDate: new Date(date).getTime(),
+		}))
+		.sort((a, b) => a.rawDate - b.rawDate);
+
+	const maxPoids =
+		chartData.length > 0 ? Math.max(...chartData.map((d) => d.poids)) : 0;
+
+	if (chartData.length === 0) {
+		return (
+			<Paper
+				sx={{
+					background: CARD_BG,
+					border: `1px solid ${BORDER}`,
+					borderRadius: 2,
+					p: 2,
+					height: 268,
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "center",
+				}}
+			>
+				<Typography
+					sx={{
+						color: "#7a8fa6",
+						fontFamily: "'Barlow Condensed', sans-serif",
+					}}
+				>
+					Aucune donnée de poids enregistrée
+				</Typography>
+			</Paper>
+		);
+	}
+
+	return (
+		<Paper
+			sx={{
+				background: CARD_BG,
+				border: `1px solid ${BORDER}`,
+				borderRadius: 2,
+				p: 2,
+			}}
+		>
+			<Typography
+				sx={{
+					color: "#7a8fa6",
+					fontSize: "1rem",
+					fontFamily: "'Barlow Condensed', sans-serif",
+					letterSpacing: "0.08em",
+					mb: 1,
+				}}
+			>
+				Évolution du poids corporel
+			</Typography>
+			<ResponsiveContainer width="100%" height={300}>
+				<BarChart
+					data={chartData}
+					margin={{ top: 20, right: 20, left: -15, bottom: 5 }}
+				>
+					<CartesianGrid
+						strokeDasharray="3 3"
+						stroke="rgba(255,255,255,0.05)"
+						vertical={false}
+					/>
+					<XAxis
+						dataKey="affichageDate"
+						padding={{ left: 0, right: 0 }}
+						tick={{
+							fill: "#7a8fa6",
+							fontSize: 14,
+							fontFamily: "'Barlow Condensed', sans-serif",
+						}}
+						axisLine={{ stroke: BORDER }}
+						tickLine={false}
+					/>
+					<YAxis
+						tick={{ fill: "#7a8fa6", fontSize: 14 }}
+						axisLine={false}
+						tickLine={false}
+						domain={["dataMin - 5", "dataMax + 5"]}
+					/>
+					<Tooltip
+						contentStyle={{
+							background: "#0b1520",
+							border: `1px solid ${GREEN}`,
+							borderRadius: 6,
+							fontFamily: "'Barlow Condensed', sans-serif",
+							color: "#fff",
+						}}
+						itemStyle={{ color: "#fff" }}
+						labelStyle={{ color: "#7a8fa6" }}
+						cursor={{ fill: "rgba(255,255,255,0.05)" }}
+						formatter={(value) => [`${value} KG`, "Poids"]}
+					/>
+					<Bar dataKey="poids" radius={[3, 3, 0, 0]} barSize={30}>
+						{chartData.map((entry, index) => (
+							<Cell
+								key={`cell-${index}`}
+								fill={entry.poids === maxPoids ? GREEN : "rgba(34,197,94,0.45)"}
+							/>
+						))}
+					</Bar>
+				</BarChart>
+			</ResponsiveContainer>
+		</Paper>
+	);
 }
+// ─── Placeholders temporaires ─────────────────────────────────────────────────
 
 function TableauPerformances(_props: { data: SuiviAvecDetails[] }) {
 	return <Box />;
