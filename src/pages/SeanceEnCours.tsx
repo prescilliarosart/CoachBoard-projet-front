@@ -430,6 +430,7 @@ export default function SeanceEnCours() {
 		);
 	}
 	const ex = exercices[current];
+	if (!ex) return null;
 	const gifUrl = ex.IMAGE_URL ?? getGif(ex, gifs);
 	return (
 		<>
