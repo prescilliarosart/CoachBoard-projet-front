@@ -244,69 +244,212 @@ function TableauPerformances({ data }: { data: SuiviAvecDetails[] }) {
 									fontSize: "0.95rem",
 								}}
 							>
-								<TableCell
-									sx={{
-										color: GREEN,
-										fontFamily: "'Barlow Condensed', sans-serif",
-										fontWeight: 700,
-										borderBottom: `1px solid ${BORDER}`,
-									}}
-								>
-									{new Date(seance.date).toLocaleDateString("fr-FR", {
-										day: "2-digit",
-										month: "short",
-										year: "numeric",
-										timeZone: "Europe/Paris",
-									})}
-								</TableCell>
-								<TableCell
-									sx={{
-										color: "#fff",
-										fontFamily: "'Barlow Condensed', sans-serif",
-										borderBottom: `1px solid ${BORDER}`,
-									}}
-								>
-									{seance.titre_seance}
-								</TableCell>
-								<TableCell
-									sx={{
-										color: "#fff",
-										fontFamily: "'Barlow Condensed', sans-serif",
-										borderBottom: `1px solid ${BORDER}`,
-									}}
-								>
-									{seance.POIDS_CORPOREL ? `${seance.POIDS_CORPOREL} kg` : "—"}
-								</TableCell>
-								<TableCell
-									sx={{
-										borderBottom: `1px solid ${BORDER}`,
-									}}
-								>
-									<Chip
-										label={seance.RESSENTI ?? "-"}
-										size="small"
+								{new Date(seance.date).toLocaleDateString("fr-FR", {
+									day: "2-digit",
+									month: "short",
+									year: "numeric",
+									timeZone: "Europe/Paris",
+								})}
+							</Typography>
+							<Chip
+								label={seance.RESSENTI ?? "-"}
+								size="small"
+								sx={{
+									bgcolor: `${getRessentiColor(seance.RESSENTI ?? "-")}20`,
+									color: getRessentiColor(seance.RESSENTI ?? "-"),
+									fontWeight: 600,
+									fontFamily: "'Barlow Condensed', sans-serif",
+								}}
+							/>
+						</Box>
+						<Box
+							sx={{
+								display: "flex",
+								justifyContent: "space-between",
+								alignItems: "center",
+								mb: 0.5,
+							}}
+						>
+							<Typography
+								sx={{
+									color: "#7a8fa6",
+									fontFamily: "'Barlow Condensed', sans-serif",
+									fontSize: "0.75rem",
+								}}
+							>
+								Séance
+							</Typography>
+							<Typography
+								sx={{
+									color: "#fff",
+									fontFamily: "'Barlow Condensed', sans-serif",
+									fontWeight: 700,
+								}}
+							>
+								{seance.titre_seance}
+							</Typography>
+						</Box>
+						<Box
+							sx={{
+								display: "flex",
+								justifyContent: "space-between",
+								alignItems: "center",
+								mb: 0.5,
+							}}
+						>
+							<Typography
+								sx={{
+									color: "#7a8fa6",
+									fontFamily: "'Barlow Condensed', sans-serif",
+									fontSize: "0.75rem",
+								}}
+							>
+								Poids
+							</Typography>
+							<Typography
+								sx={{
+									color: "#fff",
+									fontFamily: "'Barlow Condensed', sans-serif",
+								}}
+							>
+								{seance.POIDS_CORPOREL ? `${seance.POIDS_CORPOREL} kg` : "—"}
+							</Typography>
+						</Box>
+						<Box
+							sx={{
+								display: "flex",
+								justifyContent: "space-between",
+								alignItems: "flex-start",
+							}}
+						>
+							<Typography
+								sx={{
+									color: "#7a8fa6",
+									fontFamily: "'Barlow Condensed', sans-serif",
+									fontSize: "0.75rem",
+								}}
+							>
+								Exercices
+							</Typography>
+							<Typography
+								sx={{
+									color: "#fff",
+									fontFamily: "'Barlow Condensed', sans-serif",
+									fontSize: "0.85rem",
+									textAlign: "right",
+									maxWidth: "60%",
+								}}
+							>
+								{seance.exercices.join(" · ")}
+							</Typography>
+						</Box>
+					</Paper>
+				))}
+			</Box>
+
+			{/* DESKTOP : tableau */}
+			<Box sx={{ display: { xs: "none", md: "block" } }}>
+				<TableContainer
+					component={Paper}
+					sx={{
+						background: CARD_BG,
+						border: `1px solid ${BORDER}`,
+						borderRadius: 2,
+					}}
+				>
+					<Table size="medium">
+						<TableHead>
+							<TableRow>
+								{[
+									"Date",
+									"Séance",
+									"Poids corporel",
+									"Ressenti",
+									"Exercices",
+								].map((col) => (
+									<TableCell
+										key={col}
 										sx={{
-											bgcolor: `${getRessentiColor(seance.RESSENTI ?? "-")}20`,
-											color: getRessentiColor(seance.RESSENTI ?? "-"),
-											fontWeight: 600,
+											color: "#7a8fa6",
 											fontFamily: "'Barlow Condensed', sans-serif",
+											fontSize: "1rem",
+											borderBottom: `1px solid ${BORDER}`,
+											letterSpacing: "0.05em",
 										}}
-									/>
-								</TableCell>
-								<TableCell
-									sx={{
-										color: "#fff",
-										fontFamily: "'Barlow Condensed', sans-serif",
-										borderBottom: `1px solid ${BORDER}`,
-									}}
-								>
-									{seance.exercices.join(", ")}
-								</TableCell>
+									>
+										{col}
+									</TableCell>
+								))}
 							</TableRow>
-						))}
-					</TableBody>
-				</Table>
-			</TableContainer>
+						</TableHead>
+						<TableBody>
+							{seances.map((seance) => (
+								<TableRow
+									key={`${seance.date}_${seance.titre_seance}`}
+									sx={{ "&:last-child td": { border: 0 } }}
+								>
+									<TableCell
+										sx={{
+											color: GREEN,
+											fontFamily: "'Barlow Condensed', sans-serif",
+											fontWeight: 700,
+											borderBottom: `1px solid ${BORDER}`,
+										}}
+									>
+										{new Date(seance.date).toLocaleDateString("fr-FR", {
+											day: "2-digit",
+											month: "short",
+											year: "numeric",
+											timeZone: "Europe/Paris",
+										})}
+									</TableCell>
+									<TableCell
+										sx={{
+											color: "#fff",
+											fontFamily: "'Barlow Condensed', sans-serif",
+											borderBottom: `1px solid ${BORDER}`,
+										}}
+									>
+										{seance.titre_seance}
+									</TableCell>
+									<TableCell
+										sx={{
+											color: "#fff",
+											fontFamily: "'Barlow Condensed', sans-serif",
+											borderBottom: `1px solid ${BORDER}`,
+										}}
+									>
+										{seance.POIDS_CORPOREL
+											? `${seance.POIDS_CORPOREL} kg`
+											: "—"}
+									</TableCell>
+									<TableCell sx={{ borderBottom: `1px solid ${BORDER}` }}>
+										<Chip
+											label={seance.RESSENTI ?? "-"}
+											size="small"
+											sx={{
+												bgcolor: `${getRessentiColor(seance.RESSENTI ?? "-")}20`,
+												color: getRessentiColor(seance.RESSENTI ?? "-"),
+												fontWeight: 600,
+												fontFamily: "'Barlow Condensed', sans-serif",
+											}}
+										/>
+									</TableCell>
+									<TableCell
+										sx={{
+											color: "#fff",
+											fontFamily: "'Barlow Condensed', sans-serif",
+											borderBottom: `1px solid ${BORDER}`,
+										}}
+									>
+										{seance.exercices.join(", ")}
+									</TableCell>
+								</TableRow>
+							))}
+						</TableBody>
+					</Table>
+				</TableContainer>
+			</Box>
 		</Box>
 	);
 }
@@ -337,7 +480,7 @@ function CalculIMC() {
 				border: `1px solid ${BORDER}`,
 				borderRadius: 2,
 				p: 2,
-				width: 220,
+				width: { xs: "100%", md: 220 },
 			}}
 		>
 			<Typography
