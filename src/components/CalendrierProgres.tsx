@@ -105,9 +105,28 @@ const CalendrierProgres = ({ suivi }: CalendrierProgresProps) => {
 				}}
 			>
 				<Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+					{/* Mobile : mois abrégé */}
+					<Typography
+						sx={{
+							display: { xs: "block", md: "none" },
+							fontFamily: "Barlow Condensed",
+							fontWeight: 700,
+							textTransform: "uppercase",
+							whiteSpace: "nowrap",
+							fontSize: "0.95rem",
+						}}
+					>
+						{moisAffiche.toLocaleDateString("fr-FR", {
+							month: "short",
+							year: "numeric",
+						})}
+					</Typography>
+
+					{/* Desktop : mois complet */}
 					<Typography
 						variant="h6"
 						sx={{
+							display: { xs: "none", md: "block" },
 							fontFamily: "Barlow Condensed",
 							fontWeight: 700,
 							textTransform: "uppercase",
@@ -148,7 +167,9 @@ const CalendrierProgres = ({ suivi }: CalendrierProgresProps) => {
 						>
 							Série
 						</Typography>
-						<Typography sx={{ fontWeight: 700, fontSize: "0.9rem" }}>
+						<Typography
+							sx={{ fontWeight: 700, fontSize: { xs: "0.8rem", md: "0.9rem" } }}
+						>
 							{nbSemainesConsecutives} Semaine
 							{nbSemainesConsecutives > 1 ? "s" : ""}
 						</Typography>
@@ -174,8 +195,8 @@ const CalendrierProgres = ({ suivi }: CalendrierProgresProps) => {
 				sx={{
 					display: "grid",
 					gridTemplateColumns: "repeat(8, 1fr)",
-					gap: 1.5,
-					rowGap: 2,
+					gap: { xs: 0.8, sm: 1.5 },
+					rowGap: { xs: 1.2, sm: 2 },
 				}}
 			>
 				{["L", "M", "M", "J", "V", "S", "D", ""].map((h, i) => (
@@ -218,8 +239,8 @@ const CalendrierProgres = ({ suivi }: CalendrierProgresProps) => {
 						<React.Fragment key={jour}>
 							<Box
 								sx={{
-									height: 38,
-									width: 38,
+									height: { xs: 32, sm: 38 },
+									width: { xs: 32, sm: 38 },
 									margin: "auto",
 									display: "flex",
 									alignItems: "center",
