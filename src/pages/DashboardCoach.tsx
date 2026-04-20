@@ -3,6 +3,8 @@ import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import {
 	Box,
 	Button,
+	Dialog,
+	DialogContent,
 	Step,
 	StepLabel,
 	Stepper,
@@ -336,14 +338,33 @@ export default function DashboardCoach() {
 								) : (
 									<FormExercices onSuccess={handleExerciceSuccess} />
 								)}
-								{showParamsExercice && exerciceId && seanceId && (
-									<FormSeanceExercice
-										seanceId={seanceId}
-										exerciceId={exerciceId}
-										modeExercice={modeExercice}
-										onSuccess={() => setShowParamsExercice(false)}
-									/>
-								)}
+								<Dialog
+									open={showParamsExercice && !!exerciceId && !!seanceId}
+									onClose={() => setShowParamsExercice(false)}
+									maxWidth="sm"
+									fullWidth
+									slotProps={{
+										paper: {
+											sx: {
+												background: "#0f1b27",
+												border: "1px solid rgba(34,197,94,0.2)",
+												borderRadius: "12px",
+											},
+										},
+									}}
+								>
+									<DialogContent>
+										{exerciceId && seanceId && (
+											<FormSeanceExercice
+												seanceId={seanceId}
+												exerciceId={exerciceId}
+												modeExercice={modeExercice}
+												onSuccess={() => setShowParamsExercice(false)}
+											/>
+										)}
+									</DialogContent>
+								</Dialog>
+
 								<Box sx={{ display: "flex", gap: 2, mt: 3 }}>
 									<Button
 										onClick={() => setActiveStep(2)}
