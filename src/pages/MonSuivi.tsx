@@ -123,7 +123,7 @@ function CourbeProgression({ suiviData = [] }: { suiviData?: Suivi[] }) {
 			<ResponsiveContainer width="100%" height={300}>
 				<BarChart
 					data={chartData}
-					margin={{ top: 20, right: 20, left: -15, bottom: 5 }}
+					margin={{ top: 20, right: 10, left: -20, bottom: 5 }}
 				>
 					<CartesianGrid
 						strokeDasharray="3 3"
@@ -160,7 +160,7 @@ function CourbeProgression({ suiviData = [] }: { suiviData?: Suivi[] }) {
 						cursor={{ fill: "rgba(255,255,255,0.05)" }}
 						formatter={(value) => [`${value} KG`, "Poids"]}
 					/>
-					<Bar dataKey="poids" radius={[3, 3, 0, 0]} barSize={30}>
+					<Bar dataKey="poids" radius={[3, 3, 0, 0]} barSize={20}>
 						{chartData.map((entry, index) => (
 							<Cell
 								key={`cell-${index}`}
