@@ -10,7 +10,7 @@ import {
 	Stepper,
 	Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import FormExercices from "../components/FormExercices";
 import FormProgramme from "../components/FormProgramme";
@@ -52,6 +52,7 @@ export default function DashboardCoach() {
 	const [modeExercice, setModeExercice] = useState<"select" | "create">(
 		"select",
 	);
+	const [exercices, setExercices] = useState<{ id: number; nom: string }[]>([]);
 	const [showParamsExercice, setShowParamsExercice] = useState(false);
 
 	const [done, setDone] = useState(false);
@@ -99,6 +100,14 @@ export default function DashboardCoach() {
 	const handleFinish = () => {
 		setDone(true);
 	};
+
+	useEffect(() => {
+		apiFetch<{ ID_EXERCICE: number; NOM: string }[]>("/api/exercices")
+			.then((data) =>
+				setExercices(data.map((ex) => ({ id: ex.ID_EXERCICE, nom: ex.NOM }))),
+			)
+			.catch(console.error);
+	}, []);
 
 	return (
 		<div style={{ position: "relative", zIndex: 1 }}>
@@ -336,7 +345,10 @@ export default function DashboardCoach() {
 								{modeExercice === "select" ? (
 									<SelectExercice onSuccess={handleExerciceSuccess} />
 								) : (
-									<FormExercices onSuccess={handleExerciceSuccess} />
+									<FormExercices
+										onSuccess={handleExerciceSuccess}
+										exercices={exercices}
+									/>
 								)}
 								<Dialog
 									open={showParamsExercice && !!exerciceId && !!seanceId}
