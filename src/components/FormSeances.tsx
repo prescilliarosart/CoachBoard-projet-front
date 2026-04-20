@@ -203,7 +203,12 @@ export default function FormSeance({ programmeId, onSuccess }: Props) {
 						value={`Programme #${programmeId}`}
 						disabled
 						fullWidth
-						sx={SX_IN}
+						sx={{
+							...SX_IN,
+							"& .MuiInputBase-input.Mui-disabled": {
+								WebkitTextFillColor: "#e2e8f0",
+							},
+						}}
 					/>
 				) : (
 					<FormControl fullWidth sx={SX_IN}>

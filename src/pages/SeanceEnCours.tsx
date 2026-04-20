@@ -22,6 +22,7 @@ type Exercice = {
 	ORDRE: number;
 	GROUPE_MUSCULAIRE: string;
 	DESCRIPTION: string | null;
+	IMAGE_URL: string | null;
 };
 
 type GifData = {
@@ -429,8 +430,7 @@ export default function SeanceEnCours() {
 		);
 	}
 	const ex = exercices[current];
-	const gifUrl = getGif(ex, gifs);
-
+	const gifUrl = ex.IMAGE_URL ?? getGif(ex, gifs);
 	return (
 		<>
 			<Navbar links={elevLinks} />
