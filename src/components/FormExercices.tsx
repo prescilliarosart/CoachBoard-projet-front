@@ -165,6 +165,7 @@ export default function FormExercice({ onSuccess, exercices = [] }: Props) {
 	}, []);
 
 	const handleSave = async () => {
+		console.log(exercices);
 		if (!form.nom || !form.type) {
 			showToast("Veuillez remplir le nom et le type.", "warning");
 			return;
