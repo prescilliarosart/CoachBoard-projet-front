@@ -402,6 +402,7 @@ export default function ExercicesPage() {
 							setShowForm(false);
 							fetchExercices();
 						}}
+						exercices={exercices}
 					/>
 				)}
 

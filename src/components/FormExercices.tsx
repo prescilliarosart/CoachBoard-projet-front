@@ -50,8 +50,14 @@ interface FormData {
 	gif_url: string | null;
 }
 
+interface ExerciceSimple {
+	id: number;
+	nom: string;
+}
+
 interface Props {
 	onSuccess: (id: number) => void;
+	exercices: ExerciceSimple[];
 }
 
 const SX_IN = {
@@ -131,7 +137,7 @@ const SX_BTN = {
 	},
 };
 
-export default function FormExercice({ onSuccess }: Props) {
+export default function FormExercice({ onSuccess, exercices = [] }: Props) {
 	const { user } = useAuth();
 	const [loading, setLoading] = useState(false);
 	const [gifs, setGifs] = useState<GifData[]>([]);
@@ -159,8 +165,17 @@ export default function FormExercice({ onSuccess }: Props) {
 	}, []);
 
 	const handleSave = async () => {
+		console.log(exercices);
 		if (!form.nom || !form.type) {
 			showToast("Veuillez remplir le nom et le type.", "warning");
+			return;
+		}
+
+		const existe = exercices.find(
+			(ex) => ex.nom.toLowerCase() === form.nom.toLowerCase(),
+		);
+		if (existe) {
+			showToast("Un exercice avec ce nom existe déjà !", "warning");
 			return;
 		}
 
