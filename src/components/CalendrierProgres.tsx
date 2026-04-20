@@ -295,18 +295,22 @@ const CalendrierProgres = ({ suivi }: CalendrierProgresProps) => {
 											const debutSemaineDuJour =
 												getDebutSemaineISO(dateJourCourant);
 
-											let num = 0;
-											const curseur = new Date();
+											let num = 1;
+											const curseur = new Date(debutSemaineDuJour);
 											while (true) {
-												const d = getDebutSemaineISO(curseur);
-												const f = getFinSemaine(d);
+												const semainePrecedente = new Date(curseur);
+												semainePrecedente.setDate(
+													semainePrecedente.getDate() - 7,
+												);
+												const finPrec = getFinSemaine(semainePrecedente);
+
 												const actif = suivi.some((s) => {
 													const sd = new Date(s.DATE);
-													return sd >= d && sd <= f;
+													return sd >= semainePrecedente && sd <= finPrec;
 												});
 												if (!actif) break;
 												num++;
-												if (d.getTime() === debutSemaineDuJour.getTime()) break;
+
 												curseur.setDate(curseur.getDate() - 7);
 											}
 
