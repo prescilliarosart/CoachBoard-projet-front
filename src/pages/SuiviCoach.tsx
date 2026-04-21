@@ -401,83 +401,173 @@ function TableauPerformances({ data }: { data: SuiviAvecDetails[] }) {
 											maxWidth: "65%",
 										}}
 									>
-										{seance.titre_seance}
-									</TableCell>
+										{seance.commentaires.join(" — ")}
+									</Typography>
+								</Box>
+							)}
+						</Paper>
+					))
+				)}
+			</Box>
+
+			{/* DESKTOP : tableau */}
+			<Box sx={{ display: { xs: "none", md: "block" } }}>
+				<TableContainer
+					component={Paper}
+					sx={{
+						background: CARD_BG,
+						border: `1px solid ${BORDER}`,
+						borderRadius: 2,
+					}}
+				>
+					<Table size="medium">
+						<TableHead>
+							<TableRow>
+								{[
+									"Date",
+									"Séance",
+									"Poids corporel",
+									"Ressenti",
+									"Exercices",
+									"",
+								].map((col) => (
 									<TableCell
+										key={col}
 										sx={{
-											color: "#fff",
+											color: "#7a8fa6",
 											fontFamily: "'Barlow Condensed', sans-serif",
+											fontSize: "1rem",
 											borderBottom: `1px solid ${BORDER}`,
+											letterSpacing: "0.05em",
 										}}
 									>
-										{seance.POIDS_CORPOREL
-											? `${seance.POIDS_CORPOREL} kg`
-											: "—"}
+										{col}
 									</TableCell>
-									<TableCell sx={{ borderBottom: `1px solid ${BORDER}` }}>
-										<Chip
-											label={seance.RESSENTI ?? "-"}
-											size="small"
-											sx={{
-												bgcolor: `${getRessentiColor(seance.RESSENTI ?? "-")}20`,
-												color: getRessentiColor(seance.RESSENTI ?? "-"),
-												fontWeight: 600,
-												fontFamily: "'Barlow Condensed', sans-serif",
-											}}
-										/>
-									</TableCell>
+								))}
+							</TableRow>
+						</TableHead>
+						<TableBody>
+							{seances.length === 0 ? (
+								<TableRow>
 									<TableCell
+										colSpan={5}
 										sx={{
-											color: "#fff",
+											textAlign: "center",
+											color: "#7a8fa6",
 											fontFamily: "'Barlow Condensed', sans-serif",
-											borderBottom: `1px solid ${BORDER}`,
+											py: 4,
+											border: "none",
 										}}
 									>
-										{seance.exercices.join(", ")}
-									</TableCell>
-									<TableCell
-										sx={{ borderBottom: `1px solid ${BORDER}`, width: 40 }}
-									>
-										{seance.commentaires.length > 0 ? (
-											<MuiTooltip
-												title={seance.commentaires.join("\n")}
-												placement="left"
-												arrow
-												componentsProps={{
-													tooltip: {
-														sx: {
-															background: "#0f1b27",
-															border: `1px solid ${BORDER}`,
-															color: "#e2e8f0",
-															fontFamily: "'Barlow Condensed', sans-serif",
-															fontSize: "0.85rem",
-															maxWidth: 280,
-														},
-													},
-												}}
-											>
-												<Box component="span" sx={{ display: "inline-flex" }}>
-													<ChatBubbleOutlineIcon
-														sx={{
-															fontSize: 18,
-															color: GREEN,
-															cursor: "pointer",
-														}}
-													/>
-												</Box>
-											</MuiTooltip>
-										) : (
-											<ChatBubbleOutlineIcon
-												sx={{ fontSize: 18, color: "rgba(255,255,255,0.1)" }}
-											/>
-										)}
+										Aucune séance enregistrée pour cet élève.
 									</TableCell>
 								</TableRow>
-							))
-						)}
-					</TableBody>
-				</Table>
-			</TableContainer>
+							) : (
+								seances.map((seance) => (
+									<TableRow
+										key={`${seance.date}_${seance.titre_seance}`}
+										sx={{ "&:last-child td": { border: 0 } }}
+									>
+										<TableCell
+											sx={{
+												color: GREEN,
+												fontFamily: "'Barlow Condensed', sans-serif",
+												fontWeight: 700,
+												borderBottom: `1px solid ${BORDER}`,
+											}}
+										>
+											{new Date(seance.date).toLocaleDateString("fr-FR", {
+												day: "2-digit",
+												month: "short",
+												year: "numeric",
+												timeZone: "Europe/Paris",
+											})}
+										</TableCell>
+										<TableCell
+											sx={{
+												color: "#fff",
+												fontFamily: "'Barlow Condensed', sans-serif",
+												borderBottom: `1px solid ${BORDER}`,
+											}}
+										>
+											{seance.titre_seance}
+										</TableCell>
+										<TableCell
+											sx={{
+												color: "#fff",
+												fontFamily: "'Barlow Condensed', sans-serif",
+												borderBottom: `1px solid ${BORDER}`,
+											}}
+										>
+											{seance.POIDS_CORPOREL
+												? `${seance.POIDS_CORPOREL} kg`
+												: "—"}
+										</TableCell>
+										<TableCell sx={{ borderBottom: `1px solid ${BORDER}` }}>
+											<Chip
+												label={seance.RESSENTI ?? "-"}
+												size="small"
+												sx={{
+													bgcolor: `${getRessentiColor(seance.RESSENTI ?? "-")}20`,
+													color: getRessentiColor(seance.RESSENTI ?? "-"),
+													fontWeight: 600,
+													fontFamily: "'Barlow Condensed', sans-serif",
+												}}
+											/>
+										</TableCell>
+										<TableCell
+											sx={{
+												color: "#fff",
+												fontFamily: "'Barlow Condensed', sans-serif",
+												borderBottom: `1px solid ${BORDER}`,
+											}}
+										>
+											{seance.exercices.join(", ")}
+										</TableCell>
+										<TableCell
+											sx={{ borderBottom: `1px solid ${BORDER}`, width: 40 }}
+										>
+											{seance.commentaires.length > 0 ? (
+												<MuiTooltip
+													title={seance.commentaires.join("\n")}
+													placement="left"
+													arrow
+													componentsProps={{
+														tooltip: {
+															sx: {
+																background: "#0f1b27",
+																border: `1px solid ${BORDER}`,
+																color: "#e2e8f0",
+																fontFamily: "'Barlow Condensed', sans-serif",
+																fontSize: "0.85rem",
+																maxWidth: 280,
+															},
+														},
+													}}
+												>
+													<Box component="span" sx={{ display: "inline-flex" }}>
+														<ChatBubbleOutlineIcon
+															sx={{
+																fontSize: 18,
+																color: GREEN,
+																cursor: "pointer",
+															}}
+														/>
+													</Box>
+												</MuiTooltip>
+											) : (
+												<ChatBubbleOutlineIcon
+													sx={{ fontSize: 18, color: "rgba(255,255,255,0.1)" }}
+												/>
+											)}
+										</TableCell>
+									</TableRow>
+								))
+							)}
+						</TableBody>
+					</Table>
+				</TableContainer>
+			</Box>
 		</Box>
 	);
 }
@@ -508,7 +598,7 @@ function CalculIMC() {
 				border: `1px solid ${BORDER}`,
 				borderRadius: 2,
 				p: 2,
-				width: 220,
+				width: { xs: "100%", md: 220 },
 			}}
 		>
 			<Typography
