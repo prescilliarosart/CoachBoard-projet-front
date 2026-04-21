@@ -123,9 +123,9 @@ export default function DashboardCoach() {
 			<Box
 				sx={{
 					display: "flex",
-					flexDirection: { xs: "column", md: "row" },
+					flexDirection: { xs: "column", sm: "row" },
 					justifyContent: "space-between",
-					alignItems: { xs: "flex-start", md: "center" },
+					alignItems: { xs: "flex-start", sm: "center" },
 					mt: "80px",
 					px: "36px",
 					py: "40px",
@@ -140,7 +140,7 @@ export default function DashboardCoach() {
 						variant="h1"
 						sx={{
 							fontFamily: "'Barlow Condensed', sans-serif",
-							fontSize: { xs: "2.5rem", md: "3.5rem" },
+							fontSize: { xs: "2.5rem", sm: "3.5rem" },
 							fontStyle: "italic",
 							fontWeight: 700,
 						}}
@@ -149,7 +149,7 @@ export default function DashboardCoach() {
 					</Typography>
 					<Typography
 						sx={{
-							fontSize: { xs: "1rem", md: "1.5rem" },
+							fontSize: { xs: "1rem", sm: "1.5rem" },
 							mt: 2,
 							fontFamily: "'Barlow', sans-serif",
 							color: "rgba(255,255,255,0.7)",
@@ -165,7 +165,7 @@ export default function DashboardCoach() {
 						display: "flex",
 						flexDirection: { xs: "column", sm: "row" },
 						gap: 2,
-						width: { xs: "100%", md: "auto" },
+						width: { xs: "100%", sm: "auto" },
 					}}
 				>
 					<Button
