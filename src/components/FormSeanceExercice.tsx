@@ -98,7 +98,7 @@ export default function FormSeanceExercice({
 			>
 				Paramètres de l'exercice
 			</Typography>
-			<Box sx={{ display: "flex", gap: 2 }}>
+			<Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
 				{(["series", "reps", "charge", "repos", "ordre"] as const).map(
 					(field) => (
 						<TextField
