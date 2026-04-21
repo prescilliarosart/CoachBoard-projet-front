@@ -156,7 +156,13 @@ export default function FormSeance({ programmeId, onSuccess }: Props) {
 				Informations de la séance
 			</Typography>
 
-			<Box sx={{ display: "flex", flexDirection: "row", gap: 3 }}>
+			<Box
+				sx={{
+					display: "flex",
+					flexDirection: { xs: "column", sm: "row" },
+					gap: 3,
+				}}
+			>
 				<TextField
 					label="Titre de la séance"
 					value={form.titre}

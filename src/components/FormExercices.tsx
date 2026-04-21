@@ -228,7 +228,7 @@ export default function FormExercice({ onSuccess, exercices = [] }: Props) {
 				borderRadius: "12px",
 				p: "32px",
 				display: "grid",
-				gridTemplateColumns: "1fr 1fr",
+				gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
 				gap: "40px",
 			}}
 		>

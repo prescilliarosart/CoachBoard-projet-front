@@ -311,6 +311,7 @@ export default function Programmes() {
 						background: "#111e2c", // fond neutre pour la table
 						borderRadius: "12px",
 						padding: "24px",
+						overflowX: "auto",
 					}}
 				>
 					<Table>
