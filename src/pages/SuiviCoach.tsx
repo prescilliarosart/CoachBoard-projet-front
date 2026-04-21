@@ -223,82 +223,182 @@ function TableauPerformances({ data }: { data: SuiviAvecDetails[] }) {
 
 	return (
 		<Box>
-			<TableContainer
-				component={Paper}
+			{/* MOBILE : cartes */}
+
+			<Box
 				sx={{
-					background: CARD_BG,
-					border: `1px solid ${BORDER}`,
-					borderRadius: 2,
+					display: { xs: "flex", md: "none" },
+					flexDirection: "column",
+					gap: 2,
 				}}
 			>
-				<Table size="medium">
-					<TableHead>
-						<TableRow>
-							{[
-								"Date",
-								"Séance",
-								"Poids corporel",
-								"Ressenti",
-								"Exercices",
-								"",
-							].map((col) => (
-								<TableCell
-									key={col}
+				{seances.length === 0 ? (
+					<Typography
+						sx={{
+							color: "#7a8fa6",
+							fontFamily: "'Barlow Condensed', sans-serif",
+							textAlign: "center",
+							py: 4,
+						}}
+					>
+						Aucune séance enregistrée pour cet élève.
+					</Typography>
+				) : (
+					seances.map((seance) => (
+						<Paper
+							key={`${seance.date}_${seance.titre_seance}`}
+							sx={{
+								background: CARD_BG,
+								border: `1px solid ${BORDER}`,
+								borderRadius: 2,
+								p: 2,
+							}}
+						>
+							<Box
+								sx={{
+									display: "flex",
+									justifyContent: "space-between",
+									alignItems: "center",
+									mb: 1,
+								}}
+							>
+								<Typography
+									sx={{
+										color: GREEN,
+										fontFamily: "'Barlow Condensed', sans-serif",
+										fontWeight: 700,
+										fontSize: "0.95rem",
+									}}
+								>
+									{new Date(seance.date).toLocaleDateString("fr-FR", {
+										day: "2-digit",
+										month: "short",
+										year: "numeric",
+										timeZone: "Europe/Paris",
+									})}
+								</Typography>
+								<Chip
+									label={seance.RESSENTI ?? "-"}
+									size="small"
+									sx={{
+										bgcolor: `${getRessentiColor(seance.RESSENTI ?? "-")}20`,
+										color: getRessentiColor(seance.RESSENTI ?? "-"),
+										fontWeight: 600,
+										fontFamily: "'Barlow Condensed', sans-serif",
+									}}
+								/>
+							</Box>
+
+							<Box
+								sx={{
+									display: "flex",
+									justifyContent: "space-between",
+									alignItems: "center",
+									mb: 0.5,
+								}}
+							>
+								<Typography
 									sx={{
 										color: "#7a8fa6",
 										fontFamily: "'Barlow Condensed', sans-serif",
-										fontSize: "1rem",
-										borderBottom: `1px solid ${BORDER}`,
-										letterSpacing: "0.05em",
+										fontSize: "0.75rem",
 									}}
 								>
-									{col}
-								</TableCell>
-							))}
-						</TableRow>
-					</TableHead>
-					<TableBody>
-						{seances.length === 0 ? (
-							<TableRow>
-								<TableCell
-									colSpan={5}
+									Séance
+								</Typography>
+								<Typography
 									sx={{
-										textAlign: "center",
+										color: "#fff",
+										fontFamily: "'Barlow Condensed', sans-serif",
+										fontWeight: 700,
+									}}
+								>
+									{seance.titre_seance}
+								</Typography>
+							</Box>
+
+							<Box
+								sx={{
+									display: "flex",
+									justifyContent: "space-between",
+									alignItems: "center",
+									mb: 0.5,
+								}}
+							>
+								<Typography
+									sx={{
 										color: "#7a8fa6",
 										fontFamily: "'Barlow Condensed', sans-serif",
-										py: 4,
-										border: "none",
+										fontSize: "0.75rem",
 									}}
 								>
-									Aucune séance enregistrée pour cet élève.
-								</TableCell>
-							</TableRow>
-						) : (
-							seances.map((seance) => (
-								<TableRow
-									key={`${seance.date}_${seance.titre_seance}`}
-									sx={{ "&:last-child td": { border: 0 } }}
+									Poids
+								</Typography>
+								<Typography
+									sx={{
+										color: "#fff",
+										fontFamily: "'Barlow Condensed', sans-serif",
+									}}
 								>
-									<TableCell
+									{seance.POIDS_CORPOREL ? `${seance.POIDS_CORPOREL} kg` : "—"}
+								</Typography>
+							</Box>
+
+							<Box
+								sx={{
+									display: "flex",
+									justifyContent: "space-between",
+									alignItems: "flex-start",
+									mb: seance.commentaires.length > 0 ? 0.5 : 0,
+								}}
+							>
+								<Typography
+									sx={{
+										color: "#7a8fa6",
+										fontFamily: "'Barlow Condensed', sans-serif",
+										fontSize: "0.75rem",
+									}}
+								>
+									Exercices
+								</Typography>
+								<Typography
+									sx={{
+										color: "#fff",
+										fontFamily: "'Barlow Condensed', sans-serif",
+										fontSize: "0.85rem",
+										textAlign: "right",
+										maxWidth: "60%",
+									}}
+								>
+									{seance.exercices.join(" · ")}
+								</Typography>
+							</Box>
+
+							{seance.commentaires.length > 0 && (
+								<Box
+									sx={{
+										display: "flex",
+										justifyContent: "space-between",
+										alignItems: "flex-start",
+										mt: 0.5,
+									}}
+								>
+									<Typography
+										sx={{
+											color: "#7a8fa6",
+											fontFamily: "'Barlow Condensed', sans-serif",
+											fontSize: "0.75rem",
+										}}
+									>
+										Commentaires
+									</Typography>
+									<Typography
 										sx={{
 											color: GREEN,
 											fontFamily: "'Barlow Condensed', sans-serif",
-											fontWeight: 700,
-											borderBottom: `1px solid ${BORDER}`,
-										}}
-									>
-										{new Date(seance.date).toLocaleDateString("fr-FR", {
-											day: "2-digit",
-											month: "short",
-											year: "numeric",
-											timeZone: "Europe/Paris",
-										})}
-									</TableCell>
-									<TableCell
-										sx={{
-											color: "#fff",
-											fontFamily: "'Barlow Condensed', sans-serif",
-											borderBottom: `1px solid ${BORDER}`,
+											fontSize: "0.78rem",
+											textAlign: "right",
+											maxWidth: "65%",
 										}}
 									>
 										{seance.titre_seance}
