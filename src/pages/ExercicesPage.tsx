@@ -485,7 +485,12 @@ export default function ExercicesPage() {
 							<Box
 								sx={{
 									display: "grid",
-									gridTemplateColumns: "repeat(4, 1fr)",
+									gridTemplateColumns: {
+										xs: "1fr",
+										sm: "repeat(2, 1fr)",
+										md: "repeat(3, 1fr)",
+										lg: "repeat(4, 1fr)",
+									},
 									gap: "16px",
 								}}
 							>

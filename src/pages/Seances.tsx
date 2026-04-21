@@ -236,6 +236,7 @@ export default function Seances() {
 					borderRadius: "12px",
 					padding: "24px",
 					margin: "40px 36px",
+					overflowX: "auto",
 				}}
 			>
 				{showForm && (

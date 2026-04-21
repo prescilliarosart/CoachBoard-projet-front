@@ -155,7 +155,13 @@ export default function FormProgramme({ onSuccess }: Props) {
 				Informations du programme
 			</Typography>
 
-			<Box sx={{ display: "flex", flexDirection: "row", gap: 3 }}>
+			<Box
+				sx={{
+					display: "flex",
+					flexDirection: { xs: "column", sm: "row" },
+					gap: 3,
+				}}
+			>
 				<TextField
 					label="Nom du programme"
 					value={form.nomProgramme}
@@ -194,7 +200,13 @@ export default function FormProgramme({ onSuccess }: Props) {
 				/>
 			</Box>
 
-			<Box sx={{ display: "flex", flexDirection: "row", gap: 3 }}>
+			<Box
+				sx={{
+					display: "flex",
+					flexDirection: { xs: "column", sm: "row" },
+					gap: 3,
+				}}
+			>
 				<TextField
 					label="Notes (optionnel)"
 					value={form.notes}
