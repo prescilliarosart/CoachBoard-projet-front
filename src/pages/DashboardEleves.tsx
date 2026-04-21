@@ -21,65 +21,55 @@ export default function DashboardEleves() {
 			<Box
 				sx={{
 					display: "flex",
+					flexDirection: { xs: "column", sm: "row" },
 					justifyContent: "space-between",
-					alignItems: "center",
-					minHeight: "200px",
-					margin: "80px 0 0",
-					paddingTop: "60px",
-					padding: "0 36px",
-					paddingBottom: "45px",
+					alignItems: { xs: "flex-start", sm: "center" },
+					mt: "80px",
+					px: "36px",
+					py: "40px",
+					borderBottom: "1px solid rgba(34, 197, 94, 0.5)",
 					position: "relative",
 					zIndex: 2,
-					borderBottom: "1px solid rgba(34, 197, 94, 0.5)",
+					gap: 3,
 				}}
 			>
-				<Box
-					component="section"
-					sx={{
-						color: "#fff",
-						padding: "24px 36px",
-						position: "relative",
-						zIndex: 2,
-					}}
-				>
+				<Box sx={{ color: "#fff" }}>
 					<Typography
 						variant="h1"
 						sx={{
 							fontFamily: "'Barlow Condensed', sans-serif",
-							fontSize: "3.5rem",
+							fontSize: { xs: "2.5rem", sm: "3.5rem" },
 							fontStyle: "italic",
 							fontWeight: 700,
 						}}
 					>
 						Mon espace
 					</Typography>
-					<p
-						style={{
-							fontSize: "1.5rem",
-							marginTop: "16px",
-							marginBottom: "50px",
+					<Typography
+						sx={{
+							fontSize: { xs: "1rem", sm: "1.5rem" },
+							mt: 2,
 							fontFamily: "'Barlow', sans-serif",
+							color: "rgba(255,255,255,0.7)",
 						}}
 					>
 						Consultez votre programme, enregistrez vos performances et suivez
 						votre progression séance après séance.
-					</p>
+					</Typography>
 				</Box>
+
 				<Button
 					variant="contained"
 					onClick={() => navigate("/seance-en-cours")}
 					sx={{
-						alignSelf: "flex-end",
-						marginRight: "200px",
-						position: "relative",
-						zIndex: 2,
 						backgroundColor: "#22c55e",
 						color: "#0b1520",
 						fontStyle: "italic",
-						fontSize: "1.25rem",
+						fontSize: "1rem",
 						fontWeight: 700,
-						border: "1.5px solid #22c55e",
+						whiteSpace: "nowrap",
 						borderRadius: "4px",
+						width: { xs: "100%", sm: "auto" },
 						"&:hover": {
 							backgroundColor: "#16a34a",
 							transform: "translateY(-2px)",
