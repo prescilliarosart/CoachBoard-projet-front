@@ -94,7 +94,7 @@ export default function SeanceEnCours() {
 	const [idEleveProgramme, setIdEleveProgramme] = useState<number | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [erreur, setErreur] = useState("");
-
+	const [dejaRealisee, setDejaRealisee] = useState(false);
 	const [current, setCurrent] = useState(0);
 	const [restTimer, setRestTimer] = useState<number | null>(null);
 	const [done, setDone] = useState(false);
@@ -135,6 +135,16 @@ export default function SeanceEnCours() {
 
 				setTitreSeance(seanceDuJour.TITRE);
 				setIdSeance(seanceDuJour.ID_SEANCE);
+
+				const today = new Date().toISOString().split("T")[0];
+				const check = await apiFetch<{ dejaRealisee: boolean }>(
+					`/api/suivi/check/${seanceDuJour.ID_SEANCE}/${today}/${actif.id_eleve_programme}`,
+				);
+				if (check.dejaRealisee) {
+					setDejaRealisee(true);
+					setLoading(false);
+					return;
+				}
 
 				const exos = await apiFetch<Exercice[]>(
 					`/api/seances_exercices/seance/${seanceDuJour.ID_SEANCE}`,
@@ -267,6 +277,56 @@ export default function SeanceEnCours() {
 		);
 	}
 
+	if (dejaRealisee) {
+		return (
+			<>
+				<Navbar links={elevLinks} />
+				<Box
+					sx={{
+						mt: 14,
+						textAlign: "center",
+						display: "flex",
+						flexDirection: "column",
+						alignItems: "center",
+						gap: 3,
+					}}
+				>
+					<Typography
+						sx={{
+							fontFamily: "'Barlow Condensed',sans-serif",
+							fontStyle: "italic",
+							fontWeight: 700,
+							fontSize: "1.6rem",
+							color: "#22c55e",
+							textTransform: "uppercase",
+						}}
+					>
+						Séance déjà réalisée aujourd'hui ! 💪
+					</Typography>
+					<Typography
+						sx={{ color: "#7a8fa6", fontFamily: "'Barlow',sans-serif" }}
+					>
+						Revenez demain pour continuer votre programme.
+					</Typography>
+					<Button
+						onClick={() => navigate("/dashboard-eleves")}
+						sx={{
+							background: "#22c55e",
+							color: "#0b1520",
+							fontFamily: "'Barlow Condensed',sans-serif",
+							fontStyle: "italic",
+							fontWeight: 700,
+							textTransform: "uppercase",
+							px: 3,
+							borderRadius: "4px",
+						}}
+					>
+						Retour au dashboard
+					</Button>
+				</Box>
+			</>
+		);
+	}
 	if (submitted) {
 		return (
 			<>
