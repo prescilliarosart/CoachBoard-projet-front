@@ -96,6 +96,7 @@ export default function SeanceEnCours() {
 	const [erreur, setErreur] = useState("");
 	const [dejaRealisee, setDejaRealisee] = useState(false);
 	const [current, setCurrent] = useState(0);
+	const [currentSerie, setCurrentSerie] = useState(1);
 	const [restTimer, setRestTimer] = useState<number | null>(null);
 	const [done, setDone] = useState(false);
 	const [submitted, setSubmitted] = useState(false);
@@ -171,28 +172,52 @@ export default function SeanceEnCours() {
 		return () => clearTimeout(t);
 	}, [restTimer]);
 
+	useEffect(() => {
+		if (restTimer !== null && restTimer > 0) {
+			document.body.style.overflow = "hidden";
+		} else {
+			document.body.style.overflow = "";
+		}
+		return () => {
+			document.body.style.overflow = "";
+		};
+	}, [restTimer]);
+
 	const handleSkipRest = () => {
 		setRestTimer(null);
-		const isLast = current + 1 >= exercices.length;
-		if (isLast) {
+		const isLastSerie = currentSerie >= exercices[current].SERIES;
+		const isLastExercice = current + 1 >= exercices.length;
+
+		if (!isLastSerie) {
+			setCurrentSerie((s) => s + 1);
+		} else if (isLastExercice) {
 			setDone(true);
 		} else {
 			setCurrent((c) => c + 1);
+			setCurrentSerie(1);
 		}
 	};
 
 	const handleNext = () => {
+		const scrollY = window.scrollY;
 		const repos = exercices[current].REPOS;
-		const isLast = current + 1 >= exercices.length;
+		const isLastSerie = currentSerie >= exercices[current].SERIES;
+		const isLastExercice = current + 1 >= exercices.length;
 
-		if (repos > 0 && !isLast) {
-			setRestTimer(repos);
+		if (!isLastSerie) {
+			if (repos > 0) {
+				setRestTimer(repos);
+				requestAnimationFrame(() => window.scrollTo(0, scrollY));
+				return;
+			}
+			setCurrentSerie((s) => s + 1);
 			return;
 		}
-		if (isLast) {
+		if (isLastExercice) {
 			setDone(true);
 		} else {
 			setCurrent((c) => c + 1);
+			setCurrentSerie(1);
 		}
 	};
 	const handleSubmit = async () => {
@@ -557,6 +582,16 @@ export default function SeanceEnCours() {
 					{ex.NOM_EXERCICE}
 				</Typography>
 
+				<Typography
+					sx={{
+						color: "#22c55e",
+						fontFamily: "'Barlow',sans-serif",
+						fontSize: "1rem",
+					}}
+				>
+					Série {currentSerie} / {ex.SERIES}
+				</Typography>
+
 				{/* GIF */}
 				<Box
 					sx={{
@@ -647,75 +682,89 @@ export default function SeanceEnCours() {
 						</Typography>
 					</Box>
 				)}
-				{/* Timer repos */}
 				{restTimer !== null && restTimer > 0 && (
 					<Box
 						sx={{
-							textAlign: "center",
-							p: 3,
-							background: "rgba(34,197,94,0.05)",
-							border: "1px solid rgba(34,197,94,0.2)",
-							borderRadius: "10px",
+							position: "fixed",
+							inset: 0,
+							background: "rgba(11,21,32,0.85)",
+							display: "flex",
+							alignItems: "center",
+							justifyContent: "center",
+							zIndex: 1300,
 						}}
 					>
-						<Typography
+						<Box
 							sx={{
-								color: "#7a8fa6",
-								fontFamily: "'Barlow',sans-serif",
-								fontSize: "0.85rem",
-								mb: 1,
+								background: "#0f1b27",
+								border: "1px solid rgba(34,197,94,0.2)",
+								borderRadius: "12px",
+								p: 4,
+								textAlign: "center",
+								minWidth: 260,
 							}}
 						>
-							Temps de repos
-						</Typography>
-						<Typography
-							sx={{
-								color: "#22c55e",
-								fontFamily: "'Barlow Condensed',sans-serif",
-								fontStyle: "italic",
-								fontWeight: 700,
-								fontSize: "3rem",
-							}}
-						>
-							{restTimer}s
-						</Typography>
-						<Button
-							onClick={handleSkipRest}
-							sx={{
-								color: "#7a8fa6",
-								fontFamily: "'Barlow',sans-serif",
-								fontSize: "0.75rem",
-								textTransform: "uppercase",
-								mt: 1,
-							}}
-						>
-							Passer
-						</Button>
+							<Typography
+								sx={{
+									color: "#7a8fa6",
+									fontFamily: "'Barlow',sans-serif",
+									fontSize: "0.85rem",
+									mb: 1,
+								}}
+							>
+								Temps de repos
+							</Typography>
+							<Typography
+								sx={{
+									color: "#22c55e",
+									fontFamily: "'Barlow Condensed',sans-serif",
+									fontStyle: "italic",
+									fontWeight: 700,
+									fontSize: "4rem",
+								}}
+							>
+								{restTimer}s
+							</Typography>
+							<Button
+								onClick={handleSkipRest}
+								sx={{
+									color: "#7a8fa6",
+									fontFamily: "'Barlow',sans-serif",
+									fontSize: "0.75rem",
+									textTransform: "uppercase",
+									mt: 2,
+								}}
+							>
+								Passer
+							</Button>
+						</Box>
 					</Box>
 				)}
 
 				{/* Bouton principal */}
-				{restTimer === null && (
-					<Button
-						onClick={handleNext}
-						sx={{
-							background: "#22c55e",
-							color: "#0b1520",
-							fontFamily: "'Barlow Condensed',sans-serif",
-							fontStyle: "italic",
-							fontWeight: 700,
-							fontSize: "0.95rem",
-							textTransform: "uppercase",
-							py: 1.5,
-							borderRadius: "4px",
-							"&:hover": { background: "#16a34a" },
-						}}
-					>
-						{current + 1 >= exercices.length
+
+				<Button
+					onClick={handleNext}
+					sx={{
+						visibility: restTimer === null ? "visible" : "hidden",
+						background: "#22c55e",
+						color: "#0b1520",
+						fontFamily: "'Barlow Condensed',sans-serif",
+						fontStyle: "italic",
+						fontWeight: 700,
+						fontSize: "0.95rem",
+						textTransform: "uppercase",
+						py: 1.5,
+						borderRadius: "4px",
+						"&:hover": { background: "#16a34a" },
+					}}
+				>
+					{currentSerie < ex.SERIES
+						? "Série terminée"
+						: current + 1 >= exercices.length
 							? "Terminer la séance"
 							: "Exercice terminé"}
-					</Button>
-				)}
+				</Button>
 			</Box>
 		</>
 	);
