@@ -65,6 +65,7 @@ export default function DashboardEleves() {
 						backgroundColor: "#22c55e",
 						color: "#0b1520",
 						fontStyle: "italic",
+						flexShrink: 0,
 						fontSize: "1rem",
 						fontWeight: 700,
 						whiteSpace: "nowrap",
