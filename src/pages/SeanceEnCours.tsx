@@ -96,6 +96,7 @@ export default function SeanceEnCours() {
 	const [erreur, setErreur] = useState("");
 	const [dejaRealisee, setDejaRealisee] = useState(false);
 	const [current, setCurrent] = useState(0);
+	const [currentSerie, setCurrentSerie] = useState(1);
 	const [restTimer, setRestTimer] = useState<number | null>(null);
 	const [done, setDone] = useState(false);
 	const [submitted, setSubmitted] = useState(false);
@@ -173,26 +174,37 @@ export default function SeanceEnCours() {
 
 	const handleSkipRest = () => {
 		setRestTimer(null);
-		const isLast = current + 1 >= exercices.length;
-		if (isLast) {
+		const isLastSerie = currentSerie >= exercices[current].SERIES;
+		const isLastExercice = current + 1 >= exercices.length;
+
+		if (!isLastSerie) {
+			setCurrentSerie((s) => s + 1);
+		} else if (isLastExercice) {
 			setDone(true);
 		} else {
 			setCurrent((c) => c + 1);
+			setCurrentSerie(1);
 		}
 	};
 
 	const handleNext = () => {
 		const repos = exercices[current].REPOS;
-		const isLast = current + 1 >= exercices.length;
+		const isLastSerie = currentSerie >= exercices[current].SERIES;
+		const isLastExercice = current + 1 >= exercices.length;
 
-		if (repos > 0 && !isLast) {
-			setRestTimer(repos);
+		if (!isLastSerie) {
+			if (repos > 0) {
+				setRestTimer(repos);
+				return;
+			}
+			setCurrentSerie((s) => s + 1);
 			return;
 		}
-		if (isLast) {
+		if (isLastExercice) {
 			setDone(true);
 		} else {
 			setCurrent((c) => c + 1);
+			setCurrentSerie(1);
 		}
 	};
 	const handleSubmit = async () => {
@@ -557,6 +569,16 @@ export default function SeanceEnCours() {
 					{ex.NOM_EXERCICE}
 				</Typography>
 
+				<Typography
+					sx={{
+						color: "#22c55e",
+						fontFamily: "'Barlow',sans-serif",
+						fontSize: "1rem",
+					}}
+				>
+					Série {currentSerie} / {ex.SERIES}
+				</Typography>
+
 				{/* GIF */}
 				<Box
 					sx={{
@@ -711,9 +733,11 @@ export default function SeanceEnCours() {
 							"&:hover": { background: "#16a34a" },
 						}}
 					>
-						{current + 1 >= exercices.length
-							? "Terminer la séance"
-							: "Exercice terminé"}
+						{currentSerie < ex.SERIES
+							? "Série terminée"
+							: current + 1 >= exercices.length
+								? "Terminer la séance"
+								: "Exercice terminé"}
 					</Button>
 				)}
 			</Box>
