@@ -1,6 +1,7 @@
 import {
 	Box,
 	Button,
+	Dialog,
 	LinearProgress,
 	TextField,
 	Typography,
@@ -170,6 +171,17 @@ export default function SeanceEnCours() {
 		}
 		const t = setTimeout(() => setRestTimer((r) => (r ?? 1) - 1), 1000);
 		return () => clearTimeout(t);
+	}, [restTimer]);
+
+	useEffect(() => {
+		if (restTimer !== null && restTimer > 0) {
+			document.body.style.overflow = "hidden";
+		} else {
+			document.body.style.overflow = "";
+		}
+		return () => {
+			document.body.style.overflow = "";
+		};
 	}, [restTimer]);
 
 	const handleSkipRest = () => {
@@ -669,50 +681,62 @@ export default function SeanceEnCours() {
 						</Typography>
 					</Box>
 				)}
-				{/* Timer repos */}
 				{restTimer !== null && restTimer > 0 && (
 					<Box
 						sx={{
-							textAlign: "center",
-							p: 3,
-							background: "rgba(34,197,94,0.05)",
-							border: "1px solid rgba(34,197,94,0.2)",
-							borderRadius: "10px",
+							position: "fixed",
+							inset: 0,
+							background: "rgba(11,21,32,0.85)",
+							display: "flex",
+							alignItems: "center",
+							justifyContent: "center",
+							zIndex: 1300,
 						}}
 					>
-						<Typography
+						<Box
 							sx={{
-								color: "#7a8fa6",
-								fontFamily: "'Barlow',sans-serif",
-								fontSize: "0.85rem",
-								mb: 1,
+								background: "#0f1b27",
+								border: "1px solid rgba(34,197,94,0.2)",
+								borderRadius: "12px",
+								p: 4,
+								textAlign: "center",
+								minWidth: 260,
 							}}
 						>
-							Temps de repos
-						</Typography>
-						<Typography
-							sx={{
-								color: "#22c55e",
-								fontFamily: "'Barlow Condensed',sans-serif",
-								fontStyle: "italic",
-								fontWeight: 700,
-								fontSize: "3rem",
-							}}
-						>
-							{restTimer}s
-						</Typography>
-						<Button
-							onClick={handleSkipRest}
-							sx={{
-								color: "#7a8fa6",
-								fontFamily: "'Barlow',sans-serif",
-								fontSize: "0.75rem",
-								textTransform: "uppercase",
-								mt: 1,
-							}}
-						>
-							Passer
-						</Button>
+							<Typography
+								sx={{
+									color: "#7a8fa6",
+									fontFamily: "'Barlow',sans-serif",
+									fontSize: "0.85rem",
+									mb: 1,
+								}}
+							>
+								Temps de repos
+							</Typography>
+							<Typography
+								sx={{
+									color: "#22c55e",
+									fontFamily: "'Barlow Condensed',sans-serif",
+									fontStyle: "italic",
+									fontWeight: 700,
+									fontSize: "4rem",
+								}}
+							>
+								{restTimer}s
+							</Typography>
+							<Button
+								onClick={handleSkipRest}
+								sx={{
+									color: "#7a8fa6",
+									fontFamily: "'Barlow',sans-serif",
+									fontSize: "0.75rem",
+									textTransform: "uppercase",
+									mt: 2,
+								}}
+							>
+								Passer
+							</Button>
+						</Box>
 					</Box>
 				)}
 
@@ -721,6 +745,7 @@ export default function SeanceEnCours() {
 					<Button
 						onClick={handleNext}
 						sx={{
+							visibility: restTimer === null ? "visible" : "hidden",
 							background: "#22c55e",
 							color: "#0b1520",
 							fontFamily: "'Barlow Condensed',sans-serif",
