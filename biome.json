@@ -5,9 +5,6 @@
 		"clientKind": "git",
 		"useIgnoreFile": true
 	},
-	"files": {
-		"ignoreUnknown": false
-	},
 	"formatter": {
 		"enabled": true,
 		"indentStyle": "tab"
@@ -15,7 +12,10 @@
 	"linter": {
 		"enabled": true,
 		"rules": {
-			"recommended": true
+			"recommended": true,
+			"a11y": {
+				"noAriaHiddenOnFocusable": "off"
+			}
 		}
 	},
 	"javascript": {
