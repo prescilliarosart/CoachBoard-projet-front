@@ -1,7 +1,6 @@
 import {
 	Box,
 	Button,
-	Dialog,
 	LinearProgress,
 	TextField,
 	Typography,
@@ -200,6 +199,7 @@ export default function SeanceEnCours() {
 	};
 
 	const handleNext = () => {
+		const scrollY = window.scrollY;
 		const repos = exercices[current].REPOS;
 		const isLastSerie = currentSerie >= exercices[current].SERIES;
 		const isLastExercice = current + 1 >= exercices.length;
@@ -207,6 +207,7 @@ export default function SeanceEnCours() {
 		if (!isLastSerie) {
 			if (repos > 0) {
 				setRestTimer(repos);
+				requestAnimationFrame(() => window.scrollTo(0, scrollY));
 				return;
 			}
 			setCurrentSerie((s) => s + 1);
@@ -741,30 +742,29 @@ export default function SeanceEnCours() {
 				)}
 
 				{/* Bouton principal */}
-				{restTimer === null && (
-					<Button
-						onClick={handleNext}
-						sx={{
-							visibility: restTimer === null ? "visible" : "hidden",
-							background: "#22c55e",
-							color: "#0b1520",
-							fontFamily: "'Barlow Condensed',sans-serif",
-							fontStyle: "italic",
-							fontWeight: 700,
-							fontSize: "0.95rem",
-							textTransform: "uppercase",
-							py: 1.5,
-							borderRadius: "4px",
-							"&:hover": { background: "#16a34a" },
-						}}
-					>
-						{currentSerie < ex.SERIES
-							? "Série terminée"
-							: current + 1 >= exercices.length
-								? "Terminer la séance"
-								: "Exercice terminé"}
-					</Button>
-				)}
+
+				<Button
+					onClick={handleNext}
+					sx={{
+						visibility: restTimer === null ? "visible" : "hidden",
+						background: "#22c55e",
+						color: "#0b1520",
+						fontFamily: "'Barlow Condensed',sans-serif",
+						fontStyle: "italic",
+						fontWeight: 700,
+						fontSize: "0.95rem",
+						textTransform: "uppercase",
+						py: 1.5,
+						borderRadius: "4px",
+						"&:hover": { background: "#16a34a" },
+					}}
+				>
+					{currentSerie < ex.SERIES
+						? "Série terminée"
+						: current + 1 >= exercices.length
+							? "Terminer la séance"
+							: "Exercice terminé"}
+				</Button>
 			</Box>
 		</>
 	);
