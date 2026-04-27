@@ -114,16 +114,16 @@ export default function SeanceEnCours() {
 				const progs = await apiFetch<EleveProgrammeActif[]>(
 					`/api/eleves-programmes/eleve/${user.id}`,
 				);
-				const actif = progs.filter((p) => p.statut === "En cours").at(-1);
+				const actif = progs.filter((p) => p.STATUT === "En cours").at(-1);
 				if (!actif) {
 					setErreur("Aucun programme actif pour le moment.");
 					setLoading(false);
 					return;
 				}
-				setIdEleveProgramme(actif.id_eleve_programme);
+				setIdEleveProgramme(actif.ID_ELEVE_PROGRAMME);
 
 				const seances = await apiFetch<SeanceJour[]>(
-					`/api/seances/programme/${actif.id_programme}`,
+					`/api/seances/programme/${actif.ID_PROGRAMME}`,
 				);
 				const seanceDuJour = seances.find(
 					(s) => s.JOUR?.toLowerCase() === aujourdhui.toLowerCase(),
@@ -139,7 +139,7 @@ export default function SeanceEnCours() {
 
 				const today = new Date().toISOString().split("T")[0];
 				const check = await apiFetch<{ dejaRealisee: boolean }>(
-					`/api/suivi/check/${seanceDuJour.ID_SEANCE}/${today}/${actif.id_eleve_programme}`,
+					`/api/suivi/check/${seanceDuJour.ID_SEANCE}/${today}/${actif.ID_ELEVE_PROGRAMME}`,
 				);
 				if (check.dejaRealisee) {
 					setDejaRealisee(true);

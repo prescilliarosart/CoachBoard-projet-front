@@ -98,9 +98,9 @@ export interface SeanceAvecProgramme extends Seance {
 }
 
 export interface EleveProgrammeActif {
-	id_eleve_programme: number;
-	id_programme: number;
-	statut: string | null;
+	ID_ELEVE_PROGRAMME: number;
+	ID_PROGRAMME: number;
+	STATUT: string | null;
 }
 
 export interface SeanceJour {
