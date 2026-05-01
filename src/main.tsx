@@ -7,6 +7,7 @@ import { AuthProvider } from "./context/AuthContext.tsx";
 
 const theme = createTheme({
 	palette: {
+		mode: "dark",
 		warning: {
 			main: "#22c55e",
 			contrastText: "#0b1520",

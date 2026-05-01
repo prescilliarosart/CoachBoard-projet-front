@@ -22,7 +22,7 @@ interface FormData {
 
 interface Programme {
 	ID_PROGRAMME: number;
-	NOM: string;
+	nom_programme: string;
 }
 
 interface Props {
@@ -91,6 +91,7 @@ export default function FormSeance({ programmeId, onSuccess }: Props) {
 		const fetchProgrammes = async () => {
 			try {
 				const data = await apiFetch<Programme[]>("/api/programmes");
+				console.log("Programmes reçus :", data);
 				setProgrammes(data);
 			} catch (err) {
 				console.error("Erreur chargement programmes :", err);
@@ -227,7 +228,7 @@ export default function FormSeance({ programmeId, onSuccess }: Props) {
 						>
 							{programmes.map((p) => (
 								<MenuItem key={p.ID_PROGRAMME} value={p.ID_PROGRAMME}>
-									{p.NOM}
+									{p.nom_programme}
 								</MenuItem>
 							))}
 						</Select>
