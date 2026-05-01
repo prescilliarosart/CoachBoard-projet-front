@@ -54,6 +54,7 @@ export default function DashboardCoach() {
 	);
 	const [exercices, setExercices] = useState<{ id: number; nom: string }[]>([]);
 	const [showParamsExercice, setShowParamsExercice] = useState(false);
+	const [exerciceKey, setExerciceKey] = useState(0);
 
 	const [done, setDone] = useState(false);
 
@@ -90,10 +91,13 @@ export default function DashboardCoach() {
 		setModeExercice("select");
 		setDone(false);
 		setActiveStep(0);
+		setExerciceKey(0);
 	};
 
 	const handleNewSeance = () => {
 		setSeanceId(null);
+		setExerciceId(null);
+		setExerciceKey((k) => k + 1);
 		setActiveStep(1);
 	};
 
@@ -322,9 +326,13 @@ export default function DashboardCoach() {
 									</Button>
 								</Box>
 								{modeExercice === "select" ? (
-									<SelectExercice onSuccess={handleExerciceSuccess} />
+									<SelectExercice
+										key={exerciceKey}
+										onSuccess={handleExerciceSuccess}
+									/>
 								) : (
 									<FormExercices
+										key={exerciceKey}
 										onSuccess={handleExerciceSuccess}
 										exercices={exercices}
 									/>
@@ -358,7 +366,10 @@ export default function DashboardCoach() {
 
 								<Box sx={{ display: "flex", gap: 2, mt: 3 }}>
 									<Button
-										onClick={() => setActiveStep(2)}
+										onClick={() => {
+											setExerciceId(null);
+											setExerciceKey((k) => k + 1);
+										}}
 										sx={SX_TOGGLE_INACTIVE}
 									>
 										Ajouter un autre exercice
